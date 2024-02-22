@@ -11,12 +11,12 @@ function Home() {
       <main>
         <div>
           <div>
-            <h2>Track recipes you've made.</h2>
+            <h2>Track recipes you&apos;ve made.</h2>
             <h2>Save those you want to eat.</h2>
-            <h2>Tell your friends what's good.</h2>
+            <h2>Tell your friends what&apos;s good.</h2>
           </div>
         </div>
-        <button>GET STARTED — IT‘S FREE!</button>
+        <button>GET STARTED — IT&apos;S FREE!</button>
         <p>The social network for food lovers. Not available anywhere else.</p>
       </main>
     </div>
