@@ -20,27 +20,27 @@ function BrowseBar() {
             value=""
             label="category"
           >
-            <MenuItem value="beef">
-              <Link href="/recipes/category/beef">Beef</Link>
-            </MenuItem>
-            <MenuItem value="chicken">
-              <Link href="/recipes/category/chicken">Chicken</Link>
-            </MenuItem>
-            <MenuItem value="noodles">
-              <Link href="/recipes/category/noodles">Noodles</Link>
-            </MenuItem>
-            <MenuItem value="pasta">
-              <Link href="/recipes/category/pasta">Pasta</Link>
-            </MenuItem>
-            <MenuItem value="pork">
-              <Link href="/recipes/category/pork">Pork</Link>
-            </MenuItem>
-            <MenuItem value="rice">
-              <Link href="/recipes/category/rice">Rice & Grains</Link>
-            </MenuItem>
-            <MenuItem value="vegetables">
-              <Link href="/recipes/category/vegetables">Vegetables</Link>
-            </MenuItem>
+            <Link href="/recipes/category/beef">
+              <MenuItem value="beef">Beef</MenuItem>
+            </Link>
+            <Link href="/recipes/category/chicken">
+              <MenuItem value="chicken">Chicken</MenuItem>
+            </Link>
+            <Link href="/recipes/category/noodles">
+              <MenuItem value="noodles">Noodles</MenuItem>
+            </Link>
+            <Link href="/recipes/category/pasta">
+              <MenuItem value="pasta">Pasta</MenuItem>
+            </Link>
+            <Link href="/recipes/category/pork">
+              <MenuItem value="pork">Pork</MenuItem>
+            </Link>
+            <Link href="/recipes/category/rice">
+              <MenuItem value="rice">Rice & Grains</MenuItem>
+            </Link>
+            <Link href="/recipes/category/vegetables">
+              <MenuItem value="vegetables">Vegetables</MenuItem>
+            </Link>
           </Select>
         </FormControl>
       </Grid>
@@ -48,28 +48,24 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="cuisine-label">Cuisine</InputLabel>
           <Select labelId="cuisine-label" id="cuisine" value="" label="cuisine">
-            <MenuItem value="african">
-              <Link href="/recipes/cuisine/african">African Cuisine</Link>
-            </MenuItem>
-            <MenuItem value="asian">
-              <Link href="/recipes/cuisine/asian">Asian Cuisine</Link>
-            </MenuItem>
-            <MenuItem value="european">
-              <Link href="/recipes/cuisine/european">European Cuisine</Link>
-            </MenuItem>
-            <MenuItem value="northamerican">
-              <Link href="/recipes/cuisine/northamerican">
-                North American Cuisine
-              </Link>
-            </MenuItem>
-            <MenuItem value="oceanic">
-              <Link href="/recipes/cuisine/oceanic">Oceanic Cuisine</Link>
-            </MenuItem>
-            <MenuItem value="southamerica">
-              <Link href="/recipes/cuisine/southamerica">
-                South American Cuisine
-              </Link>
-            </MenuItem>
+            <Link href="/recipes/cuisine/african">
+              <MenuItem value="african">African Cuisine</MenuItem>
+            </Link>
+            <Link href="/recipes/cuisine/asian">
+              <MenuItem value="asian">Asian Cuisine</MenuItem>
+            </Link>
+            <Link href="/recipes/cuisine/european">
+              <MenuItem value="european">European Cuisine</MenuItem>
+            </Link>
+            <Link href="/recipes/cuisine/northamerican">
+              <MenuItem value="northamerican">North American Cuisine</MenuItem>
+            </Link>
+            <Link href="/recipes/cuisine/oceanic">
+              <MenuItem value="oceanic">Oceanic Cuisine</MenuItem>
+            </Link>
+            <Link href="/recipes/cuisine/southamerica">
+              <MenuItem value="southamerica">South American Cuisine</MenuItem>
+            </Link>
           </Select>
         </FormControl>
       </Grid>
@@ -77,18 +73,18 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="course-label">Course</InputLabel>
           <Select labelId="course-label" id="course" value="" label="course">
-            <MenuItem value="breakfast">
-              <Link href="/recipes/course/breakfast">Breakfast</Link>
-            </MenuItem>
-            <MenuItem value="main">
-              <Link href="/recipes/course/main">Mains</Link>
-            </MenuItem>
-            <MenuItem value="appetizer">
-              <Link href="/recipes/course/appetizer">Appetizers</Link>
-            </MenuItem>
-            <MenuItem value="side">
-              <Link href="/recipes/course/side">Sides</Link>
-            </MenuItem>
+            <Link href="/recipes/course/breakfast">
+              <MenuItem value="breakfast">Breakfast</MenuItem>
+            </Link>
+            <Link href="/recipes/course/main">
+              <MenuItem value="main">Mains</MenuItem>
+            </Link>
+            <Link href="/recipes/course/appetizer">
+              <MenuItem value="appetizer">Appetizers</MenuItem>
+            </Link>
+            <Link href="/recipes/course/side">
+              <MenuItem value="side">Sides</MenuItem>
+            </Link>
           </Select>
         </FormControl>
       </Grid>
@@ -96,14 +92,12 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="method-label">Method</InputLabel>
           <Select labelId="method-label" id="method" value="" label="method">
-            <MenuItem value="pressure-cooker">
-              <Link href="/recipes/method/pressure-cooker">
-                Pressure Cooker
-              </Link>
-            </MenuItem>
-            <MenuItem value="slow-cooker">
-              <Link href="/recipes/method/slow-cooker">Slow Cooker</Link>
-            </MenuItem>
+            <Link href="/recipes/method/pressure-cooker">
+              <MenuItem value="pressure-cooker">Pressure Cooker</MenuItem>
+            </Link>
+            <Link href="/recipes/method/slow-cooker">
+              <MenuItem value="slow-cooker">Slow Cooker</MenuItem>
+            </Link>
           </Select>
         </FormControl>
       </Grid>
@@ -111,18 +105,18 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="diet-label">Diet</InputLabel>
           <Select labelId="diet-label" id="diet" value="" label="diet">
-            <MenuItem value="dairy-free">
-              <Link href="/recipes/diet/dairy-free">Dairy-free</Link>
-            </MenuItem>
-            <MenuItem value="gluten-free">
-              <Link href="/recipes/diet/gluten-free">Gluten-free</Link>
-            </MenuItem>
-            <MenuItem value="vegan">
-              <Link href="/recipes/diet/vegan">Vegan</Link>
-            </MenuItem>
-            <MenuItem value="vegetarian">
-              <Link href="/recipes/diet/vegetarian">Vegetarian</Link>
-            </MenuItem>
+            <Link href="/recipes/diet/dairy-free">
+              <MenuItem value="dairy-free">Dairy-free</MenuItem>
+            </Link>
+            <Link href="/recipes/diet/gluten-free">
+              <MenuItem value="gluten-free">Gluten-free</MenuItem>
+            </Link>
+            <Link href="/recipes/diet/vegan">
+              <MenuItem value="vegan">Vegan</MenuItem>
+            </Link>
+            <Link href="/recipes/diet/vegetarian">
+              <MenuItem value="vegetarian">Vegetarian</MenuItem>
+            </Link>
           </Select>
         </FormControl>
       </Grid>
@@ -130,12 +124,12 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="rating-label">Rating</InputLabel>
           <Select labelId="rating-label" id="rating" value="" label="rating">
-            <MenuItem value="highest">
-              <Link href="/recipes/highest">Highest Rated</Link>
-            </MenuItem>
-            <MenuItem value="lowest">
-              <Link href="/recipes/rating/lowest">Lowest Rated</Link>
-            </MenuItem>
+            <Link href="/recipes/highest">
+              <MenuItem value="highest">Highest Rated</MenuItem>
+            </Link>
+            <Link href="/recipes/rating/lowest">
+              <MenuItem value="lowest">Lowest Rated</MenuItem>
+            </Link>
           </Select>
         </FormControl>
       </Grid>
@@ -143,15 +137,15 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="popular-label">Popular</InputLabel>
           <Select labelId="popular-label" id="popular" value="" label="popular">
-            <MenuItem value="popular">
-              <Link href="/recipes/popular">All Time</Link>
-            </MenuItem>
-            <MenuItem value="popthismonth">
-              <Link href="/recipes/popular/month">This Month</Link>
-            </MenuItem>
-            <MenuItem value="popthisweek">
-              <Link href="/recipes/popular/week">This Week</Link>
-            </MenuItem>
+            <Link href="/recipes/popular">
+              <MenuItem value="popular">All Time</MenuItem>
+            </Link>
+            <Link href="/recipes/popular/month">
+              <MenuItem value="popthismonth">This Month</MenuItem>
+            </Link>
+            <Link href="/recipes/popular/week">
+              <MenuItem value="popthisweek">This Week</MenuItem>
+            </Link>
           </Select>
         </FormControl>
       </Grid>
@@ -159,9 +153,9 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="other-label">Other</InputLabel>
           <Select labelId="other-label" id="other" value="" label="other">
-            <MenuItem value="name">
-              <Link href="/recipes/name">All Recipes</Link>
-            </MenuItem>
+            <Link href="/recipes/name">
+              <MenuItem value="name">All Recipes</MenuItem>
+            </Link>
           </Select>
         </FormControl>
       </Grid>
