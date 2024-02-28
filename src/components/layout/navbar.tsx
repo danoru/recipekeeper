@@ -14,10 +14,11 @@ import MenuItem from "@mui/material/MenuItem";
 const pages = [
   { id: 1, title: "Sign In", link: "/sign-in" },
   { id: 2, title: "Create Account", link: "/create-account" },
-  { id: 3, title: "Recipes", link: "/recipes" },
-  { id: 4, title: "Lists", link: "/lists" },
-  { id: 5, title: "Members", link: "/members" },
-  { id: 6, title: "Journal", link: "/journal" },
+  { id: 3, title: "Sources", link: "/sources" },
+  { id: 4, title: "Recipes", link: "/recipes" },
+  { id: 5, title: "Lists", link: "/lists" },
+  { id: 6, title: "Members", link: "/members" },
+  { id: 7, title: "Journal", link: "/journal" },
 ];
 
 function Navbar() {
