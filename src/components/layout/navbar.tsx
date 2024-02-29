@@ -14,7 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 const pages = [
   { id: 1, title: "Sign In", link: "/sign-in" },
   { id: 2, title: "Create Account", link: "/create-account" },
-  { id: 3, title: "Sources", link: "/sources" },
+  { id: 3, title: "Creators", link: "/creators" },
   { id: 4, title: "Recipes", link: "/recipes" },
   { id: 5, title: "Lists", link: "/lists" },
   { id: 6, title: "Members", link: "/members" },

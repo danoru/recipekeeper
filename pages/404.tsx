@@ -6,17 +6,22 @@ function ErrorPage() {
   return (
     <Fragment>
       <Head>
-        <title>Savry: 404</title>
+        <title>404: Not Found • Savry</title>
       </Head>
-      <blockquote cite="https://www.youtube.com/watch?v=g0-F88c6Hrk">
+      <blockquote
+        style={{
+          fontSize: "18px",
+          marginTop: "20px",
+          textAlign: "center",
+        }}
+      >
         &quot;If a man does not have the sauce, then he is lost.
         <br />
         But, the same man can get lost in the sauce.&quot;
       </blockquote>
-      <p>
+      <p style={{ textAlign: "center", fontSize: "16px", marginTop: "20px" }}>
         Are you lost? Let&apos;s get you back on <Link href="/">track</Link>.
       </p>
-      <p>404 | This page could not be found.</p>
     </Fragment>
   );
 }

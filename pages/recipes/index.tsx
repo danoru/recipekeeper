@@ -1,5 +1,6 @@
 import Head from "next/head";
 import BrowseBar from "../../src/components/recipes/BrowseBar";
+import PopCarousel from "../../src/components/recipes/PopCarousel";
 
 function Recipes() {
   return (
@@ -9,7 +10,7 @@ function Recipes() {
       </Head>
       <main>
         <BrowseBar />
-        {/* Popular Carousel */}
+        <PopCarousel />
         <div></div>
         {/* Just Reviewed */}
         <div></div>
