@@ -8,7 +8,7 @@ function Home() {
         <meta name="description" content="Created with NextJS" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
+      <main style={{ textAlign: "center" }}>
         <div>
           <div>
             <h2>Track recipes you&apos;ve made.</h2>

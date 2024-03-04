@@ -7,7 +7,7 @@ import Link from "next/link";
 
 function BrowseBar() {
   return (
-    <Grid container style={{ justifyContent: "center" }}>
+    <Grid container item xs={12} style={{ justifyContent: "center" }}>
       <Grid item style={{ lineHeight: "3.5" }}>
         Browse By
       </Grid>
@@ -38,8 +38,14 @@ function BrowseBar() {
             <Link href="/recipes/category/rice">
               <MenuItem value="rice">Rice & Grains</MenuItem>
             </Link>
+            <Link href="/recipes/category/soup">
+              <MenuItem value="soup">Soup</MenuItem>
+            </Link>
             <Link href="/recipes/category/vegetables">
               <MenuItem value="vegetables">Vegetables</MenuItem>
+            </Link>
+            <Link href="/recipes/category/other">
+              <MenuItem value="other">Other</MenuItem>
             </Link>
           </Select>
         </FormControl>
@@ -54,8 +60,19 @@ function BrowseBar() {
             <Link href="/recipes/cuisine/asian">
               <MenuItem value="asian">Asian Cuisine</MenuItem>
             </Link>
+            <Link href="/recipes/cuisine/carribean">
+              <MenuItem value="carribean">Carribean Cuisine</MenuItem>
+            </Link>
+            <Link href="/recipes/cuisine/centralamerican">
+              <MenuItem value="centralamerican">
+                Central American Cuisine
+              </MenuItem>
+            </Link>
             <Link href="/recipes/cuisine/european">
               <MenuItem value="european">European Cuisine</MenuItem>
+            </Link>
+            <Link href="/recipes/cuisine/middleeastern">
+              <MenuItem value="middleeastern">Middle Eastern Cuisine</MenuItem>
             </Link>
             <Link href="/recipes/cuisine/northamerican">
               <MenuItem value="northamerican">North American Cuisine</MenuItem>
@@ -73,14 +90,17 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="course-label">Course</InputLabel>
           <Select labelId="course-label" id="course" value="" label="course">
+            <Link href="/recipes/course/appetizer">
+              <MenuItem value="appetizer">Appetizers</MenuItem>
+            </Link>
             <Link href="/recipes/course/breakfast">
               <MenuItem value="breakfast">Breakfast</MenuItem>
             </Link>
+            <Link href="/recipes/course/dessert">
+              <MenuItem value="dessert">Desserts</MenuItem>
+            </Link>
             <Link href="/recipes/course/main">
               <MenuItem value="main">Mains</MenuItem>
-            </Link>
-            <Link href="/recipes/course/appetizer">
-              <MenuItem value="appetizer">Appetizers</MenuItem>
             </Link>
             <Link href="/recipes/course/side">
               <MenuItem value="side">Sides</MenuItem>
