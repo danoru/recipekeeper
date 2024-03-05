@@ -34,7 +34,7 @@ function Recipes(props: any) {
   );
 }
 
-export async function getStaticProps(context: any) {
+export async function getStaticProps() {
   let featuredRecipes = getFeaturedRecipes();
 
   return {

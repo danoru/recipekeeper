@@ -12,3 +12,11 @@ export interface RECIPE_LIST_TYPE {
   rating: number;
   reviews: number;
 }
+
+export interface CREATOR_LIST_TYPE {
+  name: string;
+  image: string;
+  website: string;
+  instagram: string;
+  youtube: string;
+}
