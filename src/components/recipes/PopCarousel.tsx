@@ -54,7 +54,7 @@ function PopCarousel(props: Props) {
       >
         <p>POPULAR RECIPES THIS WEEK</p>
         <Link href="/recipes/popular/week">
-          <p>MORE</p>
+          <p style={{ cursor: "pointer" }}>MORE</p>
         </Link>
       </Grid>
       <Grid
@@ -130,7 +130,7 @@ function PopCarousel(props: Props) {
 function PopCard(props: any) {
   return (
     <Link href={props.link}>
-      <Card sx={{ width: "250px", height: "360px" }}>
+      <Card sx={{ width: "250px", height: "360px", cursor: "pointer" }}>
         <CardMedia
           sx={{ height: 140 }}
           image={props.image}
