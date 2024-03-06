@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 interface Props {
   creators: CREATOR_LIST_TYPE[];
 }
-function CreatorCarousel(props: Props) {
+function CreatorList(props: Props) {
   const { creators } = props;
 
   return (
@@ -86,4 +86,4 @@ function CreatorCard(props: any) {
   );
 }
 
-export default CreatorCarousel;
+export default CreatorList;
