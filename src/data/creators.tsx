@@ -8,6 +8,7 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://linktr.ee/babishculinaryuniverse",
     instagram: "https://www.instagram.com/bingingwithbabish",
     youtube: "https://www.youtube.com/@babishculinaryuniverse",
+    isFeatured: false,
   },
   {
     name: "Frankie Gaw of Little Fat Boy",
@@ -16,6 +17,7 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://littlefatboy.com",
     instagram: "https://www.instagram.com/littlefatboyfrankie/",
     youtube: "https://www.youtube.com/@LittleFatBoy",
+    isFeatured: true,
   },
   {
     name: "Isabel Orozco-Moore of Isabel Eats",
@@ -24,6 +26,7 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://www.isabeleats.com/",
     instagram: "https://www.instagram.com/isabeleats",
     youtube: "https://www.youtube.com/@isabeleatsrecipes",
+    isFeatured: true,
   },
   {
     name: "Joshua Weismann",
@@ -32,6 +35,7 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "http://joshuaweissman.com",
     instagram: "https://www.instagram.com/joshuaweissman",
     youtube: "https://www.youtube.com/@JoshuaWeissman",
+    isFeatured: true,
   },
   {
     name: "Wil Yeung of Yeung Man Cooking",
@@ -40,9 +44,14 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://yeungmancooking.com/",
     instagram: "https://www.instagram.com/yeungmancooking/",
     youtube: "https://www.youtube.com/@YEUNGMANCOOKING",
+    isFeatured: true,
   },
 ];
 
-export function getFeaturedCreators() {
+export function getAllCreators() {
   return CREATOR_LIST;
+}
+
+export function getFilteredCreators() {
+  return CREATOR_LIST.filter((creator) => creator.isFeatured);
 }

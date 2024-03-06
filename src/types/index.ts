@@ -19,4 +19,5 @@ export interface CREATOR_LIST_TYPE {
   website: string;
   instagram: string;
   youtube: string;
+  isFeatured: Boolean;
 }

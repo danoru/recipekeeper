@@ -51,7 +51,9 @@ function CreatorCarousel(props: Props) {
           width: "75%",
         }}
       >
-        <p>POPULAR CREATORS THIS WEEK</p>
+        <Typography variant="h6" component="div">
+          FEATURED CREATORS
+        </Typography>
       </Grid>
       <Grid
         item
