@@ -15,6 +15,7 @@ export interface RECIPE_LIST_TYPE {
 
 export interface CREATOR_LIST_TYPE {
   name: string;
+  link: string;
   image: string;
   website: string;
   instagram: string;

@@ -1,11 +1,11 @@
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Link from "next/link";
-import { CREATOR_LIST_TYPE } from "../../types";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
+import Grid from "@mui/material/Grid";
+import Link from "next/link";
 import Typography from "@mui/material/Typography";
+
+import { CREATOR_LIST_TYPE } from "../../types";
 
 interface Props {
   creators: CREATOR_LIST_TYPE[];
