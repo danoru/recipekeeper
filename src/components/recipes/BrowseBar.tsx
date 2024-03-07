@@ -173,8 +173,8 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="other-label">Other</InputLabel>
           <Select labelId="other-label" id="other" value="" label="other">
-            <Link href="/recipes/name">
-              <MenuItem value="name">All Recipes</MenuItem>
+            <Link href="/recipes/all">
+              <MenuItem value="all">All Recipes</MenuItem>
             </Link>
           </Select>
         </FormControl>

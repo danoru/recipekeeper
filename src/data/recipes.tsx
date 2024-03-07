@@ -105,8 +105,23 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
   },
 ];
 
+export function getAllRecipes() {
+  return RECIPE_LIST.sort((a, b) => {
+    const nameA = a.name.toUpperCase(); // Convert names to uppercase for case-insensitive comparison
+    const nameB = b.name.toUpperCase();
+
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  });
+}
+
 export function getFeaturedRecipes() {
-  return RECIPE_LIST;
+  return RECIPE_LIST.filter((recipe) => recipe.rating === 5);
 }
 
 export function getRecipesByCreator(creatorName: string) {
