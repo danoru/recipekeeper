@@ -1,6 +1,7 @@
 export interface RECIPE_LIST_TYPE {
   name: string;
   creator: string;
+  creatorId: string;
   link: string;
   image: string;
   description: string;

@@ -5,13 +5,14 @@ import Grid from "@mui/material/Grid";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
 
-import { CREATOR_LIST_TYPE } from "../../types";
+import { RECIPE_LIST_TYPE } from "../../types";
 
 interface Props {
-  creators: CREATOR_LIST_TYPE[];
+  filteredRecipes: RECIPE_LIST_TYPE[];
 }
-function CreatorList(props: Props) {
-  const { creators } = props;
+
+function CreatorRecipeList(props: Props) {
+  const { filteredRecipes } = props;
 
   return (
     <Grid container xs={12}>
@@ -27,7 +28,7 @@ function CreatorList(props: Props) {
         }}
       >
         <Typography variant="h6" component="div">
-          ALL CREATORS
+          ALL RECIPES BY CREATOR
         </Typography>
       </Grid>
       <Grid
@@ -40,15 +41,15 @@ function CreatorList(props: Props) {
           maxWidth: "75%",
         }}
       >
-        {creators.map((creator: any, i: number) => (
-          <CreatorCard
+        {filteredRecipes.map((recipe: any, i: number) => (
+          <RecipeCard
             key={`card-${i}`}
-            name={creator.name}
-            link={`creators/${creator.link}`}
-            image={creator.image}
-            website={creator.website}
-            instagram={creator.instagram}
-            youtube={creator.youtube}
+            name={recipe.name}
+            link={recipe.link}
+            image={recipe.image}
+            website={recipe.website}
+            instagram={recipe.instagram}
+            youtube={recipe.youtube}
             sx={{
               width: "100%",
               height: "100%",
@@ -60,7 +61,7 @@ function CreatorList(props: Props) {
   );
 }
 
-function CreatorCard(props: any) {
+function RecipeCard(props: any) {
   return (
     <Grid item>
       <Link href={props.link}>
@@ -87,4 +88,4 @@ function CreatorCard(props: any) {
   );
 }
 
-export default CreatorList;
+export default CreatorRecipeList;

@@ -88,6 +88,7 @@ function CreatorCarousel(props: Props) {
                   <CreatorCard
                     key={`card-${i}`}
                     name={creator.name}
+                    link={`creators/${creator.link}`}
                     image={creator.image}
                     website={creator.website}
                     instagram={creator.instagram}
@@ -120,7 +121,7 @@ function CreatorCarousel(props: Props) {
 
 function CreatorCard(props: any) {
   return (
-    <Link href={props.website}>
+    <Link href={props.link}>
       <Card sx={{ width: "250px", height: "250px", cursor: "pointer" }}>
         <CardMedia
           sx={{ height: 140 }}

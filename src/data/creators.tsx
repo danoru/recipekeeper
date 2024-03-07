@@ -80,3 +80,7 @@ export function getAllCreators() {
 export function getFilteredCreators() {
   return CREATOR_LIST.filter((creator) => creator.isFeatured);
 }
+
+export function getCreatorId(creatorName: string) {
+  return CREATOR_LIST.find((creator) => creator.link === creatorName);
+}

@@ -4,6 +4,7 @@ import { RECIPE_LIST_TYPE } from "../types";
 // {
 //   name: "",
 //   creator: "",
+//   creatorId: "",
 //   link: "",
 //   image: "",
 //   description: "",
@@ -20,6 +21,7 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
   {
     name: "Butternut Squash and Pork Lasagna",
     creator: "Frankie Gaw of Little Fat Boy",
+    creatorId: "littlefatboy",
     link: "https://littlefatboy.com/recipes/butternut-squash-and-pork-lasagna",
     image:
       "https://littlefatboy.com/media/pages/recipes/butternut-squash-and-pork-lasagna/8a9dafe748-1698875724/lasagna_hero.gif",
@@ -36,6 +38,7 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
   {
     name: "Taiwanese-American Chicken Pot Pie",
     creator: "Frankie Gaw of Little Fat Boy",
+    creatorId: "littlefatboy",
     link: "https://littlefatboy.com/recipes/taiwanese-american-chicken-pot-pie",
     image:
       "https://littlefatboy.com/media/pages/recipes/taiwanese-american-chicken-pot-pie/01cc49ae12-1655261071/taiwanese_chicken_pot_pie.png",
@@ -52,6 +55,7 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
   {
     name: "Banana Walnut Mochi Bread",
     creator: "Frankie Gaw of Little Fat Boy",
+    creatorId: "littlefatboy",
     link: "https://littlefatboy.com/recipes/banana-walnut-mochi-bread",
     image:
       "https://littlefatboy.com/media/pages/recipes/banana-walnut-mochi-bread/0a7ccdd835-1652838619/bananawalnutbread_3-27-22.png",
@@ -68,6 +72,7 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
   {
     name: "Chicken Pozole Verde",
     creator: "Isabel Orozco-Moore of Isabel Eats",
+    creatorId: "isabeleats",
     link: "https://www.isabeleats.com/chicken-pozole-verde/",
     image:
       "https://www.isabeleats.com/wp-content/uploads/2022/10/pozole-verde-small-8.jpg",
@@ -84,6 +89,7 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
   {
     name: "Zuppa Tuscana Congee",
     creator: "Frankie Gaw of Little Fat Boy",
+    creatorId: "littlefatboy",
     link: "https://littlefatboy.com/recipes/zuppa-toscana-congee",
     image:
       "https://littlefatboy.com/media/pages/recipes/zuppa-toscana-congee/065608820d-1655350789/zuppa_toscana_congee_pink_6-15-22.png",
@@ -101,4 +107,8 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
 
 export function getFeaturedRecipes() {
   return RECIPE_LIST;
+}
+
+export function getRecipesByCreator(creatorName: string) {
+  return RECIPE_LIST.filter((recipe) => recipe.creatorId === creatorName);
 }
