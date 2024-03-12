@@ -22,11 +22,12 @@ interface Props {
 
 function CreatorPage(props: Props) {
   const { creatorId, filteredRecipes } = props;
+  const title = creatorId.name + " • Savry";
 
   return (
     <Grid container>
       <Head>
-        <title> {creatorId.name} • Savry</title>
+        <title>{title}</title>
       </Head>
       <Grid item xs={10}>
         <CreatorRecipeList filteredRecipes={props.filteredRecipes} />
