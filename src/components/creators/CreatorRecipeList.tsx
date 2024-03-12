@@ -15,7 +15,7 @@ function CreatorRecipeList(props: Props) {
   const { filteredRecipes } = props;
 
   return (
-    <Grid container xs={12}>
+    <Grid container>
       <Grid
         item
         style={{

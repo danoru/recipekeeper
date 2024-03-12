@@ -3,47 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import StarHalf from "@mui/icons-material/StarHalf";
-import StarRate from "@mui/icons-material/StarRate";
-import StarOutline from "@mui/icons-material/StarOutline";
 
+import StarRating from "../../src/recipe/StarRating";
 import { getAllRecipes, getRecipeId } from "../../src/data/recipes";
 
 function RecipePage({ recipe }: { recipe: any }) {
   const title = recipe.name + " by " + recipe.creator + " • Savry";
   const rating: number = recipe.rating / recipe.reviews;
-  function starRating() {
-    if (rating === 5)
-      return (
-        <div>
-          <StarRate />
-          <StarRate />
-          <StarRate />
-          <StarRate />
-          <StarRate />
-        </div>
-      );
-    else if (rating > 4.5)
-      return (
-        <div>
-          <StarRate />
-          <StarRate />
-          <StarRate />
-          <StarRate />
-          <StarHalf />
-        </div>
-      );
-    else if (rating > 3.9)
-      return (
-        <div>
-          <StarRate />
-          <StarRate />
-          <StarRate />
-          <StarRate />
-          <StarOutline />
-        </div>
-      );
-  }
+
   return (
     <div>
       <Head>
@@ -63,7 +30,7 @@ function RecipePage({ recipe }: { recipe: any }) {
           </Typography>
 
           <Typography variant="body1">{recipe.description}</Typography>
-          {starRating()}
+          <StarRating rating={rating} />
           <Typography variant="body1">
             <strong>Ratings:</strong> {rating}/5 Stars based on {recipe.reviews}{" "}
             Reviews

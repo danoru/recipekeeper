@@ -14,7 +14,7 @@ function CreatorList(props: Props) {
   const { creators } = props;
 
   return (
-    <Grid container xs={12}>
+    <Grid container>
       <Grid
         item
         style={{

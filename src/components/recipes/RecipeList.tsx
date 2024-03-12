@@ -15,7 +15,7 @@ function RecipeList(props: Props) {
   const { recipes } = props;
 
   return (
-    <Grid container xs={12}>
+    <Grid container>
       <Grid
         item
         style={{
