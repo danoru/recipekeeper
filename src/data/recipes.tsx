@@ -36,7 +36,7 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     reviews: 1,
   },
   {
-    name: "Taiwanese-American Chicken Pot Pie",
+    name: "Taiwanese American Chicken Pot Pie",
     creator: "Frankie Gaw of Little Fat Boy",
     creatorId: "littlefatboy",
     link: "https://littlefatboy.com/recipes/taiwanese-american-chicken-pot-pie",
@@ -126,4 +126,10 @@ export function getFeaturedRecipes() {
 
 export function getRecipesByCreator(creatorName: string) {
   return RECIPE_LIST.filter((recipe) => recipe.creatorId === creatorName);
+}
+
+export function getRecipeId(recipeId: string) {
+  return RECIPE_LIST.find(
+    (recipe) => recipe.name.toLowerCase() === recipeId.toLowerCase()
+  );
 }

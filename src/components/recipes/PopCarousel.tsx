@@ -128,8 +128,10 @@ function PopCarousel(props: Props) {
 }
 
 function PopCard(props: any) {
+  const recipeSlug = `/recipe/${props.name.replace(/\s+/g, "-").toLowerCase()}`;
+
   return (
-    <Link href={props.link}>
+    <Link href={recipeSlug}>
       <Card sx={{ width: "250px", height: "360px", cursor: "pointer" }}>
         <CardMedia
           sx={{ height: 140 }}

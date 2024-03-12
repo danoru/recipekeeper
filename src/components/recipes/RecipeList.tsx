@@ -62,9 +62,10 @@ function RecipeList(props: Props) {
 }
 
 function RecipeCard(props: any) {
+  const recipeSlug = `/recipe/${props.name.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <Grid item>
-      <Link href={props.link}>
+      <Link href={recipeSlug}>
         <Card
           sx={{
             width: "250px",
