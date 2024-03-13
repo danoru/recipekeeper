@@ -107,7 +107,7 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
 
 export function getAllRecipes() {
   return RECIPE_LIST.sort((a, b) => {
-    const nameA = a.name.toUpperCase(); // Convert names to uppercase for case-insensitive comparison
+    const nameA = a.name.toUpperCase();
     const nameB = b.name.toUpperCase();
 
     if (nameA < nameB) {
@@ -120,8 +120,39 @@ export function getAllRecipes() {
   });
 }
 
+export function getRecipesByRating(sort: string) {
+  return RECIPE_LIST.sort((a, b) => {
+    const ratingA = a.rating;
+    const ratingB = b.rating;
+
+    if (ratingA < ratingB && sort === "highest") {
+      return 1;
+    }
+    if (ratingA > ratingB && sort === "highest") {
+      return -1;
+    }
+    if (ratingA < ratingB && sort === "lowest") {
+      return -1;
+    }
+    if (ratingA > ratingB && sort === "lowest") {
+      return 1;
+    }
+
+    return 0;
+  });
+}
+
 export function getFeaturedRecipes() {
   return RECIPE_LIST.filter((recipe) => recipe.rating === 5);
+}
+
+export function getFilteredRecipes(
+  recipeFilterId: string,
+  recipeSubfilterId: string
+) {
+  return RECIPE_LIST.filter(
+    (recipe: any) => recipe[recipeFilterId] === recipeSubfilterId
+  );
 }
 
 export function getRecipesByCreator(creatorName: string) {

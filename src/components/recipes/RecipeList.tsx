@@ -28,7 +28,7 @@ function RecipeList(props: Props) {
         }}
       >
         <Typography variant="h6" component="div">
-          ALL RECIPES
+          RECIPES
         </Typography>
       </Grid>
       <Grid
