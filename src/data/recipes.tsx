@@ -146,12 +146,10 @@ export function getFeaturedRecipes() {
   return RECIPE_LIST.filter((recipe) => recipe.rating === 5);
 }
 
-export function getFilteredRecipes(
-  recipeFilterId: string,
-  recipeSubfilterId: string
-) {
+export function getFilteredRecipes(filterId: string, subfilterId: string) {
   return RECIPE_LIST.filter(
-    (recipe: any) => recipe[recipeFilterId] === recipeSubfilterId
+    (recipe: any) =>
+      recipe[filterId].replace(/\s/g, "").toLowerCase() === subfilterId
   );
 }
 
