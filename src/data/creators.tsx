@@ -12,6 +12,16 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     isFeatured: false,
   },
   {
+    name: "Budget Bytes",
+    link: "budgetbytes",
+    image:
+      "https://www.budgetbytes.com/wp-content/uploads/2018/06/budgetbytes_logo.vFINALicon.white_.png",
+    website: "https://www.budgetbytes.com",
+    instagram: "https://www.instagram.com/budgetbytes/",
+    youtube: "https://www.youtube.com/@BudgetBytesBlog",
+    isFeatured: false,
+  },
+  {
     name: "Frankie Gaw of Little Fat Boy",
     link: "littlefatboy",
     image:

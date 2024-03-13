@@ -112,10 +112,10 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="method-label">Method</InputLabel>
           <Select labelId="method-label" id="method" value="" label="method">
-            <Link href="/recipes/method/pressure-cooker">
+            <Link href="/recipes/method/pressurecooker">
               <MenuItem value="pressure-cooker">Pressure Cooker</MenuItem>
             </Link>
-            <Link href="/recipes/method/slow-cooker">
+            <Link href="/recipes/method/slowcooker">
               <MenuItem value="slow-cooker">Slow Cooker</MenuItem>
             </Link>
           </Select>
@@ -125,11 +125,11 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="diet-label">Diet</InputLabel>
           <Select labelId="diet-label" id="diet" value="" label="diet">
-            <Link href="/recipes/diet/dairy-free">
-              <MenuItem value="dairy-free">Dairy-free</MenuItem>
+            <Link href="/recipes/diet/dairyfree">
+              <MenuItem value="dairy-free">Dairy Free</MenuItem>
             </Link>
-            <Link href="/recipes/diet/gluten-free">
-              <MenuItem value="gluten-free">Gluten-free</MenuItem>
+            <Link href="/recipes/diet/glutenfree">
+              <MenuItem value="gluten-free">Gluten Free</MenuItem>
             </Link>
             <Link href="/recipes/diet/vegan">
               <MenuItem value="vegan">Vegan</MenuItem>

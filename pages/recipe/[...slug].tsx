@@ -20,7 +20,12 @@ function RecipePage({ recipe }: { recipe: any }) {
       </Head>
       <Grid container>
         <Grid item xs={1} sx={{ margin: "0 10px 0 10px" }}>
-          <Image src={recipe.image} height="345" width="235" />
+          <Image
+            src={recipe.image}
+            height="345"
+            width="235"
+            alt={recipe.name}
+          />
         </Grid>
         <Grid item xs={8}>
           <Typography variant="h6">{recipe.name}</Typography>

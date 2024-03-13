@@ -14,6 +14,19 @@ function FilterRecipePage(props: any) {
 
   const title = `${caseCorrectedSubfilter} Recipes • Savry`;
 
+  if (!recipes || recipes.length === 0) {
+    return (
+      <div>
+        <Head>
+          <title>No Recipes Found • Savry </title>
+        </Head>
+        <Grid container>
+          <p>No recipes found for the specified filters.</p>
+        </Grid>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Head>

@@ -65,7 +65,7 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     cuisine: "Asian",
     course: "Dessert",
     method: "",
-    diet: "Gluten-free",
+    diet: "Gluten Free",
     rating: 4,
     reviews: 1,
   },
@@ -101,6 +101,23 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     method: "",
     diet: "",
     rating: 5,
+    reviews: 1,
+  },
+  {
+    name: "Slow Cooker White Chicken Chili",
+    creator: "Budget Bytes",
+    creatorId: "budgetbytes",
+    link: "https://www.budgetbytes.com/slow-cooker-white-chicken-chili/",
+    image:
+      "https://www.budgetbytes.com/wp-content/uploads/2015/01/Slow-Cooker-White-Chicken-Chili-bowls-V2-768x1024.jpg",
+    description:
+      "This Slow Cooker White Chicken Chili is the perfect example of why people love slow cookers so much. You literally just dump everything in the slow cooker, give it a quick stir, then turn it on and walk away. When you come back you have this hearty white bean chicken chili that’s ready for topping with creamy cheese and diving in with some tortilla chips. And when the sky is dark, the air is cold, and you’ve got the winter blues, easy dinners like this are a total life saver!",
+    category: "Soup",
+    cuisine: "North American",
+    course: "Main",
+    method: "Slow Cooker",
+    diet: "",
+    rating: 4,
     reviews: 1,
   },
 ];
