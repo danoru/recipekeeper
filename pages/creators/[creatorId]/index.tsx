@@ -34,8 +34,6 @@ function CreatorPage(props: Props) {
   );
   const creatorAverageRating = creatorRating / creatorReview;
 
-  console.log(creatorAverageRating);
-
   return (
     <Grid container>
       <Head>
