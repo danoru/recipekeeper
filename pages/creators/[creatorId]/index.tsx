@@ -11,6 +11,7 @@ import Typography from "@mui/material/Typography";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 
 import CreatorRecipeList from "../../../src/components/creators/CreatorRecipeList";
+import StarRating from "../../../src/review/StarRating";
 import { getAllCreators, getCreatorId } from "../../../src/data/creators";
 import { getRecipesByCreator } from "../../../src/data/recipes";
 import { CREATOR_LIST_TYPE, RECIPE_LIST_TYPE } from "../../../src/types";
@@ -23,6 +24,17 @@ interface Props {
 function CreatorPage(props: Props) {
   const { creatorId, filteredRecipes } = props;
   const title = creatorId.name + " • Savry";
+  const creatorRating = filteredRecipes.reduce(
+    (n, { rating }) => n + rating,
+    0
+  );
+  const creatorReview = filteredRecipes.reduce(
+    (n, { reviews }) => n + reviews,
+    0
+  );
+  const creatorAverageRating = creatorRating / creatorReview;
+
+  console.log(creatorAverageRating);
 
   return (
     <Grid container>
@@ -30,24 +42,23 @@ function CreatorPage(props: Props) {
         <title>{title}</title>
       </Head>
       <Grid item xs={10}>
-        <CreatorRecipeList filteredRecipes={props.filteredRecipes} />
+        <CreatorRecipeList filteredRecipes={filteredRecipes} />
       </Grid>
       <Grid item xs={2}>
-        <CreatorCard creatorId={props.creatorId} />
+        <CreatorCard creatorId={creatorId} rating={creatorAverageRating} />
       </Grid>
     </Grid>
   );
 }
 
 function CreatorCard(props: any) {
-  const { creatorId } = props;
+  const { creatorId, rating } = props;
 
   return (
     <Box>
       <Card
         sx={{
           width: "250px",
-          height: "250px",
         }}
       >
         <CardMedia
@@ -59,6 +70,7 @@ function CreatorCard(props: any) {
           <Typography variant="h6" component="div">
             {creatorId.name}
           </Typography>
+          <StarRating rating={rating} />
           <Link href={creatorId.website}>
             <LinkIcon />
           </Link>

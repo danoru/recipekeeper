@@ -1,26 +1,24 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardMedia from "@mui/material/CardMedia";
+import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
+import Link from "next/link";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import Slide from "@mui/material/Slide";
 import Stack from "@mui/material/Stack";
-import Link from "next/link";
-import { RECIPE_LIST_TYPE } from "../../types";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import CardActions from "@mui/material/CardActions";
-import Button from "@mui/material/Button";
+
+import { RECIPE_LIST_TYPE } from "../../types";
 
 interface Props {
   items: RECIPE_LIST_TYPE[];
 }
 
-function PopCarousel(props: Props) {
-  const { items } = props;
+function PopCarousel({ items }: Props) {
   const [currentPage, setCurrentPage] = useState(0);
   const [slideDirection, setSlideDirection] = useState<
     "right" | "left" | undefined
@@ -38,7 +36,7 @@ function PopCarousel(props: Props) {
     setCurrentPage((prevPage) => prevPage - 1);
   };
 
-  const containerWidth = cardsPerPage * 250; // 250px per card
+  const containerWidth = cardsPerPage * 250;
 
   return (
     <Grid container item xs={12}>
@@ -80,7 +78,7 @@ function PopCarousel(props: Props) {
               direction="row"
               alignContent="center"
               justifyContent="center"
-              sx={{ width: "100%", height: "100%" }}
+              sx={{ width: "100%", maxWidth: "1200px" }}
             >
               {items
                 .slice(
@@ -113,9 +111,6 @@ function PopCarousel(props: Props) {
         </Box>
         <IconButton
           onClick={handleNextPage}
-          sx={{
-            margin: 5,
-          }}
           disabled={
             currentPage >= Math.ceil((items.length || 0) / cardsPerPage) - 1
           }
@@ -134,7 +129,7 @@ function PopCard(props: any) {
     <Link href={recipeSlug}>
       <Card sx={{ width: "250px", height: "360px", cursor: "pointer" }}>
         <CardMedia
-          sx={{ height: 140 }}
+          sx={{ height: 140, width: "100%" }}
           image={props.image}
           title={props.name}
         />
@@ -146,9 +141,6 @@ function PopCard(props: any) {
             {props.description}
           </Typography>
         </CardContent>
-        {/* <CardActions>
-          <Button size="small">Learn More</Button>
-        </CardActions> */}
       </Card>
     </Link>
   );

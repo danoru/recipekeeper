@@ -4,7 +4,7 @@ import Link from "next/link";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 
-import StarRating from "../../src/recipe/StarRating";
+import StarRating from "../../src/review/StarRating";
 import { getAllRecipes, getRecipeId } from "../../src/data/recipes";
 
 function RecipePage({ recipe }: { recipe: any }) {
@@ -65,7 +65,6 @@ export async function getStaticProps({ params }: any) {
   const { slug } = params;
 
   const recipe = getRecipeId(slug[0].replace(/-/g, " "));
-  console.log(slug[0].replace(/-/g, " "));
 
   if (!recipe) {
     return {
