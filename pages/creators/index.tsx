@@ -37,7 +37,6 @@ export async function getServerSideProps() {
       creators: allCreators,
       featured: featuredCreators,
     },
-    revalidate: 1800,
   };
 }
 
