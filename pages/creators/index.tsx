@@ -2,9 +2,14 @@ import Head from "next/head";
 
 import CreatorCarousel from "../../src/components/creators/CreatorCarousel";
 import CreatorList from "../../src/components/creators/CreatorList";
-import { getAllCreators, getFilteredCreators } from "../../src/data/creators";
+import { CREATOR_LIST_TYPE } from "../../src/types";
 
-function Creators(props: any) {
+interface Props {
+  creators: CREATOR_LIST_TYPE[];
+  featured: CREATOR_LIST_TYPE[];
+}
+
+function Creators(props: Props) {
   const { creators, featured } = props;
 
   return (
@@ -18,14 +23,12 @@ function Creators(props: any) {
   );
 }
 
-export async function getStaticProps() {
-  const dev = process.env.NODE_ENV !== "production";
+export async function getServerSideProps() {
   const { DEV_URL, PROD_URL } = process.env;
+  const dev = process.env.NODE_ENV !== "production" ? DEV_URL : PROD_URL;
 
-  const allRes = await fetch(`${dev ? DEV_URL : PROD_URL}/api/creators`);
-  const featRes = await fetch(
-    `${dev ? DEV_URL : PROD_URL}/api/creators/featured`
-  );
+  const allRes = await fetch(`${dev}/api/creators`);
+  const featRes = await fetch(`${dev}/api/creators/featured`);
   const allCreators = await allRes.json();
   const featuredCreators = await featRes.json();
 
