@@ -19,13 +19,20 @@ function Creators(props: any) {
 }
 
 export async function getStaticProps() {
-  let allCreators = getAllCreators();
-  let filteredCreators = getFilteredCreators();
+  const dev = process.env.NODE_ENV !== "production";
+  const { DEV_URL, PROD_URL } = process.env;
+
+  const allRes = await fetch(`${dev ? DEV_URL : PROD_URL}/api/creators`);
+  const featRes = await fetch(
+    `${dev ? DEV_URL : PROD_URL}/api/creators/featured`
+  );
+  const allCreators = await allRes.json();
+  const featuredCreators = await featRes.json();
 
   return {
     props: {
       creators: allCreators,
-      featured: filteredCreators,
+      featured: featuredCreators,
     },
     revalidate: 1800,
   };
