@@ -4,8 +4,13 @@ import Head from "next/head";
 import RecipeList from "../../src/components/recipes/RecipeList";
 
 import { getAllRecipes } from "../../src/data/recipes";
+import { RECIPE_LIST_TYPE } from "../../src/types";
 
-function AllRecipes(props: any) {
+interface Props {
+  recipes: RECIPE_LIST_TYPE[];
+}
+
+function AllRecipes(props: Props) {
   const { recipes } = props;
 
   return (
@@ -22,14 +27,17 @@ function AllRecipes(props: any) {
   );
 }
 
-export async function getStaticProps() {
-  let recipes = getAllRecipes();
+export async function getServerSideProps() {
+  const { DEV_URL, PROD_URL } = process.env;
+  const dev = process.env.NODE_ENV !== "production" ? DEV_URL : PROD_URL;
+  const res = await fetch(`${dev}/api/recipes`);
+
+  const recipes = await res.json();
 
   return {
     props: {
       recipes,
     },
-    revalidate: 1800,
   };
 }
 
