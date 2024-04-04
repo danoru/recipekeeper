@@ -1,3 +1,12 @@
+export interface CREATOR_LIST_TYPE {
+  name: string;
+  link: string;
+  image: string;
+  website: string;
+  instagram: string;
+  youtube: string;
+  isFeatured: Boolean;
+}
 export interface RECIPE_LIST_TYPE {
   name: string;
   creator: string;
@@ -14,12 +23,18 @@ export interface RECIPE_LIST_TYPE {
   reviews: number;
 }
 
-export interface CREATOR_LIST_TYPE {
+export interface USER_LIST_TYPE {
+  username: string;
+  profile: UserProfile;
+  favorites?: UserFavorites;
+}
+
+interface UserProfile {
   name: string;
-  link: string;
-  image: string;
-  website: string;
-  instagram: string;
-  youtube: string;
-  isFeatured: Boolean;
+  image?: string;
+}
+
+interface UserFavorites {
+  recipes: string[];
+  creators: string[];
 }
