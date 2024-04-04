@@ -19,7 +19,7 @@ function Members(props: Props) {
       </div>
       <div>
         {users.map((user) => (
-          <p>{user.username}</p>
+          <p key={user.username}>{user.username}</p>
         ))}
       </div>
     </div>
