@@ -1,5 +1,7 @@
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
+import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
+import ProfileStatBar from "../../src/components/users/ProfileStatBar";
 import { getAllUsers } from "../../src/data/users";
 import { USER_LIST_TYPE } from "../../src/types";
 
@@ -17,12 +19,8 @@ function UserPage(props: Props) {
         <title>{title}</title>
       </Head>
       <Grid container>
-        <Grid item xs={12}>
-          {user.username}
-        </Grid>
-        <Grid item xs={12}>
-          Profile
-        </Grid>
+        <ProfileStatBar />
+        <ProfileLinkBar />
         <Grid item xs={8}>
           Favorite Creators
         </Grid>
