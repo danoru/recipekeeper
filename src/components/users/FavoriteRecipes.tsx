@@ -15,7 +15,7 @@ function FavoriteRecipes(props: Props) {
   const { recipes } = props;
 
   return (
-    <Grid container xs={8}>
+    <Grid container item xs={8}>
       <Grid
         item
         style={{

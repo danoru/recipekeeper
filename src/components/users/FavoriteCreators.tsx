@@ -14,7 +14,7 @@ function FavoriteCreators(props: Props) {
   const { creators } = props;
 
   return (
-    <Grid container xs={8}>
+    <Grid container item xs={8}>
       <Grid
         item
         style={{

@@ -22,6 +22,7 @@ interface Props {
 function UserPage(props: Props) {
   const { user, creators, recipes } = props;
   const title = `${user.profile.name}'s Profile • Savry`;
+  const avatarSize = "56px";
 
   return (
     <div>
@@ -29,7 +30,7 @@ function UserPage(props: Props) {
         <title>{title}</title>
       </Head>
       <Grid container>
-        <ProfileStatBar />
+        <ProfileStatBar avatarSize={avatarSize} />
         <ProfileLinkBar />
         <FavoriteCreators creators={creators} />
         {/* <Grid item xs={4}>

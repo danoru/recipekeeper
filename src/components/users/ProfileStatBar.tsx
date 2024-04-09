@@ -5,12 +5,19 @@ import LinkIcon from "@mui/icons-material/Link";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
+import UserAvatar from "./UserAvatar";
 
-function ProfileStatBar() {
+interface Props {
+  avatarSize: string;
+}
+
+function ProfileStatBar(props: Props) {
+  const { avatarSize } = props;
   const username = "danoru";
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -34,8 +41,9 @@ function ProfileStatBar() {
 
   return (
     <Grid container item sx={{ margin: "10px 0" }}>
-      <Grid container item xs={6} justifyContent="center">
-        <Typography variant="h5" sx={{ marginRight: "10px" }}>
+      <Grid container item xs={6} justifyContent="center" alignItems="center">
+        <UserAvatar username={username} avatarSize={avatarSize} />
+        <Typography variant="h5" sx={{ margin: "0 10px" }}>
           {username}
         </Typography>
         <Button variant="outlined" size="small">
