@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useRouter } from "next/router";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,10 +10,16 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 
+const username = "danoru";
+
 const pages = [
   // { id: 1, title: "Sign In", link: "/sign-in" },
   // { id: 2, title: "Create Account", link: "/create-account" },
-  { id: 3, title: "Profile", link: "/danoru" },
+  {
+    id: 3,
+    title: username,
+    link: `/${username}`,
+  },
   { id: 4, title: "Creators", link: "/creators" },
   { id: 5, title: "Recipes", link: "/recipes" },
   // { id: 6, title: "Lists", link: "/lists" },

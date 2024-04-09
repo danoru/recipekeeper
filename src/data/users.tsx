@@ -14,7 +14,24 @@ export const USER_LIST: USER_LIST_TYPE[] = [
       creators: ["littlefatboy", "budgetbytes", "koreanbapsang", "isabeleats"],
     },
   },
-  { username: "chiquitabananna", profile: { name: "Anna" } },
+  {
+    username: "chiquitabananna",
+    profile: { name: "Anna" },
+    favorites: {
+      recipes: [
+        "Chicken Pozole Verde",
+        "Butternut Squash and Pork Lasagna",
+        "Banana Walnut Mochi Bread",
+        "Zuppa Tuscana Congee",
+      ],
+      creators: [
+        "yeungmancooking",
+        "koreanbapsang",
+        "joshuaweismann",
+        "justonecookbook",
+      ],
+    },
+  },
 ];
 
 export function getAllUsers() {

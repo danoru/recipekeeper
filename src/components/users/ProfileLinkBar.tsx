@@ -2,8 +2,12 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Grid from "@mui/material/Grid";
 
-function ProfileLinkBar() {
-  const username = "danoru";
+interface Props {
+  username: string;
+}
+
+function ProfileLinkBar(props: Props) {
+  const { username } = props;
 
   return (
     <Grid container item xs={12} style={{ justifyContent: "center" }}>

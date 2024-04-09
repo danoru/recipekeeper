@@ -9,11 +9,11 @@ import UserAvatar from "./UserAvatar";
 
 interface Props {
   avatarSize: string;
+  username: string;
 }
 
 function ProfileStatBar(props: Props) {
-  const { avatarSize } = props;
-  const username = "danoru";
+  const { avatarSize, username } = props;
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
