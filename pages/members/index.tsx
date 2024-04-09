@@ -33,14 +33,11 @@ function Members(props: Props) {
           >
             {users.map((user) => (
               <Stack
+                key={user.username}
                 direction="row"
                 sx={{ alignItems: "center", justifyContent: "space-between" }}
               >
-                <Link
-                  key={user.username}
-                  href={`/${user.username}`}
-                  underline="none"
-                >
+                <Link href={`/${user.username}`} underline="none">
                   {user.username}
                 </Link>
                 <OutdoorGrillIcon />
