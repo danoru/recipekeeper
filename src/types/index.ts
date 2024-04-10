@@ -26,15 +26,33 @@ export interface RECIPE_LIST_TYPE {
 export interface USER_LIST_TYPE {
   username: string;
   profile: UserProfile;
+  cooklist?: string[];
+  diary?: UserDiary[];
   favorites?: UserFavorites;
+  followers?: string[];
+  following?: string[];
 }
 
 interface UserProfile {
   name: string;
+  email?: string;
+  password?: string;
   image?: string;
+  bio: string;
+  location: string;
+  badge?: string;
+  joinDate: string;
 }
 
 interface UserFavorites {
   recipes: string[];
   creators: string[];
+}
+
+interface UserDiary {
+  recipe: string;
+  rating?: number;
+  comment?: string;
+  date: string;
+  hasCookedBefore: boolean;
 }

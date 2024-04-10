@@ -17,7 +17,8 @@ function ProfileLinkBar(props: Props) {
         sx={{ flexWrap: "wrap" }}
       >
         <Button href={`/${username}`}>Profile</Button>
-        <Button href={`/${username}/activity`}>Activity</Button>
+        <Button href={`/activity`}>Activity</Button>
+        {/* <Button href={`/${username}/activity`}>Activity</Button> */}
         <Button href={`/${username}/recipes`}>Recipes</Button>
         <Button href={`/${username}/recipes/diary`}>Diary</Button>
         <Button href={`/${username}/recipes/reviews`}>Reviews</Button>

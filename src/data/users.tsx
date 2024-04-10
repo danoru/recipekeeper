@@ -3,7 +3,27 @@ import { USER_LIST_TYPE } from "../types";
 export const USER_LIST: USER_LIST_TYPE[] = [
   {
     username: "danoru",
-    profile: { name: "Daniel" },
+    profile: {
+      name: "Daniel",
+      email: "",
+      password: "",
+      image: "",
+      bio: "This is where my bio would go—if I had one!",
+      location: "Los Angeles, CA",
+      badge: "HQ",
+      joinDate: "2024-02-24",
+    },
+    cooklist: ["Spicy Creamy Mushroom Pasta"],
+    diary: [
+      {
+        recipe: "Chicken Pozole Verde",
+        rating: 5,
+        comment:
+          "My wife loves this meal, it is one of her favorite things that I make. The only change I make is that sometimes I will roast the veggies before they are added for an extra depth of flavor.",
+        date: "2024-04-10",
+        hasCookedBefore: true,
+      },
+    ],
     favorites: {
       recipes: [
         "Butternut Squash and Pork Lasagna",
@@ -13,10 +33,21 @@ export const USER_LIST: USER_LIST_TYPE[] = [
       ],
       creators: ["littlefatboy", "budgetbytes", "koreanbapsang", "isabeleats"],
     },
+    followers: ["chiquitabananna", "boeboekitty"],
+    following: ["chiquitabananna", "boeboekitty"],
   },
   {
     username: "chiquitabananna",
-    profile: { name: "Anna" },
+    profile: {
+      name: "Anna",
+      email: "",
+      password: "",
+      image: "",
+      bio: "",
+      location: "",
+      badge: "Patron",
+      joinDate: "2024-02-24",
+    },
     favorites: {
       recipes: [
         "Chicken Pozole Verde",
@@ -31,10 +62,20 @@ export const USER_LIST: USER_LIST_TYPE[] = [
         "justonecookbook",
       ],
     },
+    followers: ["danoru", "boeboekitty"],
+    following: ["danoru", "boeboekitty"],
   },
   {
     username: "boeboekitty",
-    profile: { name: "Boe" },
+    profile: {
+      name: "Boe",
+      email: "",
+      password: "",
+      image: "",
+      bio: "",
+      location: "",
+      joinDate: "2024-04-10",
+    },
     favorites: {
       recipes: [
         "Spicy Creamy Mushroom Pasta",
@@ -49,6 +90,8 @@ export const USER_LIST: USER_LIST_TYPE[] = [
         "rainbowplantlife",
       ],
     },
+    followers: ["chiquitabananna", "danoru"],
+    following: ["chiquitabananna", "danoru"],
   },
 ];
 

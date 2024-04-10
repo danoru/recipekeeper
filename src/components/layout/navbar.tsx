@@ -1,14 +1,15 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import FoodBankIcon from "@mui/icons-material/FoodBank";
 import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 
 const username = "danoru";
 
@@ -20,11 +21,12 @@ const pages = [
     title: username,
     link: `/${username}`,
   },
-  { id: 4, title: "Creators", link: "/creators" },
-  { id: 5, title: "Recipes", link: "/recipes" },
-  // { id: 6, title: "Lists", link: "/lists" },
-  { id: 7, title: "Members", link: "/members" },
-  // { id: 8, title: "Journal", link: "/journal" },
+  { id: 4, title: <FoodBankIcon fontSize="large" />, link: "/activity" },
+  { id: 5, title: "Creators", link: "/creators" },
+  { id: 6, title: "Recipes", link: "/recipes" },
+  // { id: 7, title: "Lists", link: "/lists" },
+  { id: 8, title: "Members", link: "/members" },
+  // { id: 9, title: "Journal", link: "/journal" },
 ];
 
 function Navbar() {
@@ -71,7 +73,6 @@ function Navbar() {
               <MenuIcon />
             </IconButton>
             <Menu
-              id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: "bottom",
@@ -126,9 +127,6 @@ function Navbar() {
               </Button>
             ))}
           </Box>
-          {/* <nav className={classes.navigation}>
-            <ul>{toggleAdmin()}</ul>
-          </nav> */}
         </Toolbar>
       </Container>
     </AppBar>
