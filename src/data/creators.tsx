@@ -42,6 +42,16 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     isFeatured: false,
   },
   {
+    name: "J. Kenji Lopez-Alt",
+    link: "jkenjilopezalt",
+    image:
+      "https://images.squarespace-cdn.com/content/v1/55b880f7e4b0fdc3eabeed4c/5e7857d2-ea39-4eed-9ea4-cef569986e5f/7I0A2881-FINAL+copy+2+small.jpg?format=1000w",
+    website: "https://www.kenjilopezalt.com/",
+    instagram: "https://www.instagram.com/kenjilopezalt/",
+    youtube: "https://www.youtube.com/@JKenjiLopezAlt",
+    isFeatured: false,
+  },
+  {
     name: "Isabel Orozco-Moore of Isabel Eats",
     link: "isabeleats",
     image:
@@ -69,6 +79,35 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "http://justonecookbook.com",
     instagram: "https://www.instagram.com/justonecookbook/",
     youtube: "https://www.youtube.com/@justonecookbook",
+    isFeatured: false,
+  },
+  {
+    name: "Rainbow Plant Life",
+    link: "rainbowplantlife",
+    image: "https://rainbowplantlife.com/wp-content/uploads/2020/10/nisha1.jpg",
+    website: "https://rainbowplantlife.com/",
+    instagram: "https://www.instagram.com/rainbowplantlife/",
+    youtube: "https://www.youtube.com/channel/UCDbZvuDA_tZ6XP5wKKFuemQ",
+    isFeatured: false,
+  },
+  {
+    name: "Sip and Feast",
+    link: "sipandfeast",
+    image:
+      "https://www.sipandfeast.com/wp-content/uploads/2023/10/family-10-30-23.jpg",
+    website: "https://sipandfeast.com/",
+    instagram: "https:www.instagram.com/sipandfeast/",
+    youtube: "https:www.youtube.com/sipandfeast",
+    isFeatured: false,
+  },
+  {
+    name: "Table for Two",
+    link: "tablefortwo",
+    image:
+      "https://www.tablefortwoblog.com/wp-content/uploads/2024/01/2024-headshots-julie-chiou-tablefortwoblog-17.jpg",
+    website: "https://www.tablefortwoblog.com/",
+    instagram: "https://www.instagram.com/tablefortwo/",
+    youtube: "https://www.youtube.com/@tablefortwoblog",
     isFeatured: false,
   },
   {

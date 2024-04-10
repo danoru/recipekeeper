@@ -1,12 +1,12 @@
 import Avatar from "@mui/material/Avatar";
 
 interface Props {
-  username: string;
   avatarSize: string;
+  name: string;
 }
 
 function UserAvatar(props: Props) {
-  const { username, avatarSize } = props;
+  const { avatarSize, name } = props;
 
   function stringToColor(string: string) {
     let hash = 0;
@@ -42,7 +42,7 @@ function UserAvatar(props: Props) {
   }
   return (
     <Avatar
-      {...stringAvatar(username)}
+      {...stringAvatar(name)}
       sx={{ height: avatarSize, width: avatarSize }}
     />
   );

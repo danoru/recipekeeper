@@ -10,10 +10,11 @@ import UserAvatar from "./UserAvatar";
 interface Props {
   avatarSize: string;
   username: string;
+  name: string;
 }
 
 function ProfileStatBar(props: Props) {
-  const { avatarSize, username } = props;
+  const { avatarSize, username, name } = props;
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -42,7 +43,7 @@ function ProfileStatBar(props: Props) {
   return (
     <Grid container item sx={{ margin: "10px 0" }}>
       <Grid container item xs={6} justifyContent="center" alignItems="center">
-        <UserAvatar username={username} avatarSize={avatarSize} />
+        <UserAvatar avatarSize={avatarSize} name={name} />
         <Typography variant="h5" sx={{ margin: "0 10px" }}>
           {username}
         </Typography>

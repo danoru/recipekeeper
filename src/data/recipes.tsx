@@ -120,6 +120,74 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     rating: 4,
     reviews: 1,
   },
+  {
+    name: "Spicy Creamy Mushroom Pasta",
+    creator: "Sip and Feast",
+    creatorId: "sipandfeast",
+    link: "https://www.sipandfeast.com/spicy-creamy-mushroom-pasta/",
+    image:
+      "https://www.sipandfeast.com/wp-content/uploads/2023/01/spicy-creamy-mushroom-pasta-recipe-6.jpg",
+    description:
+      "Spicy creamy mushroom pasta is what we make when we are craving a little bit of heat.  Spicy Calabrian chili paste, tomato paste, and cream are tossed with sauteed mushrooms, pasta, fresh basil, and Pecorino Romano cheese and can be ready in about 30 minutes.",
+    category: "Pasta",
+    cuisine: "European",
+    course: "Mains",
+    method: "Classic",
+    diet: "None",
+    rating: 0,
+    reviews: 1,
+  },
+  {
+    name: "Middle Eastern Inspired Ground Beef Bowls",
+    creator: "Table for Two",
+    creatorId: "tablefortwo",
+    link: "https://www.tablefortwoblog.com/middle-eastern-inspired-ground-beef-bowls/",
+    image:
+      "https://www.tablefortwoblog.com/wp-content/uploads/2022/08/middle-eastern-beef-bowls-recipe-photo-tablefortwoblog-3-800x1200.jpg",
+    description:
+      "The ground beef is made simply mouthwatering with spices like coriander, cumin, and cayenne. It’s deliciously savory, which makes it balance well with the fresh ingredients. These bowls really have it all!",
+    category: "Beef",
+    cuisine: "Middle Eastern",
+    course: "Mains",
+    method: "Classic",
+    diet: "None",
+    rating: 0,
+    reviews: 1,
+  },
+  {
+    name: "Pressure Cooker Japanese Curry",
+    creator: "Just One Cookbook",
+    creatorId: "justonecookbook",
+    link: "https://www.justonecookbook.com/pressure-cooker-japanese-curry/",
+    image:
+      "https://www.justonecookbook.com/wp-content/uploads/2016/03/Pressure-Cooker-Curry-IV.jpg",
+    description:
+      "Have you heard of Japanese curry or Curry Rice (Karē Raisu)? If not, it’s best described as mild and thick curry. Even though curry was originally from Southeast Asia, it has become one of the most popular foods in Japan enjoyed by people of all ages.",
+    category: "Chicken",
+    cuisine: "Asian",
+    course: "Mains",
+    method: "Pressure Cooker",
+    diet: "None",
+    rating: 0,
+    reviews: 1,
+  },
+  {
+    name: "Cajun Sausage and Rice Skillet",
+    creator: "Budget Bytes",
+    creatorId: "budgetbytes",
+    link: "https://www.budgetbytes.com/cajun-sausage-and-rice-skillet/",
+    image:
+      "https://www.budgetbytes.com/wp-content/uploads/2020/09/Cajun-Sausage-and-Rice-Skillet-front-500x500.jpg",
+    description:
+      "This easy Cajun Sausage and Rice Skillet is the perfect easy and filling weeknight dinner, packed with plenty of smoky-spicy flavor!",
+    category: "Pork",
+    cuisine: "North American",
+    course: "Mains",
+    method: "One Pot",
+    diet: "None",
+    rating: 0,
+    reviews: 1,
+  },
 ];
 
 export function getAllRecipes() {

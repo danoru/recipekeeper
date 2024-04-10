@@ -32,6 +32,24 @@ export const USER_LIST: USER_LIST_TYPE[] = [
       ],
     },
   },
+  {
+    username: "boeboekitty",
+    profile: { name: "Boe" },
+    favorites: {
+      recipes: [
+        "Spicy Creamy Mushroom Pasta",
+        "Middle Eastern Inspired Ground Beef Bowls",
+        "Pressure Cooker Japanese Curry",
+        "Cajun Sausage and Rice Skillet",
+      ],
+      creators: [
+        "jkenjilopezalt",
+        "budgetbytes",
+        "tablefortwo",
+        "rainbowplantlife",
+      ],
+    },
+  },
 ];
 
 export function getAllUsers() {

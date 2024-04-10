@@ -112,6 +112,9 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="method-label">Method</InputLabel>
           <Select labelId="method-label" id="method" value="" label="method">
+            <Link href="/recipes/method/onepot">
+              <MenuItem value="one-pot">One Pot</MenuItem>
+            </Link>
             <Link href="/recipes/method/pressurecooker">
               <MenuItem value="pressure-cooker">Pressure Cooker</MenuItem>
             </Link>

@@ -35,15 +35,25 @@ function Members(props: Props) {
               <Stack
                 key={user.username}
                 direction="row"
-                sx={{ alignItems: "center", justifyContent: "space-between" }}
+                sx={{ alignItems: "center", paddingLeft: "10px" }}
               >
-                <Link href={`/${user.username}`} underline="none">
-                  {user.username}
-                </Link>
-                <OutdoorGrillIcon />
-                <MenuBookIcon />
-                <FavoriteIcon />
-                <Add />
+                <div style={{ width: "25%" }}>
+                  <Link href={`/${user.username}`} underline="none">
+                    {user.username}
+                  </Link>
+                </div>
+                <div style={{ width: "25%" }}>
+                  <OutdoorGrillIcon />
+                </div>
+                <div style={{ width: "25%" }}>
+                  <MenuBookIcon />
+                </div>
+                <div style={{ width: "25%" }}>
+                  <FavoriteIcon />
+                </div>
+                <div style={{ width: "25%" }}>
+                  <Add />
+                </div>
               </Stack>
             ))}
           </Stack>
