@@ -10,7 +10,12 @@ function ProfileLinkBar(props: Props) {
   const { username } = props;
 
   return (
-    <Grid container item xs={12} style={{ justifyContent: "center" }}>
+    <Grid
+      container
+      item
+      xs={12}
+      style={{ justifyContent: "center", margin: "10px 0" }}
+    >
       <ButtonGroup
         variant="outlined"
         aria-label="Button Group"

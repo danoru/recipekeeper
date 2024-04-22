@@ -23,6 +23,14 @@ export const USER_LIST: USER_LIST_TYPE[] = [
         date: "2024-04-10",
         hasCookedBefore: true,
       },
+      {
+        recipe: "Taiwanese American Chicken Pot Pie",
+        rating: 5,
+        comment:
+          "Made this recipe for some friends and it was a big hit! Just make sure you have a big enough cast iron or your fire alarm might go off.",
+        date: "2024-04-15",
+        hasCookedBefore: true,
+      },
     ],
     favorites: {
       recipes: [

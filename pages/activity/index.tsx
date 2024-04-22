@@ -1,16 +1,12 @@
-import Add from "@mui/icons-material/Add";
 import Divider from "@mui/material/Divider";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import Link from "@mui/material/Link";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
+import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import Stack from "@mui/material/Stack";
-import OutdoorGrillIcon from "@mui/icons-material/OutdoorGrill";
+import StarRating from "../../src/review/StarRating";
 import { getAllUsers } from "../../src/data/users";
 import { USER_LIST_TYPE } from "../../src/types";
-import ProfileStatBar from "../../src/components/users/ProfileStatBar";
-import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 
 interface Props {
   users: USER_LIST_TYPE[];
@@ -30,11 +26,6 @@ function Activity(props: Props) {
       </Head>
       <Grid container>
         <Grid item />
-        <ProfileStatBar
-          avatarSize={avatarSize}
-          username={user.username}
-          name={user.profile.name}
-        />
         <ProfileLinkBar username={user.username} />
       </Grid>
       <Grid item xs={8} sx={{ marginTop: "10px" }}>
@@ -47,16 +38,20 @@ function Activity(props: Props) {
               <div>
                 <Link href={`/${user.username}`} underline="none">
                   {user.username}
-                </Link>{" "}
-                made{" "}
+                </Link>
+                {" made "}
                 <Link
                   href={`/recipe/${diaryEntry.recipe
                     .toLowerCase()
                     .replace(/ /g, "-")}`}
                 >
                   {diaryEntry.recipe}
-                </Link>{" "}
-                on {diaryEntry.date}
+                </Link>
+                {" on "}
+                {diaryEntry.date}
+                {" and rated it "}
+                <StarRating rating={diaryEntry.rating} />
+                {"."}
               </div>
             </Stack>
           ))}

@@ -41,7 +41,7 @@ function ProfileStatBar(props: Props) {
   };
 
   return (
-    <Grid container item sx={{ margin: "10px 0" }}>
+    <Grid container item sx={{ marginTop: "10px" }}>
       <Grid container item xs={6} justifyContent="center" alignItems="center">
         <UserAvatar avatarSize={avatarSize} name={name} />
         <Typography variant="h5" sx={{ margin: "0 10px" }}>
