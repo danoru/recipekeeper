@@ -41,7 +41,6 @@ export const USER_LIST: USER_LIST_TYPE[] = [
       ],
       creators: ["littlefatboy", "budgetbytes", "koreanbapsang", "isabeleats"],
     },
-    followers: ["chiquitabananna", "boeboekitty"],
     following: ["chiquitabananna", "boeboekitty"],
   },
   {
@@ -70,7 +69,6 @@ export const USER_LIST: USER_LIST_TYPE[] = [
         "justonecookbook",
       ],
     },
-    followers: ["danoru", "boeboekitty"],
     following: ["danoru", "boeboekitty"],
   },
   {
@@ -98,7 +96,6 @@ export const USER_LIST: USER_LIST_TYPE[] = [
         "rainbowplantlife",
       ],
     },
-    followers: ["chiquitabananna", "danoru"],
     following: ["chiquitabananna", "danoru"],
   },
 ];

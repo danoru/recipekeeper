@@ -1,4 +1,5 @@
-import Add from "@mui/icons-material/Add";
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import Divider from "@mui/material/Divider";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import Grid from "@mui/material/Grid";
@@ -6,32 +7,47 @@ import Head from "next/head";
 import Link from "@mui/material/Link";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import OutdoorGrillIcon from "@mui/icons-material/OutdoorGrill";
+import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import Stack from "@mui/material/Stack";
 import { getAllUsers } from "../../src/data/users";
 import { USER_LIST_TYPE } from "../../src/types";
 
 interface Props {
-  users: USER_LIST_TYPE[];
+  user: USER_LIST_TYPE;
 }
 
-function Members(props: Props) {
-  const { users } = props;
+function UserFollowing(props: Props) {
+  const { user } = props;
+  const title = `${user.profile.name}'s Friends • Savry`;
+  const following = getAllUsers().filter((u) =>
+    user.following?.includes(u.username)
+  );
 
   return (
     <div>
       <Head>
-        <title>Members • Savry</title>
+        <title>{title}</title>
       </Head>
       <Grid container>
-        <Grid item sx={{ textAlign: "center" }} xs={12}>
-          <h2>Food lovers, critics and friends — find popular members.</h2>
+        <Grid item xs={12}>
+          <ProfileLinkBar username={user.username} />
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={12}>
+          <ButtonGroup
+            variant="outlined"
+            aria-label="Button Group"
+            sx={{ flexWrap: "wrap" }}
+          >
+            <Button href="following">Following</Button>
+            <Button href="followers">Followers</Button>
+          </ButtonGroup>
+        </Grid>
+        <Grid item xs={12}>
           <Stack
             spacing={1}
             divider={<Divider orientation="horizontal" flexItem />}
           >
-            {users.map((user) => (
+            {following.map((user) => (
               <Stack
                 key={user.username}
                 direction="row"
@@ -51,9 +67,6 @@ function Members(props: Props) {
                 <div style={{ width: "25%" }}>
                   <FavoriteIcon />
                 </div>
-                <div style={{ width: "25%" }}>
-                  <Add />
-                </div>
               </Stack>
             ))}
           </Stack>
@@ -63,15 +76,28 @@ function Members(props: Props) {
   );
 }
 
-export async function getStaticProps() {
+export async function getStaticPaths() {
   const users = getAllUsers();
+  const paths = users.map((user) => ({
+    params: { username: user.username },
+  }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+}
+
+export async function getStaticProps({ params }: any) {
+  const { username } = params;
+  const user = getAllUsers().find((user) => user.username === username);
 
   return {
     props: {
-      users,
+      user,
     },
     revalidate: 1800,
   };
 }
 
-export default Members;
+export default UserFollowing;

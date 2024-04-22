@@ -12,7 +12,7 @@ interface Props {
   recipes: RECIPE_LIST_TYPE[];
 }
 
-function UserPage(props: Props) {
+function UserCooklist(props: Props) {
   const { user, recipes } = props;
   const title = `${user.profile.name}'s Cooklist • Savry`;
   const count = `YOU WANT TO COOK ${recipes.length} RECIPES`;
@@ -70,4 +70,4 @@ export async function getStaticProps({ params }: any) {
   };
 }
 
-export default UserPage;
+export default UserCooklist;
