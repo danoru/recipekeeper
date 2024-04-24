@@ -4,6 +4,7 @@ import FavoriteCreators from "../../src/components/users/FavoriteCreators";
 import FavoriteRecipes from "../../src/components/users/FavoriteRecipes";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import ProfileStatBar from "../../src/components/users/ProfileStatBar";
+import UserCooklistPreview from "../../src/components/users/UserCooklistPreview";
 import { getAllUsers } from "../../src/data/users";
 import {
   CREATOR_LIST_TYPE,
@@ -15,12 +16,13 @@ import { getAllRecipes } from "../../src/data/recipes";
 
 interface Props {
   user: USER_LIST_TYPE;
+  cooklist: RECIPE_LIST_TYPE[];
   creators: CREATOR_LIST_TYPE[];
   recipes: RECIPE_LIST_TYPE[];
 }
 
 function UserPage(props: Props) {
-  const { user, creators, recipes } = props;
+  const { user, cooklist, creators, recipes } = props;
   const title = `${user.profile.name}'s Profile • Savry`;
   const avatarSize = "56px";
 
@@ -37,20 +39,17 @@ function UserPage(props: Props) {
         />
         <ProfileLinkBar username={user.username} />
         <FavoriteCreators creators={creators} />
-        {/* <Grid item xs={4}>
-          Cooklist
-        </Grid> */}
+        <Grid item xs={4}>
+          <UserCooklistPreview cooklist={cooklist} />
+        </Grid>
         <FavoriteRecipes recipes={recipes} />
         {/* <Grid item xs={4}>
           Ratings
         </Grid>
         <Grid item xs={8}>
           Recent Activity
-        </Grid>
-        <Grid item xs={4}>
-          Cooklist
-        </Grid>
-        <Grid item xs={8}>
+        </Grid> */}
+        {/* <Grid item xs={8}>
           Following
         </Grid>
         <Grid item xs={4}>
@@ -58,7 +57,8 @@ function UserPage(props: Props) {
         </Grid>
         <Grid item xs={4}>
           Activity
-        </Grid> */}
+        </Grid>
+         */}
       </Grid>
     </div>
   );
@@ -87,8 +87,13 @@ export async function getStaticProps({ params }: any) {
     user?.favorites?.recipes.includes(recipe.name)
   );
 
+  const cooklist = getAllRecipes().filter((recipe) =>
+    user?.cooklist?.includes(recipe.name)
+  );
+
   return {
     props: {
+      cooklist,
       creators,
       recipes,
       user,

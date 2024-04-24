@@ -51,8 +51,8 @@ function RecipeList(props: Props) {
             instagram={recipe.instagram}
             youtube={recipe.youtube}
             sx={{
-              width: "100%",
               height: "100%",
+              width: "100%",
             }}
           />
         ))}
@@ -68,8 +68,8 @@ function RecipeCard(props: any) {
       <Link href={recipeSlug}>
         <Card
           sx={{
-            width: "250px",
             height: "250px",
+            width: "250px",
             cursor: "pointer",
           }}
         >
