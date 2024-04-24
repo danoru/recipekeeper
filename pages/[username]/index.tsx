@@ -32,11 +32,7 @@ function UserPage(props: Props) {
         <title>{title}</title>
       </Head>
       <Grid container>
-        <ProfileStatBar
-          avatarSize={avatarSize}
-          username={user.username}
-          name={user.profile.name}
-        />
+        <ProfileStatBar avatarSize={avatarSize} user={user} />
         <ProfileLinkBar username={user.username} />
         <FavoriteCreators creators={creators} />
         <Grid item xs={4}>

@@ -6,15 +6,19 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";
+import { getAllUsers } from "../../data/users";
+import { USER_LIST_TYPE } from "../../types";
 
 interface Props {
   avatarSize: string;
-  username: string;
-  name: string;
+  user: USER_LIST_TYPE;
 }
 
 function ProfileStatBar(props: Props) {
-  const { avatarSize, username, name } = props;
+  const { avatarSize, user } = props;
+  const following = getAllUsers().filter((u) =>
+    user.following?.includes(u.username)
+  );
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -43,9 +47,9 @@ function ProfileStatBar(props: Props) {
   return (
     <Grid container item sx={{ marginTop: "10px" }}>
       <Grid container item xs={6} justifyContent="center" alignItems="center">
-        <UserAvatar avatarSize={avatarSize} name={name} />
+        <UserAvatar avatarSize={avatarSize} name={user.profile.name} />
         <Typography variant="h5" sx={{ margin: "0 10px" }}>
-          {username}
+          {user.username}
         </Typography>
         <Button variant="outlined" size="small">
           Edit Profile
@@ -75,10 +79,21 @@ function ProfileStatBar(props: Props) {
         </Grid>
       </Grid>
       <Grid container item xs={6} justifyContent="center">
-        <Button size="small"># Recipes</Button>
-        <Button size="small"># This Year</Button>
-        <Button size="small"># Following</Button>
-        <Button size="small"># Followers</Button>
+        <Button
+          size="small"
+          href={`${user.username}/recipes`}
+        >{`${user.diary?.length} RECIPES`}</Button>
+        <Button
+          size="small"
+          href={`${user.username}/recipes`}
+        >{`${user.diary?.length} THIS YEAR`}</Button>
+        <Button
+          size="small"
+          href={`${user.username}/following`}
+        >{`${user.following?.length} FOLLOWING`}</Button>
+        <Button size="small" href={`${user.username}/followers`}>
+          {`${following.length} FOLLOWERS`}
+        </Button>
       </Grid>
     </Grid>
   );
