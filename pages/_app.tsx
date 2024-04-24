@@ -20,22 +20,22 @@ export default function MyApp(props: AppProps) {
 
   return (
     <CacheProvider value={emotionCache}>
-      <Layout>
-        <Head>
-          <title>Savry</title>
-          <meta charSet="utf-8" />
-          <meta
-            name="viewport"
-            content="initial-scale=1.0, width=device-width"
-          />
-          <link rel="shortcut icon" href="/favicon.ico" />
-        </Head>
-        <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
+        <Layout>
+          <Head>
+            <title>Savry</title>
+            <meta charSet="utf-8" />
+            <meta
+              name="viewport"
+              content="initial-scale=1.0, width=device-width"
+            />
+            <link rel="shortcut icon" href="/favicon.ico" />
+          </Head>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
           <Component {...pageProps} />
-        </ThemeProvider>
-      </Layout>
+        </Layout>
+      </ThemeProvider>
     </CacheProvider>
   );
 }

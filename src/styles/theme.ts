@@ -1,16 +1,22 @@
 import { createTheme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
+import { ThemeOptions } from "@mui/material/styles";
 
-const theme = createTheme({
+export const theme: ThemeOptions = createTheme({
   palette: {
+    mode: "dark",
     primary: {
-      main: "#556cd6",
+      main: "#66fcf1",
     },
     secondary: {
-      main: "#19857b",
+      main: "#45a29e",
     },
-    error: {
-      main: red.A400,
+    background: {
+      default: "#0b0c10",
+      paper: "#1f2833",
+    },
+    text: {
+      primary: "#c5c6c7",
+      secondary: "rgba(255,255,255,0.7)",
     },
   },
 });
