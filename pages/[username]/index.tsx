@@ -21,6 +21,12 @@ interface Props {
   recipes: RECIPE_LIST_TYPE[];
 }
 
+interface Params {
+  params: {
+    username: string;
+  };
+}
+
 function UserPage(props: Props) {
   const { user, cooklist, creators, recipes } = props;
   const title = `${user.profile.name}'s Profile • Savry`;
@@ -72,7 +78,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }: any) {
+export async function getStaticProps({ params }: Params) {
   const { username } = params;
   const user = getAllUsers().find((user) => user.username === username);
 
