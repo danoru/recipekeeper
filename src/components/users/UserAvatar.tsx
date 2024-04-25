@@ -40,10 +40,11 @@ function UserAvatar(props: Props) {
       children: nameInitials,
     };
   }
+
   return (
     <Avatar
       {...stringAvatar(name)}
-      sx={{ height: avatarSize, width: avatarSize }}
+      sx={{ ...stringAvatar(name).sx, height: avatarSize, width: avatarSize }}
     />
   );
 }
