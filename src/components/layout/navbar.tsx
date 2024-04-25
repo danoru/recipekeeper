@@ -97,7 +97,7 @@ function Navbar() {
                   >
                     <a
                       href={page.link}
-                      style={{ textDecoration: "none", color: "black" }}
+                      style={{ textDecoration: "none", color: "inherit" }}
                     >
                       {page.title}
                     </a>
@@ -120,7 +120,7 @@ function Navbar() {
               >
                 <a
                   href={page.link}
-                  style={{ textDecoration: "none", color: "white" }}
+                  style={{ textDecoration: "none", color: "inherit" }}
                 >
                   {page.title}
                 </a>
