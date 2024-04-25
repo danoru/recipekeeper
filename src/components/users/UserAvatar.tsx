@@ -28,7 +28,7 @@ function UserAvatar(props: Props) {
     return color;
   }
 
-  function stringAvatar(name: any) {
+  function stringAvatar(name: string) {
     const nameUppercase = name.toUpperCase();
     const nameSplit = nameUppercase.split(" ");
     const nameInitials =

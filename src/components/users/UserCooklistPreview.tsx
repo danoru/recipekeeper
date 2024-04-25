@@ -4,13 +4,16 @@ import Link from "next/link";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 
-interface Props {
+interface CooklistProps {
   cooklist: RECIPE_LIST_TYPE[];
 }
 
-function UserCooklistPreview(props: Props) {
-  const { cooklist } = props;
+interface RecipeCardProps {
+  name: string;
+  image: string;
+}
 
+function UserCooklistPreview({ cooklist }: CooklistProps) {
   return (
     <div>
       <Grid
@@ -26,19 +29,11 @@ function UserCooklistPreview(props: Props) {
         <Grid item>{cooklist?.length}</Grid>
       </Grid>
       <Grid container>
-        {cooklist.map((recipe: any, i: number) => (
+        {cooklist.map((recipe, i: number) => (
           <RecipeCard
             key={`card-${i}`}
             name={recipe.name}
-            link={recipe.link}
             image={recipe.image}
-            website={recipe.website}
-            instagram={recipe.instagram}
-            youtube={recipe.youtube}
-            sx={{
-              width: "100%",
-              height: "100%",
-            }}
           />
         ))}
       </Grid>
@@ -46,8 +41,8 @@ function UserCooklistPreview(props: Props) {
   );
 }
 
-function RecipeCard(props: any) {
-  const recipeSlug = `/recipe/${props.name.replace(/\s+/g, "-").toLowerCase()}`;
+function RecipeCard({ name, image }: RecipeCardProps) {
+  const recipeSlug = `/recipe/${name.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <Grid item>
       <Link href={recipeSlug}>
@@ -58,11 +53,7 @@ function RecipeCard(props: any) {
             cursor: "pointer",
           }}
         >
-          <CardMedia
-            sx={{ height: "105px" }}
-            image={props.image}
-            title={props.name}
-          />
+          <CardMedia sx={{ height: "105px" }} image={image} title={name} />
         </Card>
       </Link>
     </Grid>

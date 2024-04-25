@@ -13,7 +13,7 @@ export const USER_LIST: USER_LIST_TYPE[] = [
       badge: "HQ",
       joinDate: "2024-02-24",
     },
-    cooklist: ["Spicy Creamy Mushroom Pasta"],
+    cooklist: ["Spicy Creamy Mushroom Pasta", "Cajun Sausage and Rice Skillet"],
     diary: [
       {
         recipe: "Chicken Pozole Verde",
