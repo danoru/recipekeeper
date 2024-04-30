@@ -21,6 +21,12 @@ interface Props {
   filteredRecipes: RECIPE_LIST_TYPE[];
 }
 
+interface Params {
+  params: {
+    creatorId: string;
+  };
+}
+
 function CreatorPage(props: Props) {
   const { creatorId, filteredRecipes } = props;
   const title = creatorId.name + " • Savry";
@@ -96,7 +102,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }: any) {
+export async function getStaticProps({ params }: Params) {
   const creatorId = getCreatorId(params.creatorId);
   const filteredRecipes = getRecipesByCreator(params.creatorId);
 

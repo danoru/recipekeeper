@@ -4,15 +4,16 @@ import FavoriteCreators from "../../src/components/users/FavoriteCreators";
 import FavoriteRecipes from "../../src/components/users/FavoriteRecipes";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import ProfileStatBar from "../../src/components/users/ProfileStatBar";
+import UserActivity from "../../src/components/users/UserActivity";
 import UserCooklistPreview from "../../src/components/users/UserCooklistPreview";
 import { getAllUsers } from "../../src/data/users";
+import { getAllCreators } from "../../src/data/creators";
+import { getAllRecipes } from "../../src/data/recipes";
 import {
   CREATOR_LIST_TYPE,
   RECIPE_LIST_TYPE,
   USER_LIST_TYPE,
 } from "../../src/types";
-import { getAllCreators } from "../../src/data/creators";
-import { getAllRecipes } from "../../src/data/recipes";
 
 interface Props {
   user: USER_LIST_TYPE;
@@ -56,11 +57,10 @@ function UserPage(props: Props) {
         </Grid>
         <Grid item xs={4}>
           Diary
-        </Grid>
+      </Grid> */}
         <Grid item xs={4}>
-          Activity
+          <UserActivity user={user} />
         </Grid>
-         */}
       </Grid>
     </div>
   );
