@@ -19,7 +19,9 @@ function UserCooklistPreview({ cooklist }: CooklistProps) {
       <Grid
         container
         sx={{
-          borderBottom: "1px solid black",
+          borderBottomWidth: "1px",
+          borderBottomStyle: "solid",
+          borderBottomColor: "theme.palette.secondary",
           justifyContent: "space-between",
           margin: "10px 0",
           maxWidth: "50%",

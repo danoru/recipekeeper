@@ -18,7 +18,9 @@ function FavoriteCreators(props: Props) {
       <Grid
         item
         style={{
-          borderBottom: "1px solid black",
+          borderBottomWidth: "1px",
+          borderBottomStyle: "solid",
+          borderBottomColor: "theme.palette.secondary",
           display: "flex",
           justifyContent: "space-between",
           lineHeight: "0",

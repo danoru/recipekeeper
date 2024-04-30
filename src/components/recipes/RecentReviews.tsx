@@ -7,7 +7,9 @@ function RecentReviews() {
       item
       xs={12}
       style={{
-        borderBottom: "1px solid black",
+        borderBottomWidth: "1px",
+        borderBottomStyle: "solid",
+        borderBottomColor: "theme.palette.secondary",
         justifyContent: "space-between",
         lineHeight: "0",
         margin: "0 auto",

@@ -34,7 +34,9 @@ function UserCooklist(props: Props) {
         <Typography
           variant="overline"
           sx={{
-            borderBottom: "1px solid black",
+            borderBottomWidth: "1px",
+            borderBottomStyle: "solid",
+            borderBottomColor: "theme.palette.secondary",
             margin: "0 auto",
             width: "75%",
           }}

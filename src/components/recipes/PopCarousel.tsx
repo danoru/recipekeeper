@@ -42,7 +42,9 @@ function PopCarousel({ items }: Props) {
     <Grid container item xs={12}>
       <Grid
         style={{
-          borderBottom: "1px solid black",
+          borderBottomWidth: "1px",
+          borderBottomStyle: "solid",
+          borderBottomColor: "theme.palette.secondary",
           display: "flex",
           justifyContent: "space-between",
           lineHeight: "0",
