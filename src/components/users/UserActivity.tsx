@@ -45,7 +45,7 @@ function UserActivity({ user }: Props) {
               {" on "}
               {diaryEntry.date}
               {" and rated it "}
-              {typeof diaryEntry.rating === "number" && (
+              {diaryEntry.rating !== undefined && (
                 <StarRating rating={diaryEntry.rating} />
               )}
               {"."}
