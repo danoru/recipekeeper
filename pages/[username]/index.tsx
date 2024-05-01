@@ -6,6 +6,9 @@ import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import ProfileStatBar from "../../src/components/users/ProfileStatBar";
 import UserActivity from "../../src/components/users/UserActivity";
 import UserCooklistPreview from "../../src/components/users/UserCooklistPreview";
+import UserFollowing from "../../src/components/users/UserFollowing";
+import UserRatings from "../../src/components/users/UserRatings";
+import UserRecentRecipes from "../../src/components/users/UserRecentRecipes";
 import { getAllUsers } from "../../src/data/users";
 import { getAllCreators } from "../../src/data/creators";
 import { getAllRecipes } from "../../src/data/recipes";
@@ -19,7 +22,8 @@ interface Props {
   user: USER_LIST_TYPE;
   cooklist: RECIPE_LIST_TYPE[];
   creators: CREATOR_LIST_TYPE[];
-  recipes: RECIPE_LIST_TYPE[];
+  favoriteRecipes: RECIPE_LIST_TYPE[];
+  recentRecipes: RECIPE_LIST_TYPE[];
 }
 
 interface Params {
@@ -28,8 +32,13 @@ interface Params {
   };
 }
 
-function UserPage(props: Props) {
-  const { user, cooklist, creators, recipes } = props;
+function UserPage({
+  user,
+  cooklist,
+  creators,
+  favoriteRecipes,
+  recentRecipes,
+}: Props) {
   const title = `${user.profile.name}'s Profile • Savry`;
   const avatarSize = "56px";
 
@@ -42,25 +51,15 @@ function UserPage(props: Props) {
         <ProfileStatBar avatarSize={avatarSize} user={user} />
         <ProfileLinkBar username={user.username} />
         <FavoriteCreators creators={creators} />
-        <Grid item xs={4}>
-          <UserCooklistPreview cooklist={cooklist} />
-        </Grid>
-        <FavoriteRecipes recipes={recipes} />
+        <UserCooklistPreview cooklist={cooklist} />
+        <FavoriteRecipes recipes={favoriteRecipes} />
+        <UserRatings user={user} />
+        <UserRecentRecipes user={user} recipes={recentRecipes} />
+        <UserActivity user={user} />
+        <UserFollowing user={user} />
         {/* <Grid item xs={4}>
-          Ratings
-        </Grid>
-        <Grid item xs={8}>
-          Recent Activity
-        </Grid> */}
-        {/* <Grid item xs={8}>
-          Following
-        </Grid>
-        <Grid item xs={4}>
           Diary
       </Grid> */}
-        <Grid item xs={4}>
-          <UserActivity user={user} />
-        </Grid>
       </Grid>
     </div>
   );
@@ -85,10 +84,12 @@ export async function getStaticProps({ params }: Params) {
   const creators = getAllCreators().filter((creator) =>
     user?.favorites?.creators.includes(creator.link)
   );
-  const recipes = getAllRecipes().filter((recipe) =>
+  const favoriteRecipes = getAllRecipes().filter((recipe) =>
     user?.favorites?.recipes.includes(recipe.name)
   );
-
+  const recentRecipes = getAllRecipes().filter((recipe) =>
+    user?.diary?.some((entry) => entry.recipe.includes(recipe.name))
+  );
   const cooklist = getAllRecipes().filter((recipe) =>
     user?.cooklist?.includes(recipe.name)
   );
@@ -97,7 +98,8 @@ export async function getStaticProps({ params }: Params) {
     props: {
       cooklist,
       creators,
-      recipes,
+      favoriteRecipes,
+      recentRecipes,
       user,
     },
     revalidate: 1800,
