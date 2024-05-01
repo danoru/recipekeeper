@@ -2,9 +2,11 @@ import StarHalf from "@mui/icons-material/StarHalf";
 import StarRate from "@mui/icons-material/StarRate";
 import StarOutline from "@mui/icons-material/StarOutline";
 
-function StarRating(props: any) {
-  const rating = props.rating;
+interface Props {
+  rating: number;
+}
 
+function StarRating({ rating }: Props) {
   function starValue() {
     if (rating === 5)
       return (
