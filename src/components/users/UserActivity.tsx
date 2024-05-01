@@ -1,9 +1,7 @@
-import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import StarRating from "../../../src/review/StarRating";
-import { getAllUsers } from "../../../src/data/users";
 import { USER_LIST_TYPE } from "../../../src/types";
 
 interface Props {
@@ -13,9 +11,9 @@ interface Props {
 function UserActivity({ user }: Props) {
   const username = user.username;
   const diaryEntries = user.diary;
-  console.log(user.diary);
+
   return (
-    <Grid item xs={8} sx={{ marginTop: "10px" }}>
+    <Grid item xs={4} sx={{ marginTop: "10px" }}>
       <Grid
         container
         sx={{
@@ -31,7 +29,7 @@ function UserActivity({ user }: Props) {
       </Grid>
       <Stack spacing={1}>
         {diaryEntries?.map((diaryEntry, i) => (
-          <Stack key={i} direction="row" sx={{ justifyContent: "center" }}>
+          <Stack key={i} direction="row">
             <div>
               <Link href={`/${username}`} underline="none">
                 {username}
@@ -47,7 +45,9 @@ function UserActivity({ user }: Props) {
               {" on "}
               {diaryEntry.date}
               {" and rated it "}
-              <StarRating rating={diaryEntry.rating} />
+              {typeof diaryEntry.rating === "number" && (
+                <StarRating rating={diaryEntry.rating} />
+              )}
               {"."}
             </div>
           </Stack>
@@ -55,17 +55,6 @@ function UserActivity({ user }: Props) {
       </Stack>
     </Grid>
   );
-}
-
-export async function getStaticProps() {
-  const users = getAllUsers();
-
-  return {
-    props: {
-      users,
-    },
-    revalidate: 1800,
-  };
 }
 
 export default UserActivity;

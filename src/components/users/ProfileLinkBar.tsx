@@ -6,9 +6,7 @@ interface Props {
   username: string;
 }
 
-function ProfileLinkBar(props: Props) {
-  const { username } = props;
-
+function ProfileLinkBar({ username }: Props) {
   return (
     <Grid
       container

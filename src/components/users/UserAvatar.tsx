@@ -43,6 +43,8 @@ function UserAvatar(props: Props) {
 
   return (
     <Avatar
+      alt={name}
+      title={name}
       {...stringAvatar(name)}
       sx={{ ...stringAvatar(name).sx, height: avatarSize, width: avatarSize }}
     />

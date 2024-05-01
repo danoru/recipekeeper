@@ -49,7 +49,7 @@ interface UserFavorites {
   creators: string[];
 }
 
-interface UserDiary {
+export interface UserDiary {
   recipe: string;
   rating?: number;
   comment?: string;

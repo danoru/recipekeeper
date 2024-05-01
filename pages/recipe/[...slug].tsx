@@ -7,6 +7,12 @@ import Typography from "@mui/material/Typography";
 import StarRating from "../../src/review/StarRating";
 import { getAllRecipes, getRecipeId } from "../../src/data/recipes";
 
+interface Params {
+  params: {
+    slug: string;
+  };
+}
+
 function RecipePage({ recipe }: { recipe: any }) {
   const title = recipe.name + " by " + recipe.creator + " • Savry";
   const rating: number = recipe.rating / recipe.reviews;
@@ -19,10 +25,10 @@ function RecipePage({ recipe }: { recipe: any }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Grid container>
-        <Grid item xs={1} sx={{ margin: "0 10px 0 10px" }}>
+        <Grid item xs={2}>
           <Image
             src={recipe.image}
-            height="345"
+            height="300"
             width="235"
             alt={recipe.name}
           />
@@ -61,7 +67,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }: any) {
+export async function getStaticProps({ params }: Params) {
   const { slug } = params;
 
   const recipe = getRecipeId(slug[0].replace(/-/g, " "));

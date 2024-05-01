@@ -11,9 +11,7 @@ interface Props {
   recipes: RECIPE_LIST_TYPE[];
 }
 
-function FavoriteRecipes(props: Props) {
-  const { recipes } = props;
-
+function FavoriteRecipes({ recipes }: Props) {
   return (
     <Grid container item xs={8}>
       <Grid
@@ -47,11 +45,7 @@ function FavoriteRecipes(props: Props) {
           <RecipeCard
             key={`card-${i}`}
             name={recipe.name}
-            link={recipe.link}
             image={recipe.image}
-            website={recipe.website}
-            instagram={recipe.instagram}
-            youtube={recipe.youtube}
             sx={{
               width: "100%",
               height: "100%",

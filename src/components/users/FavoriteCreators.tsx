@@ -10,9 +10,7 @@ import { CREATOR_LIST_TYPE } from "../../types";
 interface Props {
   creators: CREATOR_LIST_TYPE[];
 }
-function FavoriteCreators(props: Props) {
-  const { creators } = props;
-
+function FavoriteCreators({ creators }: Props) {
   return (
     <Grid container item xs={8}>
       <Grid

@@ -14,8 +14,7 @@ interface Props {
   user: USER_LIST_TYPE;
 }
 
-function ProfileStatBar(props: Props) {
-  const { avatarSize, user } = props;
+function ProfileStatBar({ avatarSize, user }: Props) {
   const following = getAllUsers().filter((u) =>
     user.following?.includes(u.username)
   );
