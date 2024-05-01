@@ -50,7 +50,9 @@ function Activity(props: Props) {
                 {" on "}
                 {diaryEntry.date}
                 {" and rated it "}
-                <StarRating rating={diaryEntry.rating} />
+                {diaryEntry.rating !== undefined && (
+                  <StarRating rating={diaryEntry.rating} />
+                )}
                 {"."}
               </div>
             </Stack>
