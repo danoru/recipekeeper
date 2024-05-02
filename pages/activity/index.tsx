@@ -2,6 +2,7 @@ import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import Link from "@mui/material/Link";
+import moment from "moment";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import Stack from "@mui/material/Stack";
 import StarRating from "../../src/review/StarRating";
@@ -34,26 +35,30 @@ function Activity(props: Props) {
           divider={<Divider orientation="horizontal" flexItem />}
         >
           {diaryEntries?.map((diaryEntry, i) => (
-            <Stack key={i} direction="row" sx={{ justifyContent: "center" }}>
-              <div>
+            <Stack key={i} direction="row">
+              <div style={{ display: "inline-flex", alignItems: "center" }}>
                 <Link href={`/${user.username}`} underline="none">
-                  {user.username}
+                  <span style={{ margin: "0 2px" }}>{user.username}</span>
                 </Link>
-                {" made "}
+                <span style={{ margin: "0 2px" }}>made</span>
                 <Link
                   href={`/recipe/${diaryEntry.recipe
                     .toLowerCase()
                     .replace(/ /g, "-")}`}
                 >
-                  {diaryEntry.recipe}
+                  <span style={{ margin: "0 2px" }}>{diaryEntry.recipe}</span>
                 </Link>
-                {" on "}
-                {diaryEntry.date}
-                {" and rated it "}
+                <span style={{ margin: "0 2px" }}>on</span>
+                <span style={{ margin: "0 2px" }}>
+                  {moment(diaryEntry.date).format("dddd, MMMM Do YYYY")}
+                </span>
+                <span style={{ margin: "0 2px" }}>and rated it</span>
                 {diaryEntry.rating !== undefined && (
-                  <StarRating rating={diaryEntry.rating} />
+                  <span style={{ margin: "0 2px" }}>
+                    <StarRating rating={diaryEntry.rating} />
+                  </span>
                 )}
-                {"."}
+                <span>.</span>
               </div>
             </Stack>
           ))}
