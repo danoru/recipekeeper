@@ -20,9 +20,8 @@ function UserRecentRecipes({ recipes, user }: Props) {
   );
 
   const mostRecentEntries = sortedEntries.slice(0, 4);
-
   return (
-    <Grid container item xs={8}>
+    <Grid item xs={8}>
       <Grid
         item
         style={{
@@ -31,7 +30,6 @@ function UserRecentRecipes({ recipes, user }: Props) {
           borderBottomColor: "theme.palette.secondary",
           display: "flex",
           justifyContent: "space-between",
-          lineHeight: "0",
           margin: "0 auto",
           width: "75%",
         }}

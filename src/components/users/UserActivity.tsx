@@ -13,7 +13,7 @@ function UserActivity({ user }: Props) {
   const diaryEntries = user.diary;
 
   return (
-    <Grid item xs={4} sx={{ marginTop: "10px" }}>
+    <Grid item xs={3} sx={{ marginTop: "10px" }}>
       <Grid
         container
         sx={{

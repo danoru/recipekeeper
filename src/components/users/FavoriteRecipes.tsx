@@ -13,7 +13,7 @@ interface Props {
 
 function FavoriteRecipes({ recipes }: Props) {
   return (
-    <Grid container item xs={8}>
+    <Grid item xs={8}>
       <Grid
         item
         style={{

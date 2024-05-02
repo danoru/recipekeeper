@@ -4,7 +4,6 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
-
 import { CREATOR_LIST_TYPE } from "../../types";
 
 interface Props {
@@ -12,7 +11,7 @@ interface Props {
 }
 function FavoriteCreators({ creators }: Props) {
   return (
-    <Grid container item xs={8}>
+    <Grid item xs={8}>
       <Grid
         item
         style={{
