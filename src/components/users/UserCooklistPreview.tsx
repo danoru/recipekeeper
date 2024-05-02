@@ -15,7 +15,7 @@ interface RecipeCardProps {
 
 function UserCooklistPreview({ cooklist }: CooklistProps) {
   return (
-    <Grid item xs={4}>
+    <Grid item>
       <Grid
         container
         sx={{

@@ -10,7 +10,7 @@ interface Props {
 
 function UserFollowing({ user }: Props) {
   return (
-    <Grid item xs={8}>
+    <Grid item>
       <Grid
         item
         style={{

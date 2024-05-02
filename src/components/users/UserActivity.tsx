@@ -1,5 +1,6 @@
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
+import moment from "moment";
 import Stack from "@mui/material/Stack";
 import StarRating from "../../../src/review/StarRating";
 import { USER_LIST_TYPE } from "../../../src/types";
@@ -13,7 +14,7 @@ function UserActivity({ user }: Props) {
   const diaryEntries = user.diary;
 
   return (
-    <Grid item xs={3} sx={{ marginTop: "10px" }}>
+    <Grid item sx={{ marginTop: "10px" }}>
       <Grid
         container
         sx={{
@@ -43,12 +44,13 @@ function UserActivity({ user }: Props) {
                 {diaryEntry.recipe}
               </Link>
               {" on "}
-              {diaryEntry.date}
+              {moment(diaryEntry.date).format("dddd, MMMM Do YYYY")}
               {" and rated it "}
               {diaryEntry.rating !== undefined && (
                 <StarRating rating={diaryEntry.rating} />
               )}
               {"."}
+              {/* {moment(diaryEntry.date).fromNow()} */}
             </div>
           </Stack>
         ))}

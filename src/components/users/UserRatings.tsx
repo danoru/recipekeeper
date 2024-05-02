@@ -18,7 +18,7 @@ function UserRatings({ user }: Props) {
   const ratingDataset = generateRatingDataset(diaryEntries);
 
   return (
-    <Grid item xs={4} sx={{ marginTop: "10px" }}>
+    <Grid item sx={{ marginTop: "10px" }}>
       <Grid
         container
         sx={{

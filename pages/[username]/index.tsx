@@ -47,19 +47,21 @@ function UserPage({
       <Head>
         <title>{title}</title>
       </Head>
+      <Grid container></Grid>
       <Grid container>
         <ProfileStatBar avatarSize={avatarSize} user={user} />
         <ProfileLinkBar username={user.username} />
-        <FavoriteCreators creators={creators} />
-        <UserCooklistPreview cooklist={cooklist} />
-        <FavoriteRecipes recipes={favoriteRecipes} />
-        <UserRatings user={user} />
-        <UserRecentRecipes user={user} recipes={recentRecipes} />
-        <UserActivity user={user} />
-        <UserFollowing user={user} />
-        {/* <Grid item xs={4}>
-          Diary
-      </Grid> */}
+        <Grid item xs={8}>
+          <FavoriteCreators creators={creators} />
+          <FavoriteRecipes recipes={favoriteRecipes} />
+          <UserRecentRecipes user={user} recipes={recentRecipes} />
+          <UserFollowing user={user} />
+        </Grid>
+        <Grid item xs={4}>
+          <UserCooklistPreview cooklist={cooklist} />
+          <UserRatings user={user} />
+          <UserActivity user={user} />
+        </Grid>
       </Grid>
     </div>
   );

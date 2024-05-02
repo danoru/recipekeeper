@@ -21,7 +21,7 @@ function UserRecentRecipes({ recipes, user }: Props) {
 
   const mostRecentEntries = sortedEntries.slice(0, 4);
   return (
-    <Grid item xs={8}>
+    <Grid item>
       <Grid
         item
         style={{
