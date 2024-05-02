@@ -82,6 +82,16 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     isFeatured: false,
   },
   {
+    name: "Pinch of Yum",
+    link: "pinchofyum",
+    image:
+      "https://pinchofyum.com/wp-content/assets/images/sidebar/sidebar-lindsay.jpg",
+    website: "https://pinchofyum.com/",
+    instagram: "https://www.instagram.com/pinchofyum",
+    youtube: "https://www.youtube.com/@pinchofyum",
+    isFeatured: false,
+  },
+  {
     name: "Rainbow Plant Life",
     link: "rainbowplantlife",
     image: "https://rainbowplantlife.com/wp-content/uploads/2020/10/nisha1.jpg",

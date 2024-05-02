@@ -13,8 +13,32 @@ export const USER_LIST: USER_LIST_TYPE[] = [
       badge: "HQ",
       joinDate: "2024-02-24",
     },
-    cooklist: ["Spicy Creamy Mushroom Pasta", "Cajun Sausage and Rice Skillet"],
+    cooklist: ["Spicy Creamy Mushroom Pasta", "Oyakodon"],
     diary: [
+      {
+        recipe: "Taco Soup",
+        rating: 4,
+        comment:
+          "This was a hit with my wife and daughter, but I think it could have used a bit more seasoning for my taste.",
+        date: "2024-05-01",
+        hasCookedBefore: false,
+      },
+      {
+        recipe: "Cajun Sausage and Rice Skillet",
+        rating: 3.5,
+        comment:
+          "This is a good, quick weeknight meal. For my family's preferences, I think I will add some extra vegetables to the recipe next time as it was somewhat one note in flavor and texture.",
+        date: "2024-04-26",
+        hasCookedBefore: true,
+      },
+      {
+        recipe: "Black Pepper Stir Fried Udon",
+        rating: 4,
+        comment:
+          "I really enjoyed the depth of flavor in this dish. I added mushrooms in place of a protein (though this calls for neither) and it was very good.",
+        date: "2024-04-24",
+        hasCookedBefore: false,
+      },
       {
         recipe: "Chicken Pozole Verde",
         rating: 5,

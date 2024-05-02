@@ -188,6 +188,57 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     rating: 0,
     reviews: 1,
   },
+  {
+    name: "Taco Soup",
+    creator: "Isabel Eats",
+    creatorId: "isabeleats",
+    link: "https://www.isabeleats.com/taco-soup-recipe/",
+    image:
+      "https://www.isabeleats.com/wp-content/uploads/2023/02/taco-soup-recipe-small-9.jpg",
+    description:
+      "This taco soup recipe is hearty, healthy, and ready in under 1 hour! Made with ground beef, taco seasoning, canned beans, corn, bell peppers, and other veggies, it’s perfect served with your favorite taco toppings and tortilla chips for a little crunch.",
+    category: "Soup",
+    cuisine: "North American",
+    course: "Mains",
+    method: "One Pot",
+    diet: "None",
+    rating: 4,
+    reviews: 1,
+  },
+  {
+    name: "Oyakodon",
+    creator: "Just One Cookbook",
+    creatorId: "justonecookbook",
+    link: "https://www.justonecookbook.com/oyakodon/",
+    image:
+      "https://www.justonecookbook.com/wp-content/uploads/2022/10/Oyakodon-0595-II.jpg",
+    description:
+      "Oyakodon is a classic comfort food of Japanese home cooking. Tender pieces of chicken, onions, and eggs are simmered in an umami-rich sauce and then poured over a bowl of fluffy steamed rice. Simple, delicious, and utterly comforting, this is the kind of one-bowl meal you can cook in less than 30 minutes!",
+    category: "Chicken",
+    cuisine: "Asian",
+    course: "Mains",
+    method: "Classic",
+    diet: "None",
+    rating: 0,
+    reviews: 0,
+  },
+  {
+    name: "Black Pepper Stir Fried Udon",
+    creator: "Pinch of Yum",
+    creatorId: "pinchofyum",
+    link: "https://pinchofyum.com/black-pepper-stir-fried-udon",
+    image:
+      "https://pinchofyum.com/cdn-cgi/image/width=680,height=99999,fit=scale-down/wp-content/uploads/Udon-2-scaled.jpg",
+    description:
+      "This Black Pepper Stir Fried Udon is the perfect SOS dinner! Saucy udon noodles, dark soy sauce, stir fry veggies, fresh garlic, and lots of freshly ground black pepper. So easy!",
+    category: "Noodles",
+    cuisine: "Asian",
+    course: "Mains",
+    method: "Classic",
+    diet: "None",
+    rating: 4,
+    reviews: 1,
+  },
 ];
 
 export function getAllRecipes() {

@@ -15,6 +15,12 @@ interface Props {
 function UserRecentRecipes({ recipes, user }: Props) {
   const diaryEntries: UserDiary[] = user.diary || [];
 
+  const sortedEntries = diaryEntries.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
+  const mostRecentEntries = sortedEntries.slice(0, 4);
+
   return (
     <Grid container item xs={8}>
       <Grid
@@ -44,22 +50,22 @@ function UserRecentRecipes({ recipes, user }: Props) {
           maxWidth: "75%",
         }}
       >
-        {recipes.map((recipe: any, i: number) => {
-          const diaryEntry = diaryEntries.find(
-            (entry) => entry.recipe === recipe.name
-          );
-          const rating = diaryEntry?.rating;
+        {mostRecentEntries.map((entry: UserDiary, i: number) => {
+          const recipe = recipes.find((r) => r.name === entry.recipe);
+
           return (
-            <RecipeCard
-              key={`card-${i}`}
-              name={recipe.name}
-              image={recipe.image}
-              rating={rating}
-              sx={{
-                width: "100%",
-                height: "100%",
-              }}
-            />
+            recipe && (
+              <RecipeCard
+                key={`card-${i}`}
+                name={recipe.name}
+                image={recipe.image}
+                rating={entry.rating}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                }}
+              />
+            )
           );
         })}
       </Grid>
