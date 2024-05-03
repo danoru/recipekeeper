@@ -6,6 +6,7 @@ import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import ProfileStatBar from "../../src/components/users/ProfileStatBar";
 import UserActivity from "../../src/components/users/UserActivity";
 import UserCooklistPreview from "../../src/components/users/UserCooklistPreview";
+import UserRecipeDiary from "../../src/components/users/UserRecipeDiary";
 import UserFollowing from "../../src/components/users/UserFollowing";
 import UserRatings from "../../src/components/users/UserRatings";
 import UserRecentRecipes from "../../src/components/users/UserRecentRecipes";
@@ -59,6 +60,7 @@ function UserPage({
         </Grid>
         <Grid item xs={4}>
           <UserCooklistPreview cooklist={cooklist} />
+          <UserRecipeDiary user={user} />
           <UserRatings user={user} />
           <UserActivity user={user} />
         </Grid>
