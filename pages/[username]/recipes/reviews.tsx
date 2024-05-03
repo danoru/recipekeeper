@@ -1,6 +1,5 @@
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
-import RecipeList from "../../../src/components/recipes/RecipeList";
 import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
 import { getAllUsers } from "../../../src/data/users";
 import { RECIPE_LIST_TYPE, USER_LIST_TYPE } from "../../../src/types";
@@ -18,7 +17,7 @@ interface Params {
 }
 
 function UserRecipeList({ user, recipes }: Props) {
-  const title = `${user.profile.name}'s Recipes • Savry`;
+  const title = `${user.profile.name}'s Reviews • Savry`;
 
   return (
     <div>
@@ -27,7 +26,7 @@ function UserRecipeList({ user, recipes }: Props) {
       </Head>
       <Grid container>
         <ProfileLinkBar username={user.username} />
-        <RecipeList recipes={recipes} />
+        <Grid item>No reviews yet.</Grid>
       </Grid>
     </div>
   );

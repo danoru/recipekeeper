@@ -24,9 +24,7 @@ function ProfileLinkBar({ username }: Props) {
         {/* <Button href={`/${username}/activity`}>Activity</Button> */}
         <Button href={`/${username}/recipes`}>Recipes</Button>
         <Button href={`/${username}/recipes/diary`}>Diary</Button>
-        <Button disabled href={`/${username}/recipes/reviews`}>
-          Reviews
-        </Button>
+        <Button href={`/${username}/recipes/reviews`}>Reviews</Button>
         <Button href={`/${username}/cooklist`}>Cooklist</Button>
         <Button disabled href={`/${username}/lists`}>
           Lists
