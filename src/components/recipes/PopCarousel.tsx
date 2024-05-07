@@ -100,7 +100,7 @@ function PopCarousel({ items }: Props) {
                     course={item.course}
                     method={item.method}
                     diet={item.diet}
-                    rating={item.rating}
+                    value={item.rating}
                     sx={{
                       width: "100%",
                       height: "100%",

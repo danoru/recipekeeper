@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import moment from "moment";
 import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
-import StarRating from "../../../src/review/StarRating";
+import Rating from "@mui/material/Rating";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -66,9 +66,7 @@ function RecipeDiary({ user }: Props) {
                     <TableCell>{moment(entry.date).format("D")}</TableCell>
                     <TableCell>{entry.recipe}</TableCell>
                     <TableCell>
-                      {entry.rating !== undefined && (
-                        <StarRating rating={entry.rating} />
-                      )}
+                      <Rating value={entry.rating} precision={0.5} readOnly />
                     </TableCell>
                     <TableCell>
                       {entry.hasCookedBefore ? <ChangeCircleIcon /> : ""}

@@ -1,8 +1,8 @@
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import moment from "moment";
+import Rating from "@mui/material/Rating";
 import Stack from "@mui/material/Stack";
-import StarRating from "../../../src/review/StarRating";
 import { USER_LIST_TYPE } from "../../../src/types";
 
 interface Props {
@@ -46,9 +46,14 @@ function UserActivity({ user }: Props) {
               {" on "}
               {moment(diaryEntry.date).format("dddd, MMMM Do YYYY")}
               {" and rated it "}
-              {diaryEntry.rating !== undefined && (
-                <StarRating rating={diaryEntry.rating} />
-              )}
+              {/* {diaryEntry.rating !== undefined && ( */}
+              <Rating
+                value={diaryEntry.rating}
+                size="small"
+                precision={0.5}
+                readOnly
+              />
+              {/* // ) */}
               {"."}
               {/* {moment(diaryEntry.date).fromNow()} */}
             </div>

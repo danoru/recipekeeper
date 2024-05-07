@@ -4,8 +4,8 @@ import Head from "next/head";
 import Link from "@mui/material/Link";
 import moment from "moment";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
+import Rating from "@mui/material/Rating";
 import Stack from "@mui/material/Stack";
-import StarRating from "../../src/review/StarRating";
 import { getAllUsers } from "../../src/data/users";
 import { USER_LIST_TYPE } from "../../src/types";
 
@@ -55,7 +55,11 @@ function Activity(props: Props) {
                 <span style={{ margin: "0 2px" }}>and rated it</span>
                 {diaryEntry.rating !== undefined && (
                   <span style={{ margin: "0 2px" }}>
-                    <StarRating rating={diaryEntry.rating} />
+                    <Rating
+                      value={diaryEntry.rating}
+                      precision={0.5}
+                      readOnly
+                    />
                   </span>
                 )}
                 <span>.</span>

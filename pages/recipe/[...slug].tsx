@@ -2,9 +2,9 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import Grid from "@mui/material/Grid";
+import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 
-import StarRating from "../../src/review/StarRating";
 import { getAllRecipes, getRecipeId } from "../../src/data/recipes";
 
 interface Params {
@@ -41,7 +41,7 @@ function RecipePage({ recipe }: { recipe: any }) {
           </Typography>
 
           <Typography variant="body1">{recipe.description}</Typography>
-          <StarRating rating={rating} />
+          <Rating value={rating} precision={0.5} readOnly />
           <Typography variant="body1">
             <strong>Ratings:</strong> {rating}/5 Stars based on {recipe.reviews}{" "}
             Reviews

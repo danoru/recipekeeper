@@ -3,7 +3,7 @@ import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import Link from "next/link";
-import StarRating from "../../review/StarRating";
+import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 import { RECIPE_LIST_TYPE, USER_LIST_TYPE, UserDiary } from "../../types";
 
@@ -89,7 +89,7 @@ function RecipeCard(props: any) {
             title={props.name}
           />
           <CardContent>
-            <StarRating rating={props.rating} />
+            <Rating value={props.rating} precision={0.5} readOnly />
           </CardContent>
         </Card>
       </Link>

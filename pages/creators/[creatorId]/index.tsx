@@ -2,16 +2,15 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
+import CreatorRecipeList from "../../../src/components/creators/CreatorRecipeList";
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import Link from "next/link";
 import LinkIcon from "@mui/icons-material/Link";
+import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 import YouTubeIcon from "@mui/icons-material/YouTube";
-
-import CreatorRecipeList from "../../../src/components/creators/CreatorRecipeList";
-import StarRating from "../../../src/review/StarRating";
 import { getAllCreators, getCreatorId } from "../../../src/data/creators";
 import { getRecipesByCreator } from "../../../src/data/recipes";
 import { CREATOR_LIST_TYPE, RECIPE_LIST_TYPE } from "../../../src/types";
@@ -27,8 +26,7 @@ interface Params {
   };
 }
 
-function CreatorPage(props: Props) {
-  const { creatorId, filteredRecipes } = props;
+function CreatorPage({ creatorId, filteredRecipes }: Props) {
   const title = creatorId.name + " • Savry";
   const creatorRating = filteredRecipes.reduce(
     (n, { rating }) => n + rating,
@@ -55,9 +53,7 @@ function CreatorPage(props: Props) {
   );
 }
 
-function CreatorCard(props: any) {
-  const { creatorId, rating } = props;
-
+function CreatorCard({ creatorId, rating }: any) {
   return (
     <Box>
       <Card
@@ -74,7 +70,7 @@ function CreatorCard(props: any) {
           <Typography variant="h6" component="div">
             {creatorId.name}
           </Typography>
-          <StarRating rating={rating} />
+          <Rating value={rating} precision={0.5} readOnly />
           <Link href={creatorId.website}>
             <LinkIcon />
           </Link>
