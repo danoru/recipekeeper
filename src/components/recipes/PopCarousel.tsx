@@ -5,7 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
-import Link from "next/link";
+import Link from "@mui/material/Link";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import Slide from "@mui/material/Slide";
@@ -93,6 +93,7 @@ function PopCarousel({ items }: Props) {
                     name={item.name}
                     creator={item.creator}
                     link={item.link}
+                    underline="none"
                     description={item.description}
                     image={item.image}
                     category={item.category}
@@ -128,7 +129,7 @@ function PopCard(props: any) {
   const recipeSlug = `/recipe/${props.name.replace(/\s+/g, "-").toLowerCase()}`;
 
   return (
-    <Link href={recipeSlug}>
+    <Link href={recipeSlug} underline="none">
       <Card sx={{ width: "250px", height: "360px", cursor: "pointer" }}>
         <CardMedia
           sx={{ height: 140, width: "100%" }}

@@ -2,7 +2,7 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
-import Link from "next/link";
+import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { CREATOR_LIST_TYPE } from "../../types";
 
@@ -62,7 +62,7 @@ function FavoriteCreators({ creators }: Props) {
 function CreatorCard(props: any) {
   return (
     <Grid item>
-      <Link href={props.link}>
+      <Link href={props.link} underline="none">
         <Card
           sx={{
             width: "200px",

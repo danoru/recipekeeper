@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
@@ -47,7 +47,11 @@ function RecipePage({ recipe }: { recipe: any }) {
             Reviews
           </Typography>
           <Typography>
-            View the <Link href={recipe.link}>Recipe</Link>.
+            View the{" "}
+            <Link href={recipe.link} underline="none">
+              Recipe
+            </Link>
+            .
           </Typography>
         </Grid>
       </Grid>

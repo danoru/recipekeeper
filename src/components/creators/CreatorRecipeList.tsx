@@ -2,7 +2,7 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
-import Link from "next/link";
+import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 
 import { RECIPE_LIST_TYPE } from "../../types";
@@ -48,6 +48,7 @@ function CreatorRecipeList(props: Props) {
             key={`card-${i}`}
             name={recipe.name}
             link={recipe.link}
+            underline="none"
             image={recipe.image}
             website={recipe.website}
             instagram={recipe.instagram}
@@ -67,7 +68,7 @@ function RecipeCard(props: any) {
   const recipeSlug = `/recipe/${props.name.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <Grid item>
-      <Link href={recipeSlug}>
+      <Link href={recipeSlug} underline="none">
         <Card
           sx={{
             width: "250px",

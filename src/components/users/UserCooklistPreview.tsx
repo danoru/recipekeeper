@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid";
 import { RECIPE_LIST_TYPE } from "../../types";
-import Link from "next/link";
+import Link from "@mui/material/Link";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 

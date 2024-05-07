@@ -1,7 +1,5 @@
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
-import StarHalf from "@mui/icons-material/StarHalf";
-import StarRate from "@mui/icons-material/StarRate";
 import { BarChart } from "@mui/x-charts";
 import { USER_LIST_TYPE, UserDiary } from "../../../src/types";
 
@@ -33,7 +31,6 @@ function UserRatings({ user }: Props) {
         <Grid item>RATINGS</Grid>
       </Grid>
       <Stack spacing={1}>
-        {/* <StarHalf /> */}
         <BarChart
           dataset={ratingDataset}
           xAxis={[
@@ -46,13 +43,6 @@ function UserRatings({ user }: Props) {
           width={375}
           height={225}
         />
-        {/* <Stack direction="row">
-          <StarRate />
-          <StarRate />
-          <StarRate />
-          <StarRate />
-          <StarRate />
-        </Stack> */}
       </Stack>
     </Grid>
   );

@@ -40,20 +40,19 @@ function UserActivity({ user }: Props) {
                 href={`/recipe/${diaryEntry.recipe
                   .toLowerCase()
                   .replace(/ /g, "-")}`}
+                underline="none"
               >
                 {diaryEntry.recipe}
               </Link>
               {" on "}
               {moment(diaryEntry.date).format("dddd, MMMM Do YYYY")}
               {" and rated it "}
-              {/* {diaryEntry.rating !== undefined && ( */}
               <Rating
                 value={diaryEntry.rating}
                 size="small"
                 precision={0.5}
                 readOnly
               />
-              {/* // ) */}
               {"."}
               {/* {moment(diaryEntry.date).fromNow()} */}
             </div>

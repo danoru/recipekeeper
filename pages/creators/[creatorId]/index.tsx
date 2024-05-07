@@ -6,7 +6,7 @@ import CreatorRecipeList from "../../../src/components/creators/CreatorRecipeLis
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import Link from "next/link";
+import Link from "@mui/material/Link";
 import LinkIcon from "@mui/icons-material/Link";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";

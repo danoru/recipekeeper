@@ -5,7 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
-import Link from "next/link";
+import Link from "@mui/material/Link";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import Slide from "@mui/material/Slide";
@@ -123,7 +123,7 @@ function CreatorCarousel(props: Props) {
 
 function CreatorCard(props: any) {
   return (
-    <Link href={props.link}>
+    <Link href={props.link} underline="none">
       <Card sx={{ width: "250px", height: "250px", cursor: "pointer" }}>
         <CardMedia
           sx={{ height: 140 }}

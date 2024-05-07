@@ -2,7 +2,7 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
-import Link from "next/link";
+import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 import { RECIPE_LIST_TYPE, USER_LIST_TYPE, UserDiary } from "../../types";

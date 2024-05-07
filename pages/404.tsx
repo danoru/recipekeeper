@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import Head from "next/head";
-import Link from "next/link";
+import Link from "@mui/material/Link";
 
 function ErrorPage() {
   return (

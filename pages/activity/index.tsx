@@ -45,6 +45,7 @@ function Activity(props: Props) {
                   href={`/recipe/${diaryEntry.recipe
                     .toLowerCase()
                     .replace(/ /g, "-")}`}
+                  underline="none"
                 >
                   <span style={{ margin: "0 2px" }}>{diaryEntry.recipe}</span>
                 </Link>
