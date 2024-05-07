@@ -10,6 +10,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
 
 const username = "danoru";
 
@@ -95,13 +96,9 @@ function Navbar() {
                     textAlign="center"
                     sx={{ textDecoration: "none" }}
                   >
-                    <a
-                      href={page.link}
-                      underline="none"
-                      style={{ textDecoration: "none", color: "inherit" }}
-                    >
+                    <Link href={page.link} underline="none">
                       {page.title}
-                    </a>
+                    </Link>
                   </Typography>
                 </MenuItem>
               ))}
@@ -119,13 +116,9 @@ function Navbar() {
                   textDecoration: "none",
                 }}
               >
-                <a
-                  href={page.link}
-                  underline="none"
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
+                <Link href={page.link} underline="none">
                   {page.title}
-                </a>
+                </Link>
               </Button>
             ))}
           </Box>
