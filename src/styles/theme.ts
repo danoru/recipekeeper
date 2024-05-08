@@ -3,11 +3,17 @@ import { createTheme } from "@mui/material/styles";
 export const theme = createTheme({
   palette: {
     mode: "dark",
+    // primary: {
+    //   main: "#66fcf1",
+    //   light: "rgb(132, 252, 243",
+    //   dark: "rgb(71, 176, 168",
+    //   contrastText: "rgba(0,0,0,0.87)",
+    // },
     primary: {
-      main: "#66fcf1",
-      light: "rgb(132, 252, 243",
-      dark: "rgb(71, 176, 168",
-      contrastText: "rgba(0,0,0,0.87)",
+      main: "#ffffff",
+      light: "rgb(255,255,255)",
+      dark: "rgb(178,178,178)",
+      contrastText: "rgba(0, 0, 0, 0.87)",
     },
     secondary: {
       main: "#45a29e",
