@@ -1,11 +1,15 @@
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
-
 import RecipeList from "../../src/components/recipes/RecipeList";
 import { getRecipesByRating } from "../../src/data/recipes";
+import { RECIPE_LIST_TYPE } from "../../src/types";
 
-function LowestRatedRecipes(props: any) {
-  const { recipes } = props;
+interface Props {
+  recipes: RECIPE_LIST_TYPE[];
+}
+
+function LowestRatedRecipes({ recipes }: Props) {
+  const header = "RECIPES";
 
   return (
     <div>
@@ -14,7 +18,7 @@ function LowestRatedRecipes(props: any) {
       </Head>
       <main>
         <Grid container>
-          <RecipeList recipes={recipes} />
+          <RecipeList recipes={recipes} header={header} />
         </Grid>
       </main>
     </div>

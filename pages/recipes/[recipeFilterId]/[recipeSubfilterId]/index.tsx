@@ -1,18 +1,27 @@
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
-
 import RecipeList from "../../../../src/components/recipes/RecipeList";
-
 import { RECIPE_LIST, getFilteredRecipes } from "../../../../src/data/recipes";
+import { RECIPE_LIST_TYPE } from "../../../../src/types";
 
-function FilterRecipePage(props: any) {
-  const { recipes, recipeSubfilterId } = props;
+interface Props {
+  recipes: RECIPE_LIST_TYPE[];
+  recipeSubfilterId: string;
+}
+
+interface Params {
+  recipeFilterId: string;
+  recipeSubfilterId: string;
+}
+
+function FilterRecipePage({ recipes, recipeSubfilterId }: Props) {
   const caseCorrectedSubfilter = recipeSubfilterId.replace(
     /\b\w/g,
     (match: string) => match.toUpperCase()
   );
 
   const title = `${caseCorrectedSubfilter} Recipes • Savry`;
+  const header = "RECIPES";
 
   return (
     <div>
@@ -20,7 +29,7 @@ function FilterRecipePage(props: any) {
         <title>{title}</title>
       </Head>
       <Grid container>
-        <RecipeList recipes={recipes} />
+        <RecipeList recipes={recipes} header={header} />
       </Grid>
     </div>
   );
@@ -50,9 +59,10 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }: any) {
-  const { recipeFilterId, recipeSubfilterId } = params;
-
+export async function getStaticProps({
+  recipeFilterId,
+  recipeSubfilterId,
+}: Params) {
   const recipes = getFilteredRecipes(recipeFilterId, recipeSubfilterId);
 
   return {

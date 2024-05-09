@@ -2,13 +2,13 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
-import CreatorRecipeList from "../../../src/components/creators/CreatorRecipeList";
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import Link from "@mui/material/Link";
 import LinkIcon from "@mui/icons-material/Link";
 import Rating from "@mui/material/Rating";
+import RecipeList from "../../../src/components/recipes/RecipeList";
 import Typography from "@mui/material/Typography";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import { getAllCreators, getCreatorId } from "../../../src/data/creators";
@@ -28,6 +28,7 @@ interface Params {
 
 function CreatorPage({ creatorId, filteredRecipes }: Props) {
   const title = creatorId.name + " • Savry";
+  const header = "All Recipes by Creator";
   const creatorRating = filteredRecipes.reduce(
     (n, { rating }) => n + rating,
     0
@@ -44,7 +45,7 @@ function CreatorPage({ creatorId, filteredRecipes }: Props) {
         <title>{title}</title>
       </Head>
       <Grid item xs={10}>
-        <CreatorRecipeList filteredRecipes={filteredRecipes} />
+        <RecipeList recipes={filteredRecipes} header={header} />
       </Grid>
       <Grid item xs={2}>
         <CreatorCard creatorId={creatorId} rating={creatorAverageRating} />

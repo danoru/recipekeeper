@@ -7,8 +7,8 @@ interface Props {
   recipes: RECIPE_LIST_TYPE[];
 }
 
-function AllRecipes(props: Props) {
-  const { recipes } = props;
+function AllRecipes({ recipes }: Props) {
+  const header = "RECIPES";
 
   return (
     <div>
@@ -17,7 +17,7 @@ function AllRecipes(props: Props) {
       </Head>
       <main>
         <Grid container>
-          <RecipeList recipes={recipes} />
+          <RecipeList recipes={recipes} header={header} />
         </Grid>
       </main>
     </div>

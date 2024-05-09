@@ -2,7 +2,6 @@ import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import RecipeList from "../../src/components/recipes/RecipeList";
-import Typography from "@mui/material/Typography";
 import { getAllUsers } from "../../src/data/users";
 import { RECIPE_LIST_TYPE, USER_LIST_TYPE } from "../../src/types";
 import { getAllRecipes } from "../../src/data/recipes";
@@ -21,7 +20,8 @@ interface Params {
 function UserCooklist(props: Props) {
   const { user, recipes } = props;
   const title = `${user.profile.name}'s Cooklist • Savry`;
-  const count = `YOU WANT TO COOK ${recipes.length} RECIPES`;
+  const header = `${user.profile.name} WANTS TO COOK ${recipes.length} RECIPES`;
+  const style = "overline";
 
   return (
     <div>
@@ -30,20 +30,7 @@ function UserCooklist(props: Props) {
       </Head>
       <Grid container>
         <ProfileLinkBar username={user.username} />
-
-        <Typography
-          variant="overline"
-          sx={{
-            borderBottomWidth: "1px",
-            borderBottomStyle: "solid",
-            borderBottomColor: "theme.palette.secondary",
-            margin: "0 auto",
-            width: "75%",
-          }}
-        >
-          {count}
-        </Typography>
-        <RecipeList recipes={recipes} />
+        <RecipeList recipes={recipes} header={header} style={style} />
       </Grid>
     </div>
   );

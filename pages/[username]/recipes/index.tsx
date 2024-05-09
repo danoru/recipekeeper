@@ -19,6 +19,7 @@ interface Params {
 
 function UserRecipeList({ user, recipes }: Props) {
   const title = `${user.profile.name}'s Recipes • Savry`;
+  const header = "RECIPES";
 
   return (
     <div>
@@ -27,7 +28,7 @@ function UserRecipeList({ user, recipes }: Props) {
       </Head>
       <Grid container>
         <ProfileLinkBar username={user.username} />
-        <RecipeList recipes={recipes} />
+        <RecipeList recipes={recipes} header={header} />
       </Grid>
     </div>
   );

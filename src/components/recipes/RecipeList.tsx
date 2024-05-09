@@ -8,11 +8,28 @@ import Typography from "@mui/material/Typography";
 import { RECIPE_LIST_TYPE } from "../../types";
 
 interface Props {
+  header: string;
   recipes: RECIPE_LIST_TYPE[];
+  style?:
+    | "h1"
+    | "h2"
+    | "h3"
+    | "h4"
+    | "h5"
+    | "h6"
+    | "subtitle1"
+    | "subtitle2"
+    | "body1"
+    | "body2"
+    | "caption"
+    | "button"
+    | "overline"
+    | undefined;
 }
 
-function RecipeList(props: Props) {
-  const { recipes } = props;
+function RecipeList({ header, recipes, style }: Props) {
+  const styledHeader = header.toUpperCase();
+  const typographyStyle = style || "h6";
 
   return (
     <Grid container>
@@ -29,8 +46,8 @@ function RecipeList(props: Props) {
           width: "75%",
         }}
       >
-        <Typography variant="h6" component="div">
-          RECIPES
+        <Typography variant={typographyStyle} component="div">
+          {styledHeader}
         </Typography>
       </Grid>
       <Grid
@@ -47,12 +64,7 @@ function RecipeList(props: Props) {
           <RecipeCard
             key={`card-${i}`}
             name={recipe.name}
-            link={recipe.link}
-            underline="none"
             image={recipe.image}
-            website={recipe.website}
-            instagram={recipe.instagram}
-            youtube={recipe.youtube}
             sx={{
               height: "100%",
               width: "100%",

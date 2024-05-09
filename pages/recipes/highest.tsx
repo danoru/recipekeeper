@@ -4,8 +4,8 @@ import Head from "next/head";
 import RecipeList from "../../src/components/recipes/RecipeList";
 import { getRecipesByRating } from "../../src/data/recipes";
 
-function HighestRatedRecipes(props: any) {
-  const { recipes } = props;
+function HighestRatedRecipes({ recipes }: any) {
+  const header = "RECIPES";
 
   return (
     <div>
@@ -14,7 +14,7 @@ function HighestRatedRecipes(props: any) {
       </Head>
       <main>
         <Grid container>
-          <RecipeList recipes={recipes} />
+          <RecipeList recipes={recipes} header={header} />
         </Grid>
       </main>
     </div>
