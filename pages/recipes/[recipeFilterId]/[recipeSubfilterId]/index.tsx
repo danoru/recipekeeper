@@ -59,10 +59,8 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({
-  recipeFilterId,
-  recipeSubfilterId,
-}: Params) {
+export async function getStaticProps({ params }: { params: Params }) {
+  const { recipeFilterId, recipeSubfilterId } = params;
   const recipes = getFilteredRecipes(recipeFilterId, recipeSubfilterId);
 
   return {
