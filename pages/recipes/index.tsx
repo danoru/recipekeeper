@@ -1,12 +1,11 @@
+import BrowseBar from "../../src/components/recipes/BrowseBar";
+// import CrewPicks from "../../src/components/recipes/CrewPicks";
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
-
-import BrowseBar from "../../src/components/recipes/BrowseBar";
-import CrewPicks from "../../src/components/recipes/CrewPicks";
 import PopCarousel from "../../src/components/recipes/PopCarousel";
-import PopularReviews from "../../src/components/reviews/PopularReviews";
-import PopularReviewers from "../../src/components/reviews/PopularReviewers";
-import RecentReviews from "../../src/components/reviews/RecentReviews";
+// import PopularReviews from "../../src/components/reviews/PopularReviews";
+// import PopularReviewers from "../../src/components/reviews/PopularReviewers";
+// import RecentReviews from "../../src/components/reviews/RecentReviews";
 
 import { getFeaturedRecipes } from "../../src/data/recipes";
 
