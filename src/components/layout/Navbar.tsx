@@ -5,12 +5,13 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import FoodBankIcon from "@mui/icons-material/FoodBank";
 import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
+import LogRecipeButton from "./LogRecipeButton";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
 
 const username = "danoru";
 
@@ -44,7 +45,7 @@ function Navbar() {
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar disableGutters sx={{ justifyContent: "center" }}>
           <Typography
             variant="h6"
             noWrap
@@ -122,9 +123,11 @@ function Navbar() {
               </Button>
             ))}
           </Box>
+          <LogRecipeButton />
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
+
 export default Navbar;
