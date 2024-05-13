@@ -8,7 +8,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import type { AppProps } from "next/app";
 
 import createEmotionCache from "../src/createEmotionCache";
-import Layout from "../src/components/layout/layout";
+import Layout from "../src/components/layout/Layout";
 import theme from "../src/styles/theme";
 
 // Client-side cache, shared for the whole session of the user in the browser.
