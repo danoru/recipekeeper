@@ -4,26 +4,39 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
-import { FormEvent } from "react";
+import * as Yup from "yup";
+import { Formik, Form } from "formik";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 function LoginForm() {
   const router = useRouter();
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+  const initialValues = { username: "", password: "" };
+  const validationSchema = Yup.object({
+    username: Yup.string().required("Username is required."),
+    password: Yup.string().required("Password is required."),
+  });
+
+  async function handleSubmit(
+    values: { username: string; password: string },
+    { setSubmitting, setErrors }: any
+  ) {
     const response = await signIn("credentials", {
-      username: formData.get("username"),
-      password: formData.get("password"),
+      username: values.username,
+      password: values.password,
       redirect: false,
     });
-    console.log({ response });
-    if (!response?.error) {
+
+    if (response?.error) {
+      setErrors({ submit: response.error });
+    } else {
       router.push("/");
       router.refresh();
     }
+
+    setSubmitting(false);
   }
+
   return (
     <Grid container justifyContent="center">
       <Grid item xs={12} sm={8} md={5}>
@@ -35,43 +48,70 @@ function LoginForm() {
             Sign in
           </Typography>
         </Stack> */}
-        <form onSubmit={handleSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="Username"
-            name="username"
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          {/* <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          /> */}
-          <Button type="submit" fullWidth variant="contained" color="primary">
-            Login
-          </Button>
-          <Grid container>
-            <Grid item>
-              <Link href="/register" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
-        </form>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({
+            isSubmitting,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            values,
+          }) => (
+            <Form>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+                autoFocus
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.username}
+                error={touched.username && !!errors.username}
+                helperText={touched.username && errors.username}
+              />
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.password}
+                error={touched.password && !!errors.password}
+                helperText={touched.password && errors.password}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                disabled={isSubmitting}
+              >
+                Login
+              </Button>
+              <Grid container>
+                <Grid item>
+                  <Link href="/register" variant="body2">
+                    {"Don't have an account? Register"}
+                  </Link>
+                </Grid>
+              </Grid>
+            </Form>
+          )}
+        </Formik>
       </Grid>
     </Grid>
   );

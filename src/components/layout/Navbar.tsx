@@ -32,7 +32,7 @@ function getPages(session: any) {
     ];
   } else {
     return [
-      { id: 1, title: "Sign In", link: "/login" },
+      { id: 1, title: "Login", link: "/login" },
       { id: 2, title: "Create Account", link: "/register" },
       { id: 3, title: "Creators", link: "/creators" },
       { id: 4, title: "Recipes", link: "/recipes" },
