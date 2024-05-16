@@ -12,27 +12,42 @@ import MenuIcon from "@mui/icons-material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import { useSession } from "next-auth/react";
 
-const username = "danoru";
-
-const pages = [
-  // { id: 1, title: "Sign In", link: "/sign-in" },
-  // { id: 2, title: "Create Account", link: "/create-account" },
-  {
-    id: 3,
-    title: username,
-    link: `/${username}`,
-  },
-  { id: 4, title: <FoodBankIcon fontSize="large" />, link: "/activity" },
-  { id: 5, title: "Creators", link: "/creators" },
-  { id: 6, title: "Recipes", link: "/recipes" },
-  // { id: 7, title: "Lists", link: "/lists" },
-  { id: 8, title: "Members", link: "/members" },
-  // { id: 9, title: "Journal", link: "/journal" },
-];
+function getPages(session: any) {
+  if (session) {
+    return [
+      {
+        id: 1,
+        title: session.user.username,
+        link: `/${session.user.username}`,
+      },
+      { id: 2, title: <FoodBankIcon fontSize="large" />, link: "/activity" },
+      { id: 3, title: "Creators", link: "/creators" },
+      { id: 4, title: "Recipes", link: "/recipes" },
+      // { id: 5, title: "Lists", link: "/lists" },
+      { id: 6, title: "Members", link: "/members" },
+      // { id: 7, title: "Journal", link: "/journal" },
+      { id: 8, title: "Logout", link: "/api/auth/signout" },
+    ];
+  } else {
+    return [
+      { id: 1, title: "Sign In", link: "/login" },
+      { id: 2, title: "Create Account", link: "/register" },
+      { id: 3, title: "Creators", link: "/creators" },
+      { id: 4, title: "Recipes", link: "/recipes" },
+      // { id: 5, title: "Lists", link: "/lists" },
+      { id: 6, title: "Members", link: "/members" },
+      // { id: 7, title: "Journal", link: "/journal" },
+    ];
+  }
+}
 
 function Navbar() {
+  const { data: session, status } = useSession();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+
+  const pages = getPages(session);
 
   const handleOpenNavMenu = (event: any) => {
     setAnchorElNav(event.currentTarget);

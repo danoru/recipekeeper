@@ -56,3 +56,20 @@ export interface UserDiary {
   date: string;
   hasCookedBefore: boolean;
 }
+
+export interface User {
+  id: string;
+  username: string;
+}
+
+declare module "next-auth" {
+  interface Session {
+    user: User;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    user: User;
+  }
+}
