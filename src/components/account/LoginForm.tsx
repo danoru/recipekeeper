@@ -11,19 +11,20 @@ import { useRouter } from "next/navigation";
 
 function LoginForm() {
   const router = useRouter();
-  const initialValues = { username: "", password: "" };
+  const initialValues = { username: "", password: "", rememberMe: false };
   const validationSchema = Yup.object({
     username: Yup.string().required("Username is required."),
     password: Yup.string().required("Password is required."),
   });
 
   async function handleSubmit(
-    values: { username: string; password: string },
+    values: { username: string; password: string; rememberMe: Boolean },
     { setSubmitting, setErrors }: any
   ) {
     const response = await signIn("credentials", {
       username: values.username,
       password: values.password,
+      remember: values.rememberMe,
       redirect: false,
     });
 
@@ -92,6 +93,17 @@ function LoginForm() {
                 value={values.password}
                 error={touched.password && !!errors.password}
                 helperText={touched.password && errors.password}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={values.rememberMe}
+                    onChange={handleChange}
+                    name="rememberMe"
+                    color="primary"
+                  />
+                }
+                label="Remember Me"
               />
               <Button
                 type="submit"

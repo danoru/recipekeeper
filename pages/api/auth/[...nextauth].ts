@@ -7,6 +7,7 @@ import { User } from "../../../src/types";
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60 * 24 * 7,
   },
   providers: [
     CredentialsProvider({
@@ -15,7 +16,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        // validate data here
         const response = await sql`
         SELECT * FROM users WHERE username=${credentials?.username}`;
         const user = response.rows[0];
