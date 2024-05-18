@@ -2,7 +2,7 @@ import Button from "@mui/material/Button";
 
 function LoggedOutHomePage() {
   return (
-    <main style={{ textAlign: "center" }}>
+    <main style={{ marginTop: "20px", textAlign: "center" }}>
       <div>
         <div>
           <h2>Track recipes you&apos;ve made.</h2>

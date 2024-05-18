@@ -55,6 +55,7 @@ export interface UserDiary {
   comment?: string;
   date: string;
   hasCookedBefore: boolean;
+  username?: string;
 }
 
 export interface User {
