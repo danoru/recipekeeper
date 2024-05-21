@@ -43,7 +43,9 @@ function Members(props: Props) {
                   </Link>
                 </div>
                 <div style={{ width: "25%" }}>
-                  <OutdoorGrillIcon />
+                  <Link href={`/${user.username}/recipes`} underline="none">
+                    <OutdoorGrillIcon />
+                  </Link>
                 </div>
                 <div style={{ width: "25%" }}>
                   <MenuBookIcon />
