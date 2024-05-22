@@ -59,7 +59,7 @@ function PopularRecipeActivity({ recipes, sessionUser }: Props) {
         }}
       >
         <Typography variant="overline" component="div">
-          POPULAR WITH FRIENDS
+          RECIPES POPULAR WITH FRIENDS
         </Typography>
       </Grid>
       <Grid

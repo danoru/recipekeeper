@@ -59,7 +59,7 @@ function FriendRecipeActivity({ recipes, sessionUser }: Props) {
         }}
       >
         <Typography variant="overline" component="div">
-          NEW FROM FRIENDS
+          NEW RECIPES FROM FRIENDS
         </Typography>
       </Grid>
       <Grid
