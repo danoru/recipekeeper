@@ -6,7 +6,6 @@ export const USER_LIST: USER_LIST_TYPE[] = [
     profile: {
       name: "Daniel",
       email: "",
-      password: "",
       image: "",
       bio: "This is where my bio would go—if I had one!",
       location: "Los Angeles, CA",
@@ -65,6 +64,10 @@ export const USER_LIST: USER_LIST_TYPE[] = [
       ],
       creators: ["littlefatboy", "budgetbytes", "koreanbapsang", "isabeleats"],
     },
+    liked: {
+      recipes: ["Taiwanese American Chicken Pot Pie"],
+      creators: ["littlefatboy"],
+    },
     following: ["chiquitabananna", "boeboekitty"],
   },
   {
@@ -72,7 +75,6 @@ export const USER_LIST: USER_LIST_TYPE[] = [
     profile: {
       name: "Anna",
       email: "",
-      password: "",
       image: "",
       bio: "",
       location: "",
@@ -87,38 +89,6 @@ export const USER_LIST: USER_LIST_TYPE[] = [
           "This was a hit with my wife and daughter, but I think it could have used a bit more seasoning for my taste.",
         date: "2024-05-01",
         hasCookedBefore: false,
-      },
-      {
-        recipe: "Cajun Sausage and Rice Skillet",
-        rating: 3.5,
-        comment:
-          "This is a good, quick weeknight meal. For my family's preferences, I think I will add some extra vegetables to the recipe next time as it was somewhat one note in flavor and texture.",
-        date: "2024-04-26",
-        hasCookedBefore: true,
-      },
-      {
-        recipe: "Black Pepper Stir Fried Udon",
-        rating: 4,
-        comment:
-          "I really enjoyed the depth of flavor in this dish. I added mushrooms in place of a protein (though this calls for neither) and it was very good.",
-        date: "2024-04-24",
-        hasCookedBefore: false,
-      },
-      {
-        recipe: "Chicken Pozole Verde",
-        rating: 5,
-        comment:
-          "My wife loves this meal, it is one of her favorite things that I make. The only change I make is that sometimes I will roast the veggies before they are added for an extra depth of flavor.",
-        date: "2024-04-10",
-        hasCookedBefore: true,
-      },
-      {
-        recipe: "Taiwanese American Chicken Pot Pie",
-        rating: 5,
-        comment:
-          "Made this recipe for some friends and it was a big hit! Just make sure you have a big enough cast iron or your fire alarm might go off.",
-        date: "2024-04-15",
-        hasCookedBefore: true,
       },
     ],
     favorites: {
@@ -135,6 +105,10 @@ export const USER_LIST: USER_LIST_TYPE[] = [
         "justonecookbook",
       ],
     },
+    liked: {
+      recipes: ["Chicken Pozole Verde"],
+      creators: ["yeungmancooking"],
+    },
     following: ["danoru", "boeboekitty"],
   },
   {
@@ -142,54 +116,12 @@ export const USER_LIST: USER_LIST_TYPE[] = [
     profile: {
       name: "Boe",
       email: "",
-      password: "",
       image: "",
       bio: "",
       location: "",
       joinDate: "2024-04-10",
     },
-    diary: [
-      {
-        recipe: "Taco Soup",
-        rating: 4,
-        comment:
-          "This was a hit with my wife and daughter, but I think it could have used a bit more seasoning for my taste.",
-        date: "2024-05-01",
-        hasCookedBefore: false,
-      },
-      {
-        recipe: "Cajun Sausage and Rice Skillet",
-        rating: 3.5,
-        comment:
-          "This is a good, quick weeknight meal. For my family's preferences, I think I will add some extra vegetables to the recipe next time as it was somewhat one note in flavor and texture.",
-        date: "2024-04-26",
-        hasCookedBefore: true,
-      },
-      {
-        recipe: "Black Pepper Stir Fried Udon",
-        rating: 4,
-        comment:
-          "I really enjoyed the depth of flavor in this dish. I added mushrooms in place of a protein (though this calls for neither) and it was very good.",
-        date: "2024-04-24",
-        hasCookedBefore: false,
-      },
-      {
-        recipe: "Chicken Pozole Verde",
-        rating: 5,
-        comment:
-          "My wife loves this meal, it is one of her favorite things that I make. The only change I make is that sometimes I will roast the veggies before they are added for an extra depth of flavor.",
-        date: "2024-04-10",
-        hasCookedBefore: true,
-      },
-      {
-        recipe: "Taiwanese American Chicken Pot Pie",
-        rating: 5,
-        comment:
-          "Made this recipe for some friends and it was a big hit! Just make sure you have a big enough cast iron or your fire alarm might go off.",
-        date: "2024-04-15",
-        hasCookedBefore: true,
-      },
-    ],
+    diary: [],
     favorites: {
       recipes: [
         "Spicy Creamy Mushroom Pasta",
@@ -216,31 +148,4 @@ export function findUserByUsername(
   username: string
 ): USER_LIST_TYPE | undefined {
   return USER_LIST.find((user) => user.username === username);
-}
-
-export function getFollowingDiaryEntries(followingList: string[]): any[] {
-  const diaryEntries: UserDiary[] = [];
-
-  followingList.forEach((followedUsername) => {
-    const followedUser = findUserByUsername(followedUsername);
-    if (followedUser && followedUser.diary) {
-      followedUser.diary.forEach((entry) => {
-        diaryEntries.push({
-          ...entry,
-          username: followedUsername,
-        });
-      });
-    }
-  });
-
-  return diaryEntries;
-}
-
-export function getRecentDiaryEntries(
-  diaryEntries: any[],
-  numberOfEntries: number
-): any[] {
-  return diaryEntries
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, numberOfEntries);
 }

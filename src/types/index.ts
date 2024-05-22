@@ -29,6 +29,7 @@ export interface USER_LIST_TYPE {
   cooklist?: string[];
   diary?: UserDiary[];
   favorites?: UserFavorites;
+  liked?: UserLikes;
   followers?: string[];
   following?: string[];
 }
@@ -36,7 +37,6 @@ export interface USER_LIST_TYPE {
 interface UserProfile {
   name: string;
   email?: string;
-  password?: string;
   image?: string;
   bio: string;
   location: string;
@@ -45,6 +45,11 @@ interface UserProfile {
 }
 
 interface UserFavorites {
+  recipes: string[];
+  creators: string[];
+}
+
+interface UserLikes {
   recipes: string[];
   creators: string[];
 }

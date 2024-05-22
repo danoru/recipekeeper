@@ -3,10 +3,8 @@ import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
-import moment from "moment";
-import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
-import { UserDiary, RECIPE_LIST_TYPE, USER_LIST_TYPE } from "../../types";
+import { RECIPE_LIST_TYPE, USER_LIST_TYPE } from "../../types";
 import { findUserByUsername } from "../../data/users";
 
 interface Props {
@@ -14,33 +12,35 @@ interface Props {
   sessionUser: USER_LIST_TYPE;
 }
 
-function FriendRecipeActivity({ recipes, sessionUser }: Props) {
-  function getFollowingDiaryEntries(followingList: string[]) {
-    let allDiaryEntries: UserDiary[] = [];
+function PopularRecipeActivity({ recipes, sessionUser }: Props) {
+  function getTopLikedRecipes(followingList: string[]) {
+    const recipeCount: { [key: string]: number } = {};
 
     followingList.forEach((username) => {
       const user = findUserByUsername(username);
-      if (user && user.diary) {
-        const userEntries = user.diary.map((entry) => ({ ...entry, username }));
-        allDiaryEntries = allDiaryEntries.concat(userEntries);
+      if (user && user.liked && user.liked.recipes) {
+        user.liked.recipes.forEach((recipe) => {
+          if (recipeCount[recipe]) {
+            recipeCount[recipe]++;
+          } else {
+            recipeCount[recipe] = 1;
+          }
+        });
       }
     });
 
-    return allDiaryEntries;
+    const sortedRecipes = Object.entries(recipeCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([recipe]) => recipe);
+    return sortedRecipes;
   }
 
-  function getRecentDiaryEntries(allDiaryEntries: UserDiary[]) {
-    return allDiaryEntries
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 5);
-  }
-
-  let recentEntries: UserDiary[] = [];
+  let topLikedRecipes: string[] = [];
 
   if (sessionUser) {
     const followingList = sessionUser.following ?? [];
-    const allDiaryEntries = getFollowingDiaryEntries(followingList);
-    recentEntries = getRecentDiaryEntries(allDiaryEntries);
+    topLikedRecipes = getTopLikedRecipes(followingList);
   }
 
   return (
@@ -59,7 +59,7 @@ function FriendRecipeActivity({ recipes, sessionUser }: Props) {
         }}
       >
         <Typography variant="overline" component="div">
-          NEW FROM FRIENDS
+          POPULAR WITH FRIENDS
         </Typography>
       </Grid>
       <Grid
@@ -72,17 +72,14 @@ function FriendRecipeActivity({ recipes, sessionUser }: Props) {
           maxWidth: "75%",
         }}
       >
-        {recentEntries?.map((entry: UserDiary, i: number) => {
-          const recipe = recipes.find((r) => r.name === entry.recipe);
+        {topLikedRecipes.map((recipeName, i) => {
+          const recipe = recipes.find((r) => r.name === recipeName);
           if (!recipe) return null;
           return (
             <RecipeCard
               key={`card-${i}`}
               name={recipe.name}
               image={recipe.image}
-              rating={entry.rating}
-              date={entry.date}
-              username={entry.username}
               sx={{
                 height: "100%",
                 width: "100%",
@@ -102,7 +99,7 @@ function RecipeCard(props: any) {
       <Link href={recipeSlug} underline="none">
         <Card
           sx={{
-            height: "300px",
+            height: "225px",
             width: "250px",
             cursor: "pointer",
           }}
@@ -113,15 +110,8 @@ function RecipeCard(props: any) {
             title={props.name}
           />
           <CardContent>
-            <Typography variant="body1" component="div">
+            <Typography variant="h6" component="div">
               {props.name}
-            </Typography>
-            <Typography variant="body2" component="div">
-              {props.username}
-            </Typography>
-            <Rating value={props.rating} size="small" readOnly />
-            <Typography variant="body2" component="div">
-              {moment(props.date).format("MMM DD")}
             </Typography>
           </CardContent>
         </Card>
@@ -130,4 +120,4 @@ function RecipeCard(props: any) {
   );
 }
 
-export default FriendRecipeActivity;
+export default PopularRecipeActivity;

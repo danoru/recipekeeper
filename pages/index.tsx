@@ -3,14 +3,9 @@ import LoggedInHomePage from "../src/components/home/LoggedInHomePage";
 import LoggedOutHomePage from "../src/components/home/LoggedOutHomePage";
 import { getSession } from "next-auth/react";
 import { getAllRecipes } from "../src/data/recipes";
-import {
-  findUserByUsername,
-  getAllUsers,
-  getFollowingDiaryEntries,
-  getRecentDiaryEntries,
-} from "../src/data/users";
+import { findUserByUsername } from "../src/data/users";
 
-function Home({ recipes, session, recentEntries }: any) {
+function Home({ recipes, session, recentEntries, sessionUser }: any) {
   const username = session?.user?.username;
 
   return (
@@ -22,9 +17,9 @@ function Home({ recipes, session, recentEntries }: any) {
       </Head>
       {session ? (
         <LoggedInHomePage
-          recentEntries={recentEntries}
           recipes={recipes}
           username={username}
+          sessionUser={sessionUser}
         />
       ) : (
         <LoggedOutHomePage />
@@ -36,31 +31,18 @@ function Home({ recipes, session, recentEntries }: any) {
 export async function getServerSideProps(context: any) {
   const session = await getSession(context);
   const recipes = getAllRecipes();
-  const users = getAllUsers();
-
-  let recentEntries = [];
+  let sessionUser = null;
 
   if (session) {
     const sessionUsername = session.user.username;
-    const sessionUser = findUserByUsername(sessionUsername);
-
-    if (sessionUser) {
-      const followingList = sessionUser.following ?? [];
-      const allDiaryEntries = getFollowingDiaryEntries(followingList);
-      recentEntries = getRecentDiaryEntries(allDiaryEntries, 5).map(
-        (entry) => ({
-          ...entry,
-          username: entry.username,
-        })
-      );
-    }
+    sessionUser = findUserByUsername(sessionUsername);
   }
 
   return {
     props: {
-      recentEntries,
       recipes,
       session,
+      sessionUser,
     },
   };
 }
