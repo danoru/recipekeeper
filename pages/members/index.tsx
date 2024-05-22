@@ -16,6 +16,7 @@ interface Props {
 
 function Members(props: Props) {
   const { users } = props;
+  const filteredUsers = users.filter((user) => user.username !== "guest");
 
   return (
     <div>
@@ -31,7 +32,7 @@ function Members(props: Props) {
             spacing={1}
             divider={<Divider orientation="horizontal" flexItem />}
           >
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <Stack
                 key={user.username}
                 direction="row"

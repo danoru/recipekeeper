@@ -38,8 +38,8 @@ interface UserProfile {
   name: string;
   email?: string;
   image?: string;
-  bio: string;
-  location: string;
+  bio?: string;
+  location?: string;
   badge?: string;
   joinDate: string;
 }
