@@ -279,12 +279,23 @@ export const USER_LIST: USER_LIST_TYPE[] = [
         "joshuaweismann",
       ],
     },
-    following: ["danoru", "chiquitabananna", "boeboekitty"],
+    following: ["danoru", "chiquitabananna", "boeboekitty", "mallorylaabs"],
   },
 ];
 
 export function getAllUsers() {
-  return USER_LIST;
+  return USER_LIST.sort((a, b) => {
+    const nameA = a.username.toUpperCase();
+    const nameB = b.username.toUpperCase();
+
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  });
 }
 
 export function findUserByUsername(

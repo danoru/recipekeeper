@@ -93,15 +93,10 @@ function PopCarousel({ items }: Props) {
                     name={item.name}
                     creator={item.creator}
                     link={item.link}
-                    underline="none"
                     description={item.description}
                     image={item.image}
-                    category={item.category}
-                    cuisine={item.cuisine}
-                    course={item.course}
-                    method={item.method}
-                    diet={item.diet}
                     value={item.rating}
+                    underline="none"
                     sx={{
                       width: "100%",
                       height: "100%",

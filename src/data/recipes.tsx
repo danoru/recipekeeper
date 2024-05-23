@@ -414,18 +414,53 @@ export function getRecipesByRating(sort: string) {
 }
 
 export function getFeaturedRecipes() {
-  return RECIPE_LIST.filter((recipe) => recipe.rating === 5);
+  return RECIPE_LIST.filter((recipe) => recipe.rating === 5).sort((a, b) => {
+    const nameA = a.name.toUpperCase();
+    const nameB = b.name.toUpperCase();
+
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  });
 }
 
 export function getFilteredRecipes(filterId: string, subfilterId: string) {
   return RECIPE_LIST.filter(
     (recipe: any) =>
       recipe[filterId].replace(/\s/g, "").toLowerCase() === subfilterId
-  );
+  ).sort((a, b) => {
+    const nameA = a.name.toUpperCase();
+    const nameB = b.name.toUpperCase();
+
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  });
 }
 
 export function getRecipesByCreator(creatorName: string) {
-  return RECIPE_LIST.filter((recipe) => recipe.creatorId === creatorName);
+  return RECIPE_LIST.filter((recipe) => recipe.creatorId === creatorName).sort(
+    (a, b) => {
+      const nameA = a.name.toUpperCase();
+      const nameB = b.name.toUpperCase();
+
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    }
+  );
 }
 
 export function getRecipeId(recipeId: string) {
