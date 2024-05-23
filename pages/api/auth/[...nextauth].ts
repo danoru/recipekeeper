@@ -9,6 +9,10 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 60 * 60 * 24 * 7,
   },
+  pages: {
+    error: "/404",
+    signIn: "/login",
+  },
   providers: [
     CredentialsProvider({
       credentials: {

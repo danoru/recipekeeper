@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
 import LinkIcon from "@mui/icons-material/Link";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -71,6 +72,11 @@ function ProfileStatBar({ avatarSize, user }: Props) {
               "aria-labelledby": "basic-button",
             }}
           >
+            <MenuItem>
+              <Link href="/settings" underline="none">
+                Settings
+              </Link>
+            </MenuItem>
             <MenuItem onClick={copyUrlToClipboard}>
               <LinkIcon /> &nbsp; Copy profile link
             </MenuItem>

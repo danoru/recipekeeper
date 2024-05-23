@@ -18,6 +18,7 @@ import {
   RECIPE_LIST_TYPE,
   USER_LIST_TYPE,
 } from "../../src/types";
+import { getSession } from "next-auth/react";
 
 interface Props {
   user: USER_LIST_TYPE;
@@ -25,6 +26,7 @@ interface Props {
   creators: CREATOR_LIST_TYPE[];
   favoriteRecipes: RECIPE_LIST_TYPE[];
   recentRecipes: RECIPE_LIST_TYPE[];
+  session: any;
 }
 
 interface Params {
@@ -39,6 +41,7 @@ function UserPage({
   creators,
   favoriteRecipes,
   recentRecipes,
+  session,
 }: Props) {
   const title = `${user.profile.name}'s Profile • Savry`;
   const avatarSize = "56px";
