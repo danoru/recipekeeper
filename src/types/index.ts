@@ -3,8 +3,8 @@ export interface CREATOR_LIST_TYPE {
   link: string;
   image: string;
   website: string;
-  instagram: string;
-  youtube: string;
+  instagram?: string;
+  youtube?: string;
   isFeatured: Boolean;
 }
 export interface RECIPE_LIST_TYPE {

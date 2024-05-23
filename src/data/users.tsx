@@ -79,7 +79,7 @@ export const USER_LIST: USER_LIST_TYPE[] = [
         "joshuaweismann",
       ],
     },
-    following: ["chiquitabananna", "boeboekitty"],
+    following: ["chiquitabananna", "boeboekitty", "mallorylaabs"],
   },
   {
     username: "chiquitabananna",
@@ -92,16 +92,6 @@ export const USER_LIST: USER_LIST_TYPE[] = [
       badge: "Patron",
       joinDate: "2024-02-24",
     },
-    diary: [
-      {
-        recipe: "Taco Soup",
-        rating: 4,
-        comment:
-          "This was a hit with my wife and daughter, but I think it could have used a bit more seasoning for my taste.",
-        date: "2024-05-01",
-        hasCookedBefore: false,
-      },
-    ],
     favorites: {
       recipes: [
         "Chicken Pozole Verde",
@@ -131,7 +121,7 @@ export const USER_LIST: USER_LIST_TYPE[] = [
         "littlefatboy",
       ],
     },
-    following: ["danoru", "boeboekitty"],
+    following: ["danoru", "boeboekitty", "mallorylaabs"],
   },
   {
     username: "boeboekitty",
@@ -143,7 +133,14 @@ export const USER_LIST: USER_LIST_TYPE[] = [
       location: "",
       joinDate: "2024-04-10",
     },
-    diary: [],
+    diary: [
+      {
+        recipe: "Easy American Goulash",
+        rating: 5,
+        date: "2024-05-19",
+        hasCookedBefore: true,
+      },
+    ],
     favorites: {
       recipes: [
         "Spicy Creamy Mushroom Pasta",
@@ -173,6 +170,41 @@ export const USER_LIST: USER_LIST_TYPE[] = [
       ],
     },
     following: ["chiquitabananna", "danoru"],
+  },
+  {
+    username: "mallorylaabs",
+    profile: {
+      name: "Mallory",
+      joinDate: "2024-05-22",
+    },
+    diary: [
+      {
+        recipe: "Creamy Roasted Red Pepper Pasta",
+        rating: 4,
+        date: "2024-05-21",
+        hasCookedBefore: true,
+      },
+      {
+        recipe: "Dressed Up French Style Flatbread from Trader Joe's 2 Ways",
+        rating: 5,
+        date: "2024-05-14",
+        hasCookedBefore: false,
+      },
+    ],
+    favorites: {
+      recipes: [
+        "One Pan Mango and Lime Coconut Chicken",
+        "Tender Chicken and Broccoli",
+        "Air Fryer Taiwanese Popcorn Chicken",
+        "Dairy-Free Marry Me Chicken",
+      ],
+      creators: ["cafemaddy", "cjeats", "oliviaadriance", "emthenutrionist"],
+    },
+    liked: {
+      recipes: ["Mango Lime Coconut Chicken", "Tender Chicken and Broccoli"],
+      creators: ["cafemaddy", "cjeats", "oliviaadriance", "emthenutrionist"],
+    },
+    following: ["danoru", "chiquitabananna", "boeboekitty"],
   },
   {
     username: "guest",

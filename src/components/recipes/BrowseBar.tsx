@@ -112,6 +112,9 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="method-label">Method</InputLabel>
           <Select labelId="method-label" id="method" value="" label="method">
+            <Link href="/recipes/method/airfryer" underline="none">
+              <MenuItem value="air-fryer">Air Fryer</MenuItem>
+            </Link>
             <Link href="/recipes/method/onepot" underline="none">
               <MenuItem value="one-pot">One Pot</MenuItem>
             </Link>
@@ -133,6 +136,9 @@ function BrowseBar() {
             </Link>
             <Link href="/recipes/diet/glutenfree" underline="none">
               <MenuItem value="gluten-free">Gluten Free</MenuItem>
+            </Link>
+            <Link href="/recipes/diet/paleo" underline="none">
+              <MenuItem value="paleo">Paleo</MenuItem>
             </Link>
             <Link href="/recipes/diet/vegan" underline="none">
               <MenuItem value="vegan">Vegan</MenuItem>

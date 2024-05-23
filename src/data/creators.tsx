@@ -121,6 +121,25 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     isFeatured: false,
   },
   {
+    name: "The Good Bite",
+    link: "thegoodbite",
+    image:
+      "https://www.thegoodbite.co.uk/wp-content/uploads/2020/10/WhatsApp-Image-2020-08-14-at-12.21.22.jpeg",
+    website: "https://www.thegoodbite.co.uk/",
+    instagram: "https://www.instagram.com/thegoodbite/",
+    isFeatured: false,
+  },
+  {
+    name: "Trader Joe's Five Items or Less",
+    link: "traderjoesfiveitemsorless",
+    image:
+      "https://traderjoes5itemsorless.com/wp-content/uploads/2022/07/sidebar-image.jpg",
+    website: "https://traderjoes5itemsorless.com/",
+    instagram: "https://www.instagram.com/traderjoes5itemsorless/",
+    youtube: "https://www.youtube.com/@thegoodbite9270",
+    isFeatured: false,
+  },
+  {
     name: "Wil Yeung of Yeung Man Cooking",
     link: "yeungmancooking",
     image:
@@ -129,6 +148,55 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     instagram: "https://www.instagram.com/yeungmancooking/",
     youtube: "https://www.youtube.com/@YEUNGMANCOOKING",
     isFeatured: true,
+  },
+  {
+    name: "Cafe Maddy",
+    link: "cafemaddy",
+    image:
+      "https://images.squarespace-cdn.com/content/v1/5ea23fb05a9d5e5bf1c24291/1588457654277-S2LCLNAN9Q16K645IF0Q/KakaoTalk_Photo_2020-04-30-13-06-06.jpeg?format=2500w",
+    website: "https://www.cafemaddy.com/",
+    instagram: "https://www.instagram.com/cafemaddy",
+    youtube: "https://www.youtube.com/@CafeMaddy",
+    isFeatured: false,
+  },
+  {
+    name: "Olivia Adriance",
+    link: "oliviaadriance",
+    image:
+      "https://oliviaadriance.com/wp-content/uploads/2023/12/Olivia_Adriance_LIfestly_Book_20-copy.jpg.webp",
+    website: "https://oliviaadriance.com/",
+    instagram: "https://www.instagram.com/olivia.adriance/",
+    youtube: "https://www.youtube.com/@oliviaadriance",
+    isFeatured: false,
+  },
+  {
+    name: "CJ Eats",
+    link: "cjeats",
+    image: "https://cjeatsrecipes.com/wp-content/uploads/2022/04/CJ.webp",
+    website: "https://cjeatsrecipes.com/",
+    instagram: "https://www.instagram.com/cj.eats_/",
+    youtube: "https://www.youtube.com/cjeats",
+    isFeatured: false,
+  },
+  {
+    name: "Smelly Lunchbox",
+    link: "smellylunchbox",
+    image:
+      "https://smellylunchbox.com/wp-content/uploads/2023/07/prof-pic-300x300.webp",
+    website: "https://smellylunchbox.com/",
+    instagram: "https://www.instagram.com/smelly.lunchbox/",
+    youtube: "https://www.youtube.com/@smelly.lunchbox",
+    isFeatured: false,
+  },
+  {
+    name: "Em the Nutrionist",
+    link: "emthenutrionist",
+    image:
+      "https://images.squarespace-cdn.com/content/v1/5e4568acaa27976632444349/1632398240985-8VR607FBAWF669Z29T6I/IMG_1021.JPG",
+    website: "https://emilyenglish.com/",
+    instagram: "https://www.instagram.com/emthenutrionist/",
+    youtube: "https://www.youtube.com/@Emily.english",
+    isFeatured: false,
   },
 ];
 
