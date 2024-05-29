@@ -48,13 +48,6 @@ function RecipePage({ recipe }: { recipe: any }) {
             <strong>Ratings:</strong> {rating}/5 Stars based on {recipe.reviews}{" "}
             Reviews
           </Typography>
-          <Typography>
-            View the{" "}
-            <Link href={recipe.link} underline="none">
-              Recipe
-            </Link>
-            .
-          </Typography>
         </div>
         <RecipeActionBar recipe={recipe} />
       </Stack>

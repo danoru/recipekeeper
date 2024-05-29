@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/FavoriteOutlined";
@@ -17,6 +19,18 @@ interface Props {
 }
 
 function RecipeActionBar({ recipe }: Props) {
+  const [copied, setCopied] = useState(false);
+  const copyUrlToClipboard = () => {
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy:", err);
+      });
+  };
   return (
     <Paper sx={{ borderRadius: "1%", width: "15%" }}>
       <Stack direction="row" justifyContent="center">
@@ -63,12 +77,18 @@ function RecipeActionBar({ recipe }: Props) {
         </Typography>
       </Link>
       <Divider />
-      <Typography
-        variant="subtitle1"
-        style={{ padding: "1vh 0", textAlign: "center" }}
+      <Button
+        fullWidth
+        onClick={copyUrlToClipboard}
+        sx={{
+          color: "text.primary",
+          padding: "1vh 0",
+          textAlign: "center",
+          textTransform: "none",
+        }}
       >
-        Share
-      </Typography>
+        <Typography variant="subtitle1">Share</Typography>
+      </Button>
     </Paper>
   );
 }
