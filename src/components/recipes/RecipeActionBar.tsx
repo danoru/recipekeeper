@@ -1,6 +1,7 @@
 import Divider from "@mui/material/Divider";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/FavoriteOutlined";
+import Link from "@mui/material/Link";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import MenuBookTwoToneIcon from "@mui/icons-material/MenuBookTwoTone";
 import Paper from "@mui/material/Paper";
@@ -9,8 +10,13 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import OutdoorGrillIcon from "@mui/icons-material/OutdoorGrill";
 import OutdoorGrillOutlinedIcon from "@mui/icons-material/OutdoorGrillOutlined";
+import { RECIPE_LIST_TYPE } from "../../types";
 
-function RecipeActionBar() {
+interface Props {
+  recipe: RECIPE_LIST_TYPE;
+}
+
+function RecipeActionBar({ recipe }: Props) {
   return (
     <Paper sx={{ borderRadius: "1%", width: "15%" }}>
       <Stack direction="row" justifyContent="center">
@@ -47,12 +53,15 @@ function RecipeActionBar() {
         Add to Lists
       </Typography>
       <Divider />
-      <Typography
-        variant="subtitle1"
-        style={{ padding: "1vh 0", textAlign: "center" }}
-      >
-        View Recipe
-      </Typography>
+      <Link href={recipe.link} underline="none">
+        <Typography
+          variant="subtitle1"
+          style={{ padding: "1vh 0", textAlign: "center" }}
+          color="text.primary"
+        >
+          View Recipe
+        </Typography>
+      </Link>
       <Divider />
       <Typography
         variant="subtitle1"

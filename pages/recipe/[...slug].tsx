@@ -56,7 +56,7 @@ function RecipePage({ recipe }: { recipe: any }) {
             .
           </Typography>
         </div>
-        <RecipeActionBar />
+        <RecipeActionBar recipe={recipe} />
       </Stack>
     </div>
   );
