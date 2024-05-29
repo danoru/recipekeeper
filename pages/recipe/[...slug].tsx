@@ -1,10 +1,10 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Rating from "@mui/material/Rating";
+import RecipeActionBar from "../../src/components/recipes/RecipeActionBar";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-
 import { getAllRecipes, getRecipeId } from "../../src/data/recipes";
 
 interface Params {
@@ -24,16 +24,18 @@ function RecipePage({ recipe }: { recipe: any }) {
         <meta name="description" content="Created with NextJS" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Grid container>
-        <Grid item xs={2}>
-          <Image
-            src={recipe.image}
-            height="300"
-            width="235"
-            alt={recipe.name}
-          />
-        </Grid>
-        <Grid item xs={8}>
+      <Stack
+        direction="row"
+        sx={{ justifyContent: "center", marginTop: "2vh" }}
+      >
+        <Image
+          src={recipe.image}
+          height="300"
+          width="235"
+          alt={recipe.name}
+          style={{ borderRadius: "5%", marginRight: "2vw" }}
+        />
+        <div style={{ maxWidth: "50%", marginRight: "2vw" }}>
           <Typography variant="h6">{recipe.name}</Typography>
           <Typography variant="body1">
             by{" "}
@@ -53,8 +55,9 @@ function RecipePage({ recipe }: { recipe: any }) {
             </Link>
             .
           </Typography>
-        </Grid>
-      </Grid>
+        </div>
+        <RecipeActionBar />
+      </Stack>
     </div>
   );
 }
