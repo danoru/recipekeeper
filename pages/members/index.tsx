@@ -1,4 +1,5 @@
 import Add from "@mui/icons-material/Add";
+import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import Grid from "@mui/material/Grid";
@@ -7,6 +8,7 @@ import Link from "@mui/material/Link";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import OutdoorGrillIcon from "@mui/icons-material/OutdoorGrill";
 import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
 import { getAllUsers } from "../../src/data/users";
 import { USER_LIST_TYPE } from "../../src/types";
 
@@ -23,7 +25,7 @@ function Members(props: Props) {
       <Head>
         <title>Members • Savry</title>
       </Head>
-      <Grid container>
+      <Grid container justifyContent="center">
         <Grid item sx={{ textAlign: "center" }} xs={12}>
           <h2>Food lovers, critics and friends — find popular members.</h2>
         </Grid>
@@ -45,17 +47,38 @@ function Members(props: Props) {
                 </div>
                 <div style={{ width: "25%" }}>
                   <Link href={`/${user.username}/recipes`} underline="none">
-                    <OutdoorGrillIcon />
+                    <Tooltip
+                      title={`${user.username}'s Recipes`}
+                      placement="top-start"
+                    >
+                      <OutdoorGrillIcon />
+                    </Tooltip>
                   </Link>
                 </div>
                 <div style={{ width: "25%" }}>
-                  <MenuBookIcon />
+                  <Link href={`/${user.username}/cooklist`} underline="none">
+                    <Tooltip
+                      title={`${user.username}'s Cooklist`}
+                      placement="top-start"
+                    >
+                      <MenuBookIcon />
+                    </Tooltip>
+                  </Link>
                 </div>
                 <div style={{ width: "25%" }}>
-                  <FavoriteIcon />
+                  <Link href={`/${user.username}/likes`} underline="none">
+                    <Tooltip
+                      title={`${user.username}'s Likes`}
+                      placement="top-start"
+                    >
+                      <FavoriteIcon />
+                    </Tooltip>
+                  </Link>
                 </div>
                 <div style={{ width: "25%" }}>
-                  <Add />
+                  <Button disabled>
+                    <Add />
+                  </Button>
                 </div>
               </Stack>
             ))}
