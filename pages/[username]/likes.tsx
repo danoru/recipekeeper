@@ -61,7 +61,7 @@ export async function getStaticProps({ params }: Params) {
   const { username } = params;
   const user = getAllUsers().find((user) => user.username === username);
   const creators = getAllCreators().filter((creator) =>
-    user?.liked?.creators?.includes(creator.name)
+    user?.liked?.creators?.includes(creator.link)
   );
   const recipes = getAllRecipes().filter((recipe) =>
     user?.liked?.recipes?.includes(recipe.name)
