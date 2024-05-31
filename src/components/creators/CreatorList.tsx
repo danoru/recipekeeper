@@ -9,9 +9,27 @@ import { CREATOR_LIST_TYPE } from "../../types";
 
 interface Props {
   creators: CREATOR_LIST_TYPE[];
+  header: string;
+  style?:
+    | "h1"
+    | "h2"
+    | "h3"
+    | "h4"
+    | "h5"
+    | "h6"
+    | "subtitle1"
+    | "subtitle2"
+    | "body1"
+    | "body2"
+    | "caption"
+    | "button"
+    | "overline"
+    | undefined;
 }
 function CreatorList(props: Props) {
-  const { creators } = props;
+  const { creators, header, style } = props;
+  const styledHeader = header.toUpperCase();
+  const typographyStyle = style || "h6";
 
   return (
     <Grid container>
@@ -28,8 +46,8 @@ function CreatorList(props: Props) {
           width: "75%",
         }}
       >
-        <Typography variant="h6" component="div">
-          ALL CREATORS
+        <Typography variant={typographyStyle} component="div">
+          {styledHeader}
         </Typography>
       </Grid>
       <Grid

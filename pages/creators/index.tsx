@@ -11,6 +11,8 @@ interface Props {
 
 function Creators(props: Props) {
   const { creators, featured } = props;
+  const header = "All Creators";
+  const style = "h6";
 
   return (
     <div>
@@ -18,7 +20,7 @@ function Creators(props: Props) {
         <title>Creators • Savry</title>
       </Head>
       <CreatorCarousel creators={featured} />
-      <CreatorList creators={creators} />
+      <CreatorList creators={creators} header={header} style={style} />
     </div>
   );
 }
