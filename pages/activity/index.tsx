@@ -6,19 +6,43 @@ import moment from "moment";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import Rating from "@mui/material/Rating";
 import Stack from "@mui/material/Stack";
-import { getAllUsers } from "../../src/data/users";
-import { USER_LIST_TYPE } from "../../src/types";
+import { findUserByUsername } from "../../src/data/users";
+import { getSession } from "next-auth/react";
+import { getAllRecipes } from "../../src/data/recipes";
+import { RECIPE_LIST_TYPE, USER_LIST_TYPE, UserDiary } from "../../src/types";
 
 interface Props {
-  users: USER_LIST_TYPE[];
+  recipes: RECIPE_LIST_TYPE[];
+  session: any;
+  sessionUser: USER_LIST_TYPE;
 }
 
-function Activity(props: Props) {
-  const { users } = props;
-  const user = users[0];
-  const title = `${users[0].username}'s Activity Stream`;
-  const diaryEntries = users[0].diary;
+function Activity({ session, sessionUser, recipes }: Props) {
+  const username = session?.user.username;
+  const title = `${username}'s Activity Stream`;
   const avatarSize = "56px";
+
+  function getDiaryEntries(followingList: string[]) {
+    let allDiaryEntries: UserDiary[] = [];
+
+    followingList.forEach((username) => {
+      const user = findUserByUsername(username);
+      if (user && user.diary) {
+        const userEntries = user.diary.map((entry) => ({ ...entry, username }));
+        allDiaryEntries = allDiaryEntries.concat(userEntries);
+      }
+    });
+
+    return allDiaryEntries;
+  }
+
+  let diaryEntries: UserDiary[] = [];
+
+  if (sessionUser) {
+    const followingList = sessionUser.following ?? [];
+    const selfIncludedFollowingList = [...followingList, sessionUser.username];
+    diaryEntries = getDiaryEntries(selfIncludedFollowingList);
+  }
 
   return (
     <div>
@@ -27,60 +51,69 @@ function Activity(props: Props) {
       </Head>
       <Grid container>
         <Grid item />
-        <ProfileLinkBar username={user.username} />
+        <ProfileLinkBar username={username} />
       </Grid>
       <Grid item xs={8} sx={{ marginTop: "10px" }}>
         <Stack
           spacing={1}
           divider={<Divider orientation="horizontal" flexItem />}
         >
-          {diaryEntries?.map((diaryEntry, i) => (
-            <Stack key={i} direction="row">
-              <div style={{ display: "inline-flex", alignItems: "center" }}>
-                <Link href={`/${user.username}`} underline="none">
-                  <span style={{ margin: "0 2px" }}>{user.username}</span>
-                </Link>
-                <span style={{ margin: "0 2px" }}>made</span>
-                <Link
-                  href={`/recipe/${diaryEntry.recipe
-                    .toLowerCase()
-                    .replace(/ /g, "-")}`}
-                  underline="none"
-                >
-                  <span style={{ margin: "0 2px" }}>{diaryEntry.recipe}</span>
-                </Link>
-                <span style={{ margin: "0 2px" }}>on</span>
-                <span style={{ margin: "0 2px" }}>
-                  {moment(diaryEntry.date).format("dddd, MMMM Do YYYY")}
-                </span>
-                <span style={{ margin: "0 2px" }}>and rated it</span>
-                {diaryEntry.rating !== undefined && (
+          {diaryEntries?.map((entry: UserDiary, i: number) => {
+            const recipe = recipes.find((r) => r.name === entry.recipe);
+            if (!recipe) return null;
+            return (
+              <Stack key={i} direction="row">
+                <div style={{ display: "inline-flex", alignItems: "center" }}>
+                  <Link href={`/${entry.username}`} underline="none">
+                    <span style={{ margin: "0 2px" }}>{entry.username}</span>
+                  </Link>
+                  <span style={{ margin: "0 2px" }}>made</span>
+                  <Link
+                    href={`/recipe/${entry.recipe
+                      .toLowerCase()
+                      .replace(/ /g, "-")}`}
+                    underline="none"
+                  >
+                    <span style={{ margin: "0 2px" }}>{entry.recipe}</span>
+                  </Link>
+                  <span style={{ margin: "0 2px" }}>on</span>
                   <span style={{ margin: "0 2px" }}>
-                    <Rating
-                      value={diaryEntry.rating}
-                      precision={0.5}
-                      readOnly
-                    />
+                    {moment(entry.date).format("dddd, MMMM Do YYYY")}
                   </span>
-                )}
-                <span>.</span>
-              </div>
-            </Stack>
-          ))}
+                  <span style={{ margin: "0 2px" }}>and rated it</span>
+                  {entry.rating !== undefined && (
+                    <span style={{ margin: "0 2px" }}>
+                      <Rating value={entry.rating} precision={0.5} readOnly />
+                    </span>
+                  )}
+                  <span>.</span>
+                </div>
+              </Stack>
+            );
+          })}
         </Stack>
       </Grid>
     </div>
   );
 }
 
-export async function getStaticProps() {
-  const users = getAllUsers();
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+  let sessionUser = null;
+
+  if (session) {
+    const sessionUsername = session.user.username;
+    sessionUser = findUserByUsername(sessionUsername);
+  }
+
+  const recipes = getAllRecipes();
 
   return {
     props: {
-      users,
+      recipes,
+      session,
+      sessionUser,
     },
-    revalidate: 1800,
   };
 }
 
