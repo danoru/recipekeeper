@@ -32,7 +32,7 @@ function RecipeActionBar({ recipe }: Props) {
       });
   };
   return (
-    <Paper sx={{ borderRadius: "1%", width: "15%" }}>
+    <Paper sx={{ borderRadius: "1%" }}>
       <Stack direction="row" justifyContent="center">
         <Stack alignItems="center" padding="1vh 0" width="33%">
           <OutdoorGrillOutlinedIcon />

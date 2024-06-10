@@ -3,9 +3,12 @@ import Image from "next/image";
 import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import RecipeActionBar from "../../src/components/recipes/RecipeActionBar";
+import RecipeRatings from "../../src/components/recipes/RecipeRatings";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { getAllRecipes, getRecipeId } from "../../src/data/recipes";
+import { getAllUsers } from "../../src/data/users";
+import { RECIPE_LIST_TYPE, USER_LIST_TYPE } from "../../src/types";
 
 interface Params {
   params: {
@@ -13,7 +16,13 @@ interface Params {
   };
 }
 
-function RecipePage({ recipe }: { recipe: any }) {
+interface Props {
+  recipe: RECIPE_LIST_TYPE;
+  slug: string;
+  users: USER_LIST_TYPE[];
+}
+
+function RecipePage({ recipe, slug, users }: Props) {
   const title = recipe.name + " by " + recipe.creator + " • Savry";
   const rating: number = recipe.rating / recipe.reviews;
 
@@ -49,7 +58,10 @@ function RecipePage({ recipe }: { recipe: any }) {
             Reviews
           </Typography>
         </div>
-        <RecipeActionBar recipe={recipe} />
+        <Stack direction="column" maxWidth="15%">
+          <RecipeActionBar recipe={recipe} />
+          <RecipeRatings slug={slug} users={users} />
+        </Stack>
       </Stack>
     </div>
   );
@@ -71,6 +83,7 @@ export async function getStaticProps({ params }: Params) {
   const { slug } = params;
 
   const recipe = getRecipeId(slug[0].replace(/-/g, " "));
+  const users = getAllUsers();
 
   if (!recipe) {
     return {
@@ -81,6 +94,8 @@ export async function getStaticProps({ params }: Params) {
   return {
     props: {
       recipe,
+      slug,
+      users,
     },
     revalidate: 1800,
   };
