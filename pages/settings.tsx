@@ -3,9 +3,34 @@ import Head from "next/head";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { getSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 function SettingsPage({ session }: any) {
   const username = session?.user?.username;
+
+  const [userData, setUserData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    location: "",
+    website: "",
+    bio: "",
+  });
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (username) {
+      fetch(`/api/user/${username}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setUserData(data);
+          setLoading(false);
+        });
+    }
+  }, [username]);
+
   return (
     <div>
       <Head>
@@ -14,7 +39,7 @@ function SettingsPage({ session }: any) {
       <Stack direction="row" sx={{ justifyContent: "center" }}>
         <div>
           <TextField
-            id="outlined-basic"
+            id="username"
             label="Username"
             disabled
             fullWidth
@@ -25,49 +50,55 @@ function SettingsPage({ session }: any) {
           />
           <Stack direction="row">
             <TextField
-              id="outlined-basic"
+              id="firstName"
               label="Given Name"
               variant="outlined"
+              value={userData.firstname}
               InputLabelProps={{ shrink: true }}
               sx={{ marginBottom: "10px" }}
             />
             <TextField
-              id="outlined-basic"
+              id="lastName"
               label="Family Name"
+              value={userData.lastname}
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               sx={{ marginBottom: "10px" }}
             />
           </Stack>
           <TextField
-            id="outlined-basic"
+            id="email"
             label="Email Address"
+            value={userData.email}
             variant="outlined"
             InputLabelProps={{ shrink: true }}
             sx={{ marginBottom: "10px" }}
           />
           <Stack direction="row">
             <TextField
-              id="outlined-basic"
+              id="location"
               label="Location"
+              value={userData.location}
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               sx={{ marginBottom: "10px" }}
             />
             <TextField
-              id="outlined-basic"
+              id="website"
               label="Website"
+              value={userData.website}
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               sx={{ marginBottom: "10px" }}
             />
           </Stack>
           <TextField
-            id="outlined-basic"
+            id="bio"
             label="Bio"
             fullWidth
             multiline
             rows={4}
+            value={userData.bio}
             variant="outlined"
             InputLabelProps={{ shrink: true }}
             sx={{ marginBottom: "10px" }}
