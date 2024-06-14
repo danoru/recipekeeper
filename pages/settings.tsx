@@ -53,6 +53,7 @@ function SettingsPage({ session }: any) {
               id="firstName"
               label="Given Name"
               variant="outlined"
+              disabled
               value={userData.firstname}
               InputLabelProps={{ shrink: true }}
               sx={{ marginBottom: "10px" }}
@@ -62,6 +63,7 @@ function SettingsPage({ session }: any) {
               label="Family Name"
               value={userData.lastname}
               variant="outlined"
+              disabled
               InputLabelProps={{ shrink: true }}
               sx={{ marginBottom: "10px" }}
             />
@@ -71,6 +73,7 @@ function SettingsPage({ session }: any) {
             label="Email Address"
             value={userData.email}
             variant="outlined"
+            disabled
             InputLabelProps={{ shrink: true }}
             sx={{ marginBottom: "10px" }}
           />
@@ -80,6 +83,7 @@ function SettingsPage({ session }: any) {
               label="Location"
               value={userData.location}
               variant="outlined"
+              disabled
               InputLabelProps={{ shrink: true }}
               sx={{ marginBottom: "10px" }}
             />
@@ -88,6 +92,7 @@ function SettingsPage({ session }: any) {
               label="Website"
               value={userData.website}
               variant="outlined"
+              disabled
               InputLabelProps={{ shrink: true }}
               sx={{ marginBottom: "10px" }}
             />
@@ -100,6 +105,7 @@ function SettingsPage({ session }: any) {
             rows={4}
             value={userData.bio}
             variant="outlined"
+            disabled
             InputLabelProps={{ shrink: true }}
             sx={{ marginBottom: "10px" }}
           />

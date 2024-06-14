@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Cooklist {
+  userId   Int
+  recipeId Int
+  recipes  Recipes @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users    Users   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([userId, recipeId])
+}
+
+model Creators {
+  link              String              @id @unique
+  name              String
+  image             String?
+  website           String?
+  instagram         String?
+  youtube           String?
+  favoritesCreators FavoritesCreators[]
+  likedCreators     LikedCreators[]
+  recipes           Recipes[]
+}
+
+model DiaryEntries {
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  recipeId        Int?
+  rating          Decimal?  @db.Decimal(2, 1)
+  comment         String?
+  date            DateTime? @db.Date
+  hasCookedBefore Boolean   @default(false)
+  recipes         Recipes?  @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users           Users?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model FavoritesCreators {
+  userId    Int
+  creatorId String
+  creators  Creators @relation(fields: [creatorId], references: [link], onDelete: NoAction, onUpdate: NoAction)
+  users     Users    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([userId, creatorId])
+}
+
+model FavoritesRecipes {
+  userId   Int
+  recipeid Int
+  recipes  Recipes @relation(fields: [recipeid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users    Users   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([userId, recipeid])
+}
+
+model Following {
+  userId            Int
+  followingUsername String
+  users             Users  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([userId, followingUsername])
+}
+
+model LikedCreators {
+  userId    Int
+  creatorId String
+  creators  Creators @relation(fields: [creatorId], references: [link], onDelete: NoAction, onUpdate: NoAction)
+  users     Users    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([userId, creatorId])
+}
+
+model LikedRecipes {
+  userId   Int
+  recipeId Int
+  recipes  Recipes @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users    Users   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([userId, recipeId])
+}
+
+model Recipes {
+  id               Int                @id @default(autoincrement())
+  name             String
+  creatorId        String
+  link             String
+  image            String
+  description      String
+  category         String
+  cuisine          String
+  course           String
+  method           String
+  diet             String
+  cooklist         Cooklist[]
+  diaryEntries     DiaryEntries[]
+  favoritesRecipes FavoritesRecipes[]
+  likedRecipes     LikedRecipes[]
+  creators         Creators?          @relation(fields: [creatorId], references: [link], onDelete: NoAction, onUpdate: NoAction)
+  reviews          Reviews[]
+}
+
+model Reviews {
+  id       Int       @id @default(autoincrement())
+  recipeId Int
+  userId   Int
+  rating   Decimal?  @db.Decimal(2, 1)
+  comment  String?
+  date     DateTime? @db.Date
+  recipes  Recipes?  @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users    Users?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Users {
+  id                Int                 @id @default(autoincrement())
+  username          String              @unique
+  password          String
+  firstName         String?
+  lastName          String?
+  email             String?
+  location          String?
+  website           String?
+  bio               String?
+  image             String?
+  badge             Badge               @default(USER)
+  joinDate          DateTime?           @default(now())
+  cooklist          Cooklist[]
+  diaryEntries      DiaryEntries[]
+  favoritesCreators FavoritesCreators[]
+  favoritesRecipes  FavoritesRecipes[]
+  following         Following[]
+  likedCreators     LikedCreators[]
+  likedRecipes      LikedRecipes[]
+  reviews           Reviews[]
+}
+
+enum Badge {
+  ADMIN
+  PATRON
+  USER
+}

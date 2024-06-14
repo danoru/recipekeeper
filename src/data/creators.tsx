@@ -2,14 +2,13 @@ import { CREATOR_LIST_TYPE } from "../types";
 
 export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
   {
-    name: "Andrew Rea of Babish Culinary Universe",
+    name: "Babish Culinary Universe",
     link: "babish",
     image:
       "https://images.squarespace-cdn.com/content/v1/590be7fd15d5dbc6bf3e22d0/1494201957953-ON3OE3O0BBEV4JJANAO8/andrew.jpg?format=1000w",
     website: "https://linktr.ee/babishculinaryuniverse",
     instagram: "https://www.instagram.com/bingingwithbabish",
     youtube: "https://www.youtube.com/@babishculinaryuniverse",
-    isFeatured: false,
   },
   {
     name: "Budget Bytes",
@@ -19,27 +18,24 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://www.budgetbytes.com",
     instagram: "https://www.instagram.com/budgetbytes/",
     youtube: "https://www.youtube.com/@BudgetBytesBlog",
-    isFeatured: false,
   },
   {
-    name: "Frankie Gaw of Little Fat Boy",
+    name: "Little Fat Boy",
     link: "littlefatboy",
     image:
       "https://littlefatboy.com/media/pages/about-us/315f68bb38-1684966465/screen-shot-2023-05-24-at-3.14.16-pm.png",
     website: "https://littlefatboy.com",
     instagram: "https://www.instagram.com/littlefatboyfrankie/",
     youtube: "https://www.youtube.com/@LittleFatBoy",
-    isFeatured: true,
   },
   {
-    name: "Hyosun Ro of Korean Bapsang",
+    name: "Korean Bapsang",
     link: "koreanbapsang",
     image:
       "https://www.koreanbapsang.com/wp-content/uploads/2023/11/Author-KB-New.png",
     website: "https://www.koreanbapsang.com/",
     instagram: "https://www.instagram.com/koreanbapsang/",
     youtube: "https://www.youtube.com/channel/UCMfhrjXVlCliSyj45ztHByA",
-    isFeatured: false,
   },
   {
     name: "J. Kenji Lopez-Alt",
@@ -49,17 +45,15 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://www.kenjilopezalt.com/",
     instagram: "https://www.instagram.com/kenjilopezalt/",
     youtube: "https://www.youtube.com/@JKenjiLopezAlt",
-    isFeatured: false,
   },
   {
-    name: "Isabel Orozco-Moore of Isabel Eats",
+    name: "Isabel Eats",
     link: "isabeleats",
     image:
       "https://www.isabeleats.com/wp-content/uploads/2023/02/isabel-orozco-moore-headshot.jpg",
     website: "https://www.isabeleats.com/",
     instagram: "https://www.instagram.com/isabeleats",
     youtube: "https://www.youtube.com/@isabeleatsrecipes",
-    isFeatured: true,
   },
   {
     name: "Joshua Weismann",
@@ -69,17 +63,15 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "http://joshuaweissman.com",
     instagram: "https://www.instagram.com/joshuaweissman",
     youtube: "https://www.youtube.com/@JoshuaWeissman",
-    isFeatured: true,
   },
   {
-    name: "Namiko Hirawasa Chen of Just One Cookbook",
+    name: "Just One Cookbook",
     link: "justonecookbook",
     image:
       "https://www.justonecookbook.com/wp-content/uploads/2020/11/Nami-7893.jpg",
     website: "http://justonecookbook.com",
     instagram: "https://www.instagram.com/justonecookbook/",
     youtube: "https://www.youtube.com/@justonecookbook",
-    isFeatured: false,
   },
   {
     name: "Pinch of Yum",
@@ -89,7 +81,6 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://pinchofyum.com/",
     instagram: "https://www.instagram.com/pinchofyum",
     youtube: "https://www.youtube.com/@pinchofyum",
-    isFeatured: false,
   },
   {
     name: "Rainbow Plant Life",
@@ -98,7 +89,6 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://rainbowplantlife.com/",
     instagram: "https://www.instagram.com/rainbowplantlife/",
     youtube: "https://www.youtube.com/channel/UCDbZvuDA_tZ6XP5wKKFuemQ",
-    isFeatured: false,
   },
   {
     name: "Sip and Feast",
@@ -108,7 +98,6 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://sipandfeast.com/",
     instagram: "https:www.instagram.com/sipandfeast/",
     youtube: "https:www.youtube.com/sipandfeast",
-    isFeatured: false,
   },
   {
     name: "Table for Two",
@@ -118,7 +107,6 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://www.tablefortwoblog.com/",
     instagram: "https://www.instagram.com/tablefortwo/",
     youtube: "https://www.youtube.com/@tablefortwoblog",
-    isFeatured: false,
   },
   {
     name: "The Good Bite",
@@ -127,7 +115,6 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
       "https://www.thegoodbite.co.uk/wp-content/uploads/2020/10/WhatsApp-Image-2020-08-14-at-12.21.22.jpeg",
     website: "https://www.thegoodbite.co.uk/",
     instagram: "https://www.instagram.com/thegoodbite/",
-    isFeatured: false,
   },
   {
     name: "Trader Joe's Five Items or Less",
@@ -137,17 +124,15 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://traderjoes5itemsorless.com/",
     instagram: "https://www.instagram.com/traderjoes5itemsorless/",
     youtube: "https://www.youtube.com/@thegoodbite9270",
-    isFeatured: false,
   },
   {
-    name: "Wil Yeung of Yeung Man Cooking",
+    name: "Yeung Man Cooking",
     link: "yeungmancooking",
     image:
       "https://cdn.shopify.com/s/files/1/0423/1482/5885/files/wil_photo001_f3b9ae9f-a54c-4d87-b64e-02ec88dd9541_480x480.jpg?v=1593988665",
     website: "https://yeungmancooking.com/",
     instagram: "https://www.instagram.com/yeungmancooking/",
     youtube: "https://www.youtube.com/@YEUNGMANCOOKING",
-    isFeatured: true,
   },
   {
     name: "Cafe Maddy",
@@ -157,7 +142,14 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://www.cafemaddy.com/",
     instagram: "https://www.instagram.com/cafemaddy",
     youtube: "https://www.youtube.com/@CafeMaddy",
-    isFeatured: false,
+  },
+  {
+    name: "I Heart Umami",
+    link: "iheartumami",
+    image: "https://iheartumami.com/wp-content/uploads/2019/03/ChihYu-2.jpg",
+    website: "https://www.iheartumami.com/",
+    instagram: "https://www.instagram.com/iheartumami.ny",
+    youtube: "https://www.youtube.com/channel/UCqaK0m5Q86OEIsF8CB_-AOA",
   },
   {
     name: "Olivia Adriance",
@@ -167,7 +159,6 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://oliviaadriance.com/",
     instagram: "https://www.instagram.com/olivia.adriance/",
     youtube: "https://www.youtube.com/@oliviaadriance",
-    isFeatured: false,
   },
   {
     name: "CJ Eats",
@@ -176,7 +167,6 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://cjeatsrecipes.com/",
     instagram: "https://www.instagram.com/cj.eats_/",
     youtube: "https://www.youtube.com/cjeats",
-    isFeatured: false,
   },
   {
     name: "Smelly Lunchbox",
@@ -186,7 +176,6 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://smellylunchbox.com/",
     instagram: "https://www.instagram.com/smelly.lunchbox/",
     youtube: "https://www.youtube.com/@smelly.lunchbox",
-    isFeatured: false,
   },
   {
     name: "Em the Nutrionist",
@@ -196,7 +185,6 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
     website: "https://emilyenglish.com/",
     instagram: "https://www.instagram.com/emthenutrionist/",
     youtube: "https://www.youtube.com/@Emily.english",
-    isFeatured: false,
   },
 ];
 
@@ -213,10 +201,6 @@ export function getAllCreators() {
     }
     return 0;
   });
-}
-
-export function getFilteredCreators() {
-  return CREATOR_LIST.filter((creator) => creator.isFeatured);
 }
 
 export function getCreatorId(creatorName: string) {

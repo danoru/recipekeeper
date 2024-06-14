@@ -1,9 +1,9 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
-import { sql } from "@vercel/postgres";
-import { User } from "../../../src/types";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
@@ -20,30 +20,40 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        const response = await sql`
-        SELECT * FROM users WHERE username=${credentials?.username}`;
-        const user = response.rows[0];
-        const passwordCorrect = await compare(
-          credentials?.password || "",
-          user.password
-        );
+        try {
+          const user = await prisma.users.findUnique({
+            where: {
+              username: credentials?.username,
+            },
+          });
 
-        console.log({ passwordCorrect });
+          if (!user) {
+            return null;
+          }
 
-        if (passwordCorrect) {
-          return {
-            id: user.id,
-            username: user.username,
-          } as User;
+          const passwordCorrect = await compare(
+            credentials?.password || "",
+            user.password || ""
+          );
+
+          if (passwordCorrect) {
+            return {
+              id: user.id.toString(),
+              username: user.username,
+            };
+          } else {
+            return null;
+          }
+        } catch (error) {
+          console.error("Error during authentication:", error);
+          return null;
         }
-
-        console.log({ credentials });
-        return null;
       },
     }),
   ],
+
   callbacks: {
-    async session({ session, token }: { session: any; token: any }) {
+    async session({ session, token }) {
       session.user = token.user;
       return session;
     },

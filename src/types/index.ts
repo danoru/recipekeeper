@@ -5,11 +5,9 @@ export interface CREATOR_LIST_TYPE {
   website: string;
   instagram?: string;
   youtube?: string;
-  isFeatured: Boolean;
 }
 export interface RECIPE_LIST_TYPE {
   name: string;
-  creator: string;
   creatorId: string;
   link: string;
   image: string;
@@ -19,8 +17,6 @@ export interface RECIPE_LIST_TYPE {
   course: string;
   method: string;
   diet: string;
-  rating: number;
-  reviews: number;
 }
 
 export interface USER_LIST_TYPE {

@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { hash } from "bcrypt";
-import { sql } from "@vercel/postgres";
 import * as yup from "yup";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const schema = yup.object().shape({
   username: yup
@@ -21,24 +23,31 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const { username, password } = req.body;
 
-    const existingUser = await sql`
-    SELECT * FROM users WHERE username=${username}`;
-    if (existingUser.rows.length > 0) {
+    const existingUser = await prisma.users.findUnique({
+      where: { username },
+    });
+    if (existingUser) {
       return res.status(400).json({ error: "Username already exists." });
     }
 
     const hashedPassword = await hash(password, 10);
 
-    await sql`INSERT INTO users (username, password)
-    VALUES (${username}, ${hashedPassword})`;
+    await prisma.users.create({
+      data: {
+        username,
+        password: hashedPassword,
+      },
+    });
 
     res.status(200).json({ message: "Success." });
   } catch (e) {
     if (e instanceof yup.ValidationError) {
       return res.status(400).json({ error: e.errors.join(", ") });
     }
-    console.log({ e });
+    console.error({ e });
     res.status(500).json({ error: "Internal server error." });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 

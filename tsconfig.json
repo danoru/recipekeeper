@@ -17,5 +17,10 @@
     "incremental": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "**/*.jsx"]
+  "exclude": ["node_modules", "**/*.jsx"],  
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
 }

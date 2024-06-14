@@ -1,26 +1,8 @@
 import { RECIPE_LIST_TYPE } from "../types";
 
-// "DATA FORMAT"
-// {
-//   name: "",
-//   creator: "",
-//   creatorId: "",
-//   link: "",
-//   image: "",
-//   description: "",
-//   category: "",
-//   cuisine: "",
-//   course: "",
-//   method: "",
-//   diet: "",
-//   rating: ,
-//   reviews: ,
-// }
-
 export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
   {
     name: "Butternut Squash and Pork Lasagna",
-    creator: "Frankie Gaw of Little Fat Boy",
     creatorId: "littlefatboy",
     link: "https://littlefatboy.com/recipes/butternut-squash-and-pork-lasagna",
     image:
@@ -32,12 +14,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Main",
     method: "Classic",
     diet: "None",
-    rating: 4,
-    reviews: 1,
   },
   {
     name: "Taiwanese American Chicken Pot Pie",
-    creator: "Frankie Gaw of Little Fat Boy",
     creatorId: "littlefatboy",
     link: "https://littlefatboy.com/recipes/taiwanese-american-chicken-pot-pie",
     image:
@@ -49,12 +28,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Main",
     method: "Classic",
     diet: "None",
-    rating: 5,
-    reviews: 1,
   },
   {
     name: "Banana Walnut Mochi Bread",
-    creator: "Frankie Gaw of Little Fat Boy",
     creatorId: "littlefatboy",
     link: "https://littlefatboy.com/recipes/banana-walnut-mochi-bread",
     image:
@@ -66,12 +42,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Dessert",
     method: "Classic",
     diet: "Gluten Free",
-    rating: 4,
-    reviews: 1,
   },
   {
     name: "Chicken Pozole Verde",
-    creator: "Isabel Orozco-Moore of Isabel Eats",
     creatorId: "isabeleats",
     link: "https://www.isabeleats.com/chicken-pozole-verde/",
     image:
@@ -83,12 +56,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Main",
     method: "Classic",
     diet: "None",
-    rating: 5,
-    reviews: 1,
   },
   {
     name: "Zuppa Tuscana Congee",
-    creator: "Frankie Gaw of Little Fat Boy",
     creatorId: "littlefatboy",
     link: "https://littlefatboy.com/recipes/zuppa-toscana-congee",
     image:
@@ -100,12 +70,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Main",
     method: "Classic",
     diet: "None",
-    rating: 5,
-    reviews: 1,
   },
   {
     name: "Slow Cooker White Chicken Chili",
-    creator: "Budget Bytes",
     creatorId: "budgetbytes",
     link: "https://www.budgetbytes.com/slow-cooker-white-chicken-chili/",
     image:
@@ -117,12 +84,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Main",
     method: "Slow Cooker",
     diet: "None",
-    rating: 4,
-    reviews: 1,
   },
   {
     name: "Spicy Creamy Mushroom Pasta",
-    creator: "Sip and Feast",
     creatorId: "sipandfeast",
     link: "https://www.sipandfeast.com/spicy-creamy-mushroom-pasta/",
     image:
@@ -134,12 +98,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "Classic",
     diet: "None",
-    rating: 0,
-    reviews: 1,
   },
   {
     name: "Middle Eastern Inspired Ground Beef Bowls",
-    creator: "Table for Two",
     creatorId: "tablefortwo",
     link: "https://www.tablefortwoblog.com/middle-eastern-inspired-ground-beef-bowls/",
     image:
@@ -151,12 +112,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "Classic",
     diet: "None",
-    rating: 0,
-    reviews: 1,
   },
   {
     name: "Pressure Cooker Japanese Curry",
-    creator: "Just One Cookbook",
     creatorId: "justonecookbook",
     link: "https://www.justonecookbook.com/pressure-cooker-japanese-curry/",
     image:
@@ -168,12 +126,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "Pressure Cooker",
     diet: "None",
-    rating: 0,
-    reviews: 1,
   },
   {
     name: "Cajun Sausage and Rice Skillet",
-    creator: "Budget Bytes",
     creatorId: "budgetbytes",
     link: "https://www.budgetbytes.com/cajun-sausage-and-rice-skillet/",
     image:
@@ -185,12 +140,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "One Pot",
     diet: "None",
-    rating: 0,
-    reviews: 1,
   },
   {
     name: "Taco Soup",
-    creator: "Isabel Eats",
     creatorId: "isabeleats",
     link: "https://www.isabeleats.com/taco-soup-recipe/",
     image:
@@ -202,12 +154,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "One Pot",
     diet: "None",
-    rating: 4,
-    reviews: 1,
   },
   {
     name: "Oyakodon",
-    creator: "Just One Cookbook",
     creatorId: "justonecookbook",
     link: "https://www.justonecookbook.com/oyakodon/",
     image:
@@ -219,12 +168,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "Classic",
     diet: "None",
-    rating: 0,
-    reviews: 0,
   },
   {
     name: "Black Pepper Stir Fried Udon",
-    creator: "Pinch of Yum",
     creatorId: "pinchofyum",
     link: "https://pinchofyum.com/black-pepper-stir-fried-udon",
     image:
@@ -236,12 +182,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "Classic",
     diet: "None",
-    rating: 4,
-    reviews: 1,
   },
   {
     name: "Easy American Goulash",
-    creator: "Budget Bytes",
     creatorId: "budgetbytes",
     link: "https://www.budgetbytes.com/goulash/",
     image:
@@ -253,12 +196,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "One Pot",
     diet: "None",
-    rating: 5,
-    reviews: 1,
   },
   {
     name: "Creamy Roasted Red Pepper Pasta",
-    creator: "The Good Bite",
     creatorId: "thegoodbite",
     link: "https://www.thegoodbite.co.uk/recipes/creamy-roasted-red-pepper-pasta-2/",
     image:
@@ -270,12 +210,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "Classic",
     diet: "Vegan",
-    rating: 4,
-    reviews: 1,
   },
   {
     name: "Dressed Up French Style Flatbread from Trader Joe's 2 Ways",
-    creator: "Trader Joe's Five Items or Less",
     creatorId: "traderjoesfiveitemsorless",
     link: "https://traderjoes5itemsorless.com/dressed-up-french-style-flatbread-from-trader-joes-2-ways/",
     image:
@@ -287,12 +224,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "Classic",
     diet: "Vegan",
-    rating: 4,
-    reviews: 1,
   },
   {
     name: "Paleo Egg Drop Soup",
-    creator: "I Heart Umami",
     creatorId: "iheartumami",
     link: "https://iheartumami.com/hearty-chinese-egg-drop-soup/",
     image:
@@ -304,12 +238,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "Classic",
     diet: "Paleo",
-    rating: 4.5,
-    reviews: 1,
   },
   {
     name: "Air Fryer Taiwanese Popcorn Chicken",
-    creator: "CJ Eats",
     creatorId: "cjeats",
     link: "https://cjeatsrecipes.com/air-fryer-taiwanese-popcorn-chicken/",
     image:
@@ -321,12 +252,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Appetizers",
     method: "Air Fryer",
     diet: "None",
-    rating: 5,
-    reviews: 1,
   },
   {
     name: "Tender Chicken and Broccoli",
-    creator: "Smelly Lunchbox",
     creatorId: "smellylunchbox",
     link: "https://smellylunchbox.com/chicken-and-broccoli/",
     image:
@@ -338,12 +266,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "Classic",
     diet: "None",
-    rating: 5,
-    reviews: 1,
   },
   {
     name: "Dairy-Free Marry Me Chicken",
-    creator: "Olivia Adriance",
     creatorId: "oliviaadriance",
     link: "https://oliviaadriance.com/dairy-free-marry-me-chicken/",
     image:
@@ -355,12 +280,9 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "Classic",
     diet: "Dairy Free",
-    rating: 5,
-    reviews: 1,
   },
   {
     name: "One Pan Mango and Lime Coconut Chicken",
-    creator: "Em the Nutrionist",
     creatorId: "emthenutrionist",
     link: "https://www.instagram.com/emthenutritionist/reel/CsrFFj0I2l9/",
     image: "https://i.imgur.com/swENhzK.png",
@@ -371,8 +293,6 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
     course: "Mains",
     method: "One Pan",
     diet: "None",
-    rating: 5,
-    reviews: 1,
   },
 ];
 
@@ -391,42 +311,42 @@ export function getAllRecipes() {
   });
 }
 
-export function getRecipesByRating(sort: string) {
-  return RECIPE_LIST.sort((a, b) => {
-    const ratingA = a.rating;
-    const ratingB = b.rating;
+// export function getRecipesByRating(sort: string) {
+//   return RECIPE_LIST.sort((a, b) => {
+//     const ratingA = a.rating;
+//     const ratingB = b.rating;
 
-    if (ratingA < ratingB && sort === "highest") {
-      return 1;
-    }
-    if (ratingA > ratingB && sort === "highest") {
-      return -1;
-    }
-    if (ratingA < ratingB && sort === "lowest") {
-      return -1;
-    }
-    if (ratingA > ratingB && sort === "lowest") {
-      return 1;
-    }
+//     if (ratingA < ratingB && sort === "highest") {
+//       return 1;
+//     }
+//     if (ratingA > ratingB && sort === "highest") {
+//       return -1;
+//     }
+//     if (ratingA < ratingB && sort === "lowest") {
+//       return -1;
+//     }
+//     if (ratingA > ratingB && sort === "lowest") {
+//       return 1;
+//     }
 
-    return 0;
-  });
-}
+//     return 0;
+//   });
+// }
 
-export function getFeaturedRecipes() {
-  return RECIPE_LIST.filter((recipe) => recipe.rating === 5).sort((a, b) => {
-    const nameA = a.name.toUpperCase();
-    const nameB = b.name.toUpperCase();
+// export function getFeaturedRecipes() {
+//   return RECIPE_LIST.filter((recipe) => recipe.rating === 5).sort((a, b) => {
+//     const nameA = a.name.toUpperCase();
+//     const nameB = b.name.toUpperCase();
 
-    if (nameA < nameB) {
-      return -1;
-    }
-    if (nameA > nameB) {
-      return 1;
-    }
-    return 0;
-  });
-}
+//     if (nameA < nameB) {
+//       return -1;
+//     }
+//     if (nameA > nameB) {
+//       return 1;
+//     }
+//     return 0;
+//   });
+// }
 
 export function getFilteredRecipes(filterId: string, subfilterId: string) {
   return RECIPE_LIST.filter(
