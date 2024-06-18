@@ -1,13 +1,14 @@
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
-import { getAllUsers } from "../../../src/data/users";
-import { RECIPE_LIST_TYPE, USER_LIST_TYPE } from "../../../src/types";
+import { findUserByUsername, getAllUsers } from "../../../src/data/users";
 import { getAllRecipes } from "../../../src/data/recipes";
+import { getUserDiaryEntries } from "../../../src/data/diary";
+import { DiaryEntries, Recipes, Users } from "@prisma/client";
 
 interface Props {
-  user: USER_LIST_TYPE;
-  recipes: RECIPE_LIST_TYPE[];
+  user: Users;
+  diaryEntries: (DiaryEntries & { recipes: Recipes })[];
 }
 
 interface Params {
@@ -16,8 +17,8 @@ interface Params {
   };
 }
 
-function UserRecipeList({ user, recipes }: Props) {
-  const title = `${user.profile.name}'s Reviews • Savry`;
+function UserRecipeList({ user, diaryEntries }: Props) {
+  const title = `${user.username}'s Reviews • Savry`;
 
   return (
     <div>
@@ -33,7 +34,7 @@ function UserRecipeList({ user, recipes }: Props) {
 }
 
 export async function getStaticPaths() {
-  const users = getAllUsers();
+  const users = await getAllUsers();
   const paths = users.map((user) => ({
     params: { username: user.username },
   }));
@@ -46,15 +47,16 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: Params) {
   const { username } = params;
-  const user = getAllUsers().find((user) => user.username === username);
+  const user = await findUserByUsername(username);
+  let diaryEntries: DiaryEntries[] = [];
 
-  const recipes = getAllRecipes().filter((recipe) =>
-    user?.diary?.some((entry) => entry.recipe === recipe.name)
-  );
+  if (user) {
+    diaryEntries = await getUserDiaryEntries(user.id);
+  }
 
   return {
     props: {
-      recipes,
+      diaryEntries,
       user,
     },
     revalidate: 1800,

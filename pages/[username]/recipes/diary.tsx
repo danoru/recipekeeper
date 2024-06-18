@@ -11,12 +11,18 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { getAllUsers } from "../../../src/data/users";
-import { USER_LIST_TYPE, UserDiary } from "../../../src/types";
+import {
+  findUserByUserId,
+  findUserByUsername,
+  getAllUsers,
+} from "../../../src/data/users";
 import { getAllRecipes } from "../../../src/data/recipes";
+import { DiaryEntries, Recipes, Users } from "@prisma/client";
+import { getUserDiaryEntries } from "../../../src/data/diary";
 
 interface Props {
-  user: USER_LIST_TYPE;
+  user: Users;
+  diaryEntries: (DiaryEntries & { recipes: Recipes })[];
 }
 
 interface Params {
@@ -25,10 +31,12 @@ interface Params {
   };
 }
 
-function RecipeDiary({ user }: Props) {
-  const title = `${user.profile.name}'s Recipes • Savry`;
-  const diaryEntries = user.diary;
-  const entriesByMonth: { [month: string]: UserDiary[] } = {};
+function RecipeDiary({ user, diaryEntries }: Props) {
+  const title = `${user.username}'s Recipes • Savry`;
+
+  const entriesByMonth: {
+    [month: string]: (DiaryEntries & { recipes: Recipes })[];
+  } = {};
   diaryEntries?.forEach((entry) => {
     const date = moment(entry.date);
     const month = date.format("MMM");
@@ -64,9 +72,13 @@ function RecipeDiary({ user }: Props) {
                   <TableRow key={`${month}-${index}`}>
                     <TableCell>{month}</TableCell>
                     <TableCell>{moment(entry.date).format("D")}</TableCell>
-                    <TableCell>{entry.recipe}</TableCell>
+                    <TableCell>{entry.recipes.name}</TableCell>
                     <TableCell>
-                      <Rating value={entry.rating} precision={0.5} readOnly />
+                      <Rating
+                        value={entry.rating.toNumber()}
+                        precision={0.5}
+                        readOnly
+                      />
                     </TableCell>
                     <TableCell>
                       {entry.hasCookedBefore ? <ChangeCircleIcon /> : ""}
@@ -87,7 +99,7 @@ function RecipeDiary({ user }: Props) {
 }
 
 export async function getStaticPaths() {
-  const users = getAllUsers();
+  const users = await getAllUsers();
   const paths = users.map((user) => ({
     params: { username: user.username },
   }));
@@ -100,15 +112,16 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: Params) {
   const { username } = params;
-  const user = getAllUsers().find((user) => user.username === username);
+  const user = await findUserByUsername(username);
+  let diaryEntries: DiaryEntries[] = [];
 
-  const recipes = getAllRecipes().filter((recipe) =>
-    user?.diary?.some((entry) => entry.recipe === recipe.name)
-  );
+  if (user) {
+    diaryEntries = await getUserDiaryEntries(user.id);
+  }
 
   return {
     props: {
-      recipes,
+      diaryEntries,
       user,
     },
     revalidate: 1800,
