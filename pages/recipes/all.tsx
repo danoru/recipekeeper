@@ -1,10 +1,11 @@
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import RecipeList from "../../src/components/recipes/RecipeList";
-import { RECIPE_LIST_TYPE } from "../../src/types";
+import { Recipes } from "@prisma/client";
+import { getAllRecipes } from "../../src/data/recipes";
 
 interface Props {
-  recipes: RECIPE_LIST_TYPE[];
+  recipes: Recipes[];
 }
 
 function AllRecipes({ recipes }: Props) {
@@ -24,12 +25,8 @@ function AllRecipes({ recipes }: Props) {
   );
 }
 
-export async function getServerSideProps() {
-  const { DEV_URL, PROD_URL } = process.env;
-  const dev = process.env.NODE_ENV !== "production" ? DEV_URL : PROD_URL;
-  const res = await fetch(`${dev}/api/recipes`);
-  const recipes = await res.json();
-
+export async function getStaticProps() {
+  const recipes = await getAllRecipes();
   return {
     props: {
       recipes,

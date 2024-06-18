@@ -333,7 +333,7 @@ export async function getRecipesByRating(sort: string) {
   const sortedRecipes = recipes
     .map((recipe) => {
       const totalRating = recipe.reviews.reduce((sum, review) => {
-        return sum + (review.rating || 0);
+        return sum + (review.rating.toNumber() || 0);
       }, 0);
       const averageRating = recipe.reviews.length
         ? totalRating / recipe.reviews.length
@@ -369,7 +369,7 @@ export async function getFeaturedRecipes() {
 
   const featuredRecipes = recipes.filter((recipe) => {
     const totalRating = recipe.reviews.reduce((sum, review) => {
-      return sum + (review.rating || 0);
+      return sum + (review.rating.toNumber() || 0);
     }, 0);
     const averageRating = recipe.reviews.length
       ? totalRating / recipe.reviews.length

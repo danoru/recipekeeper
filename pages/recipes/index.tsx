@@ -8,10 +8,14 @@ import PopCarousel from "../../src/components/recipes/PopCarousel";
 // import RecentReviews from "../../src/components/reviews/RecentReviews";
 
 import { getFeaturedRecipes } from "../../src/data/recipes";
+import { Recipes } from "@prisma/client";
 
-function Recipes(props: any) {
-  const { recipes } = props;
+interface Props {
+  recipes: Recipes[];
+}
 
+function RecipesPage({ recipes }: Props) {
+  console.log(recipes);
   return (
     <div>
       <Head>
@@ -20,7 +24,7 @@ function Recipes(props: any) {
       <main>
         <Grid container>
           <BrowseBar />
-          <PopCarousel items={recipes} />
+          <PopCarousel recipes={recipes} />
           {/* <RecentReviews />
           <PopularReviews />
           <Grid item xs={4}>
@@ -34,7 +38,7 @@ function Recipes(props: any) {
 }
 
 export async function getStaticProps() {
-  let featuredRecipes = getFeaturedRecipes();
+  let featuredRecipes = await getFeaturedRecipes();
 
   return {
     props: {
@@ -44,4 +48,4 @@ export async function getStaticProps() {
   };
 }
 
-export default Recipes;
+export default RecipesPage;

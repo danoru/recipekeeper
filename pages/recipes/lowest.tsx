@@ -2,10 +2,10 @@ import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import RecipeList from "../../src/components/recipes/RecipeList";
 import { getRecipesByRating } from "../../src/data/recipes";
-import { RECIPE_LIST_TYPE } from "../../src/types";
+import { Recipes } from "@prisma/client";
 
 interface Props {
-  recipes: RECIPE_LIST_TYPE[];
+  recipes: Recipes[];
 }
 
 function LowestRatedRecipes({ recipes }: Props) {
@@ -26,7 +26,7 @@ function LowestRatedRecipes({ recipes }: Props) {
 }
 
 export async function getStaticProps() {
-  let recipes = getRecipesByRating("lowest");
+  let recipes = await getRecipesByRating("lowest");
 
   return {
     props: {

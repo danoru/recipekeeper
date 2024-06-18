@@ -1,10 +1,14 @@
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
-
 import RecipeList from "../../src/components/recipes/RecipeList";
 import { getRecipesByRating } from "../../src/data/recipes";
+import { Recipes } from "@prisma/client";
 
-function HighestRatedRecipes({ recipes }: any) {
+interface Props {
+  recipes: Recipes[];
+}
+
+function HighestRatedRecipes({ recipes }: Props) {
   const header = "RECIPES";
 
   return (
@@ -22,7 +26,7 @@ function HighestRatedRecipes({ recipes }: any) {
 }
 
 export async function getStaticProps() {
-  let recipes = getRecipesByRating("highest");
+  let recipes = await getRecipesByRating("highest");
 
   return {
     props: {
