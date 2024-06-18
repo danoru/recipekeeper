@@ -222,6 +222,7 @@ export async function getCreatorByLink(creatorLink: string) {
 export async function getFavoriteCreators(userId: number) {
   const favoriteCreators = await prisma.favoritesCreators.findMany({
     where: { userId },
+    include: { creators: true },
   });
   return favoriteCreators;
 }

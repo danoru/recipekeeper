@@ -4,8 +4,10 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Head from "next/head";
 import Layout from "../src/components/layout/Layout";
 import PropTypes from "prop-types";
+import superjson from "superjson";
 import theme from "../src/styles/theme";
 import { CacheProvider } from "@emotion/react";
+import { Decimal } from "decimal.js";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@mui/material/styles";
 import type { AppProps } from "next/app";
@@ -44,3 +46,12 @@ App.propTypes = {
   emotionCache: PropTypes.object,
   pageProps: PropTypes.object.isRequired,
 };
+
+superjson.registerCustom<Decimal, string>(
+  {
+    isApplicable: (v): v is Decimal => Decimal.isDecimal(v),
+    serialize: (v) => v.toJSON(),
+    deserialize: (v) => new Decimal(v),
+  },
+  "decimal.js"
+);

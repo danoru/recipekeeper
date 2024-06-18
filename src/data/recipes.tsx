@@ -349,6 +349,14 @@ export async function getRecipesByRating(sort: string) {
   return sortedRecipes;
 }
 
+export async function getFavoriteRecipes(userId: number) {
+  const favoriteRecipes = await prisma.favoritesRecipes.findMany({
+    where: { userId },
+    include: { recipes: true },
+  });
+  return favoriteRecipes;
+}
+
 export async function getFeaturedRecipes() {
   const recipes = await prisma.recipes.findMany({
     include: {

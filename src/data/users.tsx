@@ -312,29 +312,29 @@ export async function findUserByUsername(username: string) {
   return user;
 }
 
-export async function getFollowersList(username: string) {
-  const followingList = await prisma.following.findMany({
+export async function getFollowers(username: string) {
+  const followers = await prisma.following.findMany({
     where: {
       followingUsername: username,
     },
+    include: {
+      users: true,
+    },
   });
-
-  const followers = followingList.map((f) => f.followingUsername);
   return followers;
 }
 
-export async function getFollowingList(userId: number) {
-  const followingList = await prisma.following.findMany({
+export async function getFollowing(userId: number) {
+  const following = await prisma.following.findMany({
     where: {
       userId,
     },
-    select: {
-      followingUsername: true,
+    include: {
+      users: true,
     },
   });
 
-  const followers = followingList.map((f) => f.followingUsername);
-  return followers;
+  return following;
 }
 
 // export async function getTopLikedCreators(followingList: string[]) {

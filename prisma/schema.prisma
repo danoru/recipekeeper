@@ -33,7 +33,7 @@ model DiaryEntries {
   id              Int      @id @default(autoincrement())
   userId          Int
   recipeId        Int
-  rating          Int
+  rating          Decimal
   comment         String?
   date            DateTime @db.Date
   hasCookedBefore Boolean  @default(false)
@@ -92,11 +92,11 @@ model Recipes {
   link             String
   image            String
   description      String
-  category         Category
-  cuisine          Cuisine
-  course           Course
-  method           Method
-  diet             Diet
+  category         String
+  cuisine          String
+  course           String
+  method           String
+  diet             String
   cooklist         Cooklist[]
   diaryEntries     DiaryEntries[]
   favoritesRecipes FavoritesRecipes[]
@@ -105,55 +105,11 @@ model Recipes {
   reviews          Reviews[]
 }
 
-enum Category {
-  Beef
-  Chicken
-  Noodles
-  Pasta
-  Pork
-  RiceGrains
-  Soup
-  Vegetables
-  Other
-}
-
-enum Cuisine {
-  African
-  Asian
-  Carribean
-  CentralAmerican
-  European
-  MiddleEastern
-  NorthAmerican
-  Oceanic
-  SouthAmerican
-}
-
-enum Course {
-  Side
-  Dessert
-}
-
-enum Method {
-  AirFryer
-  OnePot
-  PressureCooker
-  SlowCooker
-}
-
-enum Diet {
-  DiaryFree
-  GlutenFree
-  Paleo
-  Vegan
-  Vegetarian
-}
-
 model Reviews {
   id       Int      @id @default(autoincrement())
   recipeId Int
   userId   Int
-  rating   Int
+  rating   Decimal
   comment  String?
   date     DateTime @default(now())
   recipes  Recipes  @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
