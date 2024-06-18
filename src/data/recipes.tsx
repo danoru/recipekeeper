@@ -1,4 +1,7 @@
 import { RECIPE_LIST_TYPE } from "../types";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
   {
@@ -296,95 +299,165 @@ export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
   },
 ];
 
-export function getAllRecipes() {
-  return RECIPE_LIST.sort((a, b) => {
-    const nameA = a.name.toUpperCase();
-    const nameB = b.name.toUpperCase();
-
-    if (nameA < nameB) {
-      return -1;
-    }
-    if (nameA > nameB) {
-      return 1;
-    }
-    return 0;
+export async function getAllRecipes() {
+  const recipes = await prisma.recipes.findMany({
+    orderBy: {
+      name: "asc",
+    },
   });
+  return recipes;
 }
 
-// export function getRecipesByRating(sort: string) {
-//   return RECIPE_LIST.sort((a, b) => {
-//     const ratingA = a.rating;
-//     const ratingB = b.rating;
-
-//     if (ratingA < ratingB && sort === "highest") {
-//       return 1;
-//     }
-//     if (ratingA > ratingB && sort === "highest") {
-//       return -1;
-//     }
-//     if (ratingA < ratingB && sort === "lowest") {
-//       return -1;
-//     }
-//     if (ratingA > ratingB && sort === "lowest") {
-//       return 1;
-//     }
-
-//     return 0;
-//   });
-// }
-
-// export function getFeaturedRecipes() {
-//   return RECIPE_LIST.filter((recipe) => recipe.rating === 5).sort((a, b) => {
-//     const nameA = a.name.toUpperCase();
-//     const nameB = b.name.toUpperCase();
-
-//     if (nameA < nameB) {
-//       return -1;
-//     }
-//     if (nameA > nameB) {
-//       return 1;
-//     }
-//     return 0;
-//   });
-// }
-
-export function getFilteredRecipes(filterId: string, subfilterId: string) {
-  return RECIPE_LIST.filter(
-    (recipe: any) =>
-      recipe[filterId].replace(/\s/g, "").toLowerCase() === subfilterId
-  ).sort((a, b) => {
-    const nameA = a.name.toUpperCase();
-    const nameB = b.name.toUpperCase();
-
-    if (nameA < nameB) {
-      return -1;
-    }
-    if (nameA > nameB) {
-      return 1;
-    }
-    return 0;
+export async function getRecipeByName(name: string) {
+  const recipe = await prisma.recipes.findFirst({
+    where: {
+      name: {
+        equals: name,
+        mode: "insensitive", // Case-insensitive comparison
+      },
+    },
+    include: { creators: true },
   });
+  return recipe;
 }
 
-export function getRecipesByCreator(creatorName: string) {
-  return RECIPE_LIST.filter((recipe) => recipe.creatorId === creatorName).sort(
-    (a, b) => {
-      const nameA = a.name.toUpperCase();
-      const nameB = b.name.toUpperCase();
+export async function getRecipesByRating(sort: string) {
+  const orderBy = sort === "highest" ? "desc" : "asc";
 
-      if (nameA < nameB) {
-        return -1;
+  const recipes = await prisma.recipes.findMany({
+    include: {
+      reviews: true,
+    },
+  });
+
+  const sortedRecipes = recipes
+    .map((recipe) => {
+      const totalRating = recipe.reviews.reduce((sum, review) => {
+        return sum + (review.rating || 0);
+      }, 0);
+      const averageRating = recipe.reviews.length
+        ? totalRating / recipe.reviews.length
+        : 0;
+      return { ...recipe, averageRating };
+    })
+    .sort((a, b) =>
+      orderBy === "desc"
+        ? b.averageRating - a.averageRating
+        : a.averageRating - b.averageRating
+    );
+
+  return sortedRecipes;
+}
+
+export async function getFeaturedRecipes() {
+  const recipes = await prisma.recipes.findMany({
+    include: {
+      reviews: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  const featuredRecipes = recipes.filter((recipe) => {
+    const totalRating = recipe.reviews.reduce((sum, review) => {
+      return sum + (review.rating || 0);
+    }, 0);
+    const averageRating = recipe.reviews.length
+      ? totalRating / recipe.reviews.length
+      : 0;
+    return averageRating === 5;
+  });
+
+  return featuredRecipes;
+}
+
+export async function getFilteredRecipes(
+  filterId: string,
+  subfilterId: string
+) {
+  const recipes = await prisma.recipes.findMany({
+    where: {
+      [filterId]: subfilterId,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+  return recipes;
+}
+
+export async function getRecipesByCreator(creatorName: string) {
+  const recipes = await prisma.recipes.findMany({
+    where: {
+      creators: {
+        name: creatorName,
+      },
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+  return recipes;
+}
+
+export async function getTopLikedRecipes(userId: number) {
+  const user = await prisma.users.findUnique({
+    where: { id: userId },
+    include: { following: { select: { followingUsername: true } } },
+  });
+
+  const followingList = user?.following.map((f) => f.followingUsername) || [];
+
+  const recipeCount: { [key: number]: number } = {};
+
+  for (const username of followingList) {
+    const user = await prisma.users.findUnique({
+      where: { username },
+      include: { likedRecipes: true },
+    });
+
+    if (user?.likedRecipes) {
+      for (const likedRecipe of user.likedRecipes) {
+        const recipeId = Number(likedRecipe.recipeId); // Ensure recipeId is parsed as number
+        if (recipeId in recipeCount) {
+          recipeCount[recipeId]++;
+        } else {
+          recipeCount[recipeId] = 1;
+        }
       }
-      if (nameA > nameB) {
-        return 1;
-      }
-      return 0;
     }
+  }
+
+  const sortedRecipes = Object.keys(recipeCount).map((recipeId) => ({
+    recipeId: Number(recipeId), // Parse recipeId as number
+    count: recipeCount[Number(recipeId)],
+  }));
+
+  const topLikedRecipes = sortedRecipes
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  const topRecipesDetails = await Promise.all(
+    topLikedRecipes.map(async (recipe) => {
+      const fullRecipeDetails = await prisma.recipes.findUnique({
+        where: { id: recipe.recipeId },
+      });
+      return fullRecipeDetails;
+    })
   );
+
+  return topRecipesDetails;
 }
 
-export function getRecipeId(recipeId: string) {
-  return RECIPE_LIST.find(
-    (recipe) => recipe.name.toLowerCase() === recipeId.toLowerCase()
-  );
+export async function getCooklist(userId: number) {
+  const cooklist = await prisma.cooklist.findMany({
+    where: {
+      userId,
+    },
+    include: {
+      recipes: true,
+    },
+  });
+  return cooklist;
 }

@@ -20,25 +20,25 @@ model Cooklist {
 model Creators {
   link              String              @id @unique
   name              String
-  image             String?
-  website           String?
-  instagram         String?
-  youtube           String?
+  image             String
+  website           String
+  instagram         String
+  youtube           String
   favoritesCreators FavoritesCreators[]
   likedCreators     LikedCreators[]
   recipes           Recipes[]
 }
 
 model DiaryEntries {
-  id              Int       @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   userId          Int
-  recipeId        Int?
-  rating          Decimal?  @db.Decimal(2, 1)
+  recipeId        Int
+  rating          Int
   comment         String?
-  date            DateTime? @db.Date
-  hasCookedBefore Boolean   @default(false)
-  recipes         Recipes?  @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users           Users?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  date            DateTime @db.Date
+  hasCookedBefore Boolean  @default(false)
+  recipes         Recipes? @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users           Users?   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model FavoritesCreators {
@@ -52,11 +52,11 @@ model FavoritesCreators {
 
 model FavoritesRecipes {
   userId   Int
-  recipeid Int
-  recipes  Recipes @relation(fields: [recipeid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  recipeId Int
+  recipes  Recipes @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users    Users   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([userId, recipeid])
+  @@id([userId, recipeId])
 }
 
 model Following {
@@ -92,28 +92,72 @@ model Recipes {
   link             String
   image            String
   description      String
-  category         String
-  cuisine          String
-  course           String
-  method           String
-  diet             String
+  category         Category
+  cuisine          Cuisine
+  course           Course
+  method           Method
+  diet             Diet
   cooklist         Cooklist[]
   diaryEntries     DiaryEntries[]
   favoritesRecipes FavoritesRecipes[]
   likedRecipes     LikedRecipes[]
-  creators         Creators?          @relation(fields: [creatorId], references: [link], onDelete: NoAction, onUpdate: NoAction)
+  creators         Creators           @relation(fields: [creatorId], references: [link], onDelete: NoAction, onUpdate: NoAction)
   reviews          Reviews[]
 }
 
+enum Category {
+  Beef
+  Chicken
+  Noodles
+  Pasta
+  Pork
+  RiceGrains
+  Soup
+  Vegetables
+  Other
+}
+
+enum Cuisine {
+  African
+  Asian
+  Carribean
+  CentralAmerican
+  European
+  MiddleEastern
+  NorthAmerican
+  Oceanic
+  SouthAmerican
+}
+
+enum Course {
+  Side
+  Dessert
+}
+
+enum Method {
+  AirFryer
+  OnePot
+  PressureCooker
+  SlowCooker
+}
+
+enum Diet {
+  DiaryFree
+  GlutenFree
+  Paleo
+  Vegan
+  Vegetarian
+}
+
 model Reviews {
-  id       Int       @id @default(autoincrement())
+  id       Int      @id @default(autoincrement())
   recipeId Int
   userId   Int
-  rating   Decimal?  @db.Decimal(2, 1)
+  rating   Int
   comment  String?
-  date     DateTime? @db.Date
-  recipes  Recipes?  @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users    Users?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  date     DateTime @default(now())
+  recipes  Recipes  @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users    Users    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Users {
@@ -128,7 +172,7 @@ model Users {
   bio               String?
   image             String?
   badge             Badge               @default(USER)
-  joinDate          DateTime?           @default(now())
+  joinDate          DateTime            @default(now())
   cooklist          Cooklist[]
   diaryEntries      DiaryEntries[]
   favoritesCreators FavoritesCreators[]

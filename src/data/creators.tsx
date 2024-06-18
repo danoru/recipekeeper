@@ -1,4 +1,7 @@
 import { CREATOR_LIST_TYPE } from "../types";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
   {
@@ -188,21 +191,86 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
   },
 ];
 
-export function getAllCreators() {
-  return CREATOR_LIST.sort((a, b) => {
-    const nameA = a.name.toUpperCase();
-    const nameB = b.name.toUpperCase();
+export async function getAllCreators() {
+  const creators = await prisma.creators.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  });
 
-    if (nameA < nameB) {
-      return -1;
-    }
-    if (nameA > nameB) {
-      return 1;
-    }
-    return 0;
+  return creators;
+}
+
+export async function getFeaturedCreators() {
+  const featuredCreators = await prisma.creators.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  return featuredCreators;
+}
+
+export async function getCreatorByLink(creatorLink: string) {
+  return await prisma.creators.findUnique({
+    where: {
+      link: creatorLink,
+    },
   });
 }
 
-export function getCreatorId(creatorName: string) {
-  return CREATOR_LIST.find((creator) => creator.link === creatorName);
+export async function getFavoriteCreators(userId: number) {
+  const favoriteCreators = await prisma.favoritesCreators.findMany({
+    where: { userId },
+  });
+  return favoriteCreators;
+}
+
+export async function getTopLikedCreators(userId: number) {
+  const user = await prisma.users.findUnique({
+    where: { id: userId },
+    include: { following: { select: { followingUsername: true } } },
+  });
+
+  const followingList = user?.following.map((f) => f.followingUsername) || [];
+
+  const creatorCount: { [key: string]: number } = {};
+
+  for (const username of followingList) {
+    const user = await prisma.users.findUnique({
+      where: { username },
+      include: { likedCreators: true },
+    });
+
+    if (user?.likedCreators) {
+      for (const likedCreator of user.likedCreators) {
+        const { creatorId } = likedCreator;
+        if (creatorId in creatorCount) {
+          creatorCount[creatorId]++;
+        } else {
+          creatorCount[creatorId] = 1;
+        }
+      }
+    }
+  }
+
+  const sortedCreators = Object.keys(creatorCount).map((creatorId) => ({
+    creatorId,
+    count: creatorCount[creatorId],
+  }));
+
+  const topLikedCreators = sortedCreators
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  const topCreatorsDetails = await Promise.all(
+    topLikedCreators.map(async (creator) => {
+      const fullCreatorDetails = await prisma.creators.findUnique({
+        where: { link: creator.creatorId },
+      });
+      return fullCreatorDetails;
+    })
+  );
+
+  return topCreatorsDetails;
 }

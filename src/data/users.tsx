@@ -1,4 +1,7 @@
-import { USER_LIST_TYPE, UserDiary } from "../types";
+import { USER_LIST_TYPE } from "../types";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export const USER_LIST: USER_LIST_TYPE[] = [
   {
@@ -282,24 +285,104 @@ export const USER_LIST: USER_LIST_TYPE[] = [
     following: ["danoru", "chiquitabananna", "boeboekitty", "mallorylaabs"],
   },
 ];
-
-export function getAllUsers() {
-  return USER_LIST.sort((a, b) => {
-    const nameA = a.username.toUpperCase();
-    const nameB = b.username.toUpperCase();
-
-    if (nameA < nameB) {
-      return -1;
-    }
-    if (nameA > nameB) {
-      return 1;
-    }
-    return 0;
+export async function getAllUsers() {
+  const users = await prisma.users.findMany({
+    orderBy: {
+      username: "asc",
+    },
   });
+  return users;
 }
 
-export function findUserByUsername(
-  username: string
-): USER_LIST_TYPE | undefined {
-  return USER_LIST.find((user) => user.username === username);
+export async function findUserByUserId(id: number) {
+  const user = await prisma.users.findUnique({
+    where: {
+      id,
+    },
+  });
+  return user;
+}
+
+export async function findUserByUsername(username: string) {
+  const user = await prisma.users.findUnique({
+    where: {
+      username,
+    },
+  });
+  return user;
+}
+
+export async function getFollowersList(username: string) {
+  const followingList = await prisma.following.findMany({
+    where: {
+      followingUsername: username,
+    },
+  });
+
+  const followers = followingList.map((f) => f.followingUsername);
+  return followers;
+}
+
+export async function getFollowingList(userId: number) {
+  const followingList = await prisma.following.findMany({
+    where: {
+      userId,
+    },
+    select: {
+      followingUsername: true,
+    },
+  });
+
+  const followers = followingList.map((f) => f.followingUsername);
+  return followers;
+}
+
+// export async function getTopLikedCreators(followingList: string[]) {
+//   const creatorCount: { [key: string]: number } = {};
+
+//   for (const username of followingList) {
+//     const user = await prisma.users.findUnique({
+//       where: { username },
+//       include: { likedCreators: true },
+//     });
+
+//     if (user?.likedCreators) {
+//       for (const likedCreator of user.likedCreators) {
+//         const { creatorId } = likedCreator;
+//         if (creatorId in creatorCount) {
+//           creatorCount[creatorId]++;
+//         } else {
+//           creatorCount[creatorId] = 1;
+//         }
+//       }
+//     }
+//   }
+
+//   const sortedCreators = Object.entries(creatorCount)
+//     .sort((a, b) => b[1] - a[1])
+//     .slice(0, 5)
+//     .map(([creatorId]) => creatorId);
+
+//   return sortedCreators;
+// }
+
+export async function getUserLikes(username: string) {
+  const user = await prisma.users.findUnique({
+    where: {
+      username,
+    },
+    include: {
+      likedCreators: {
+        include: {
+          creators: true,
+        },
+      },
+      likedRecipes: {
+        include: {
+          recipes: true,
+        },
+      },
+    },
+  });
+  return user;
 }
