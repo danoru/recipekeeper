@@ -1,16 +1,15 @@
 import Head from "next/head";
-
 import CreatorCarousel from "../../src/components/creators/CreatorCarousel";
 import CreatorList from "../../src/components/creators/CreatorList";
-import { CREATOR_LIST_TYPE } from "../../src/types";
+import { getAllCreators, getFeaturedCreators } from "../../src/data/creators";
+import { Creators } from "@prisma/client";
 
 interface Props {
-  creators: CREATOR_LIST_TYPE[];
-  featured: CREATOR_LIST_TYPE[];
+  creators: Creators[];
+  featured: Creators[];
 }
 
-function Creators(props: Props) {
-  const { creators, featured } = props;
+function CreatorsPage({ creators, featured }: Props) {
   const header = "All Creators";
   const style = "h6";
 
@@ -26,13 +25,8 @@ function Creators(props: Props) {
 }
 
 export async function getServerSideProps() {
-  const { DEV_URL, PROD_URL } = process.env;
-  const dev = process.env.NODE_ENV !== "production" ? DEV_URL : PROD_URL;
-
-  const allRes = await fetch(`${dev}/api/creators`);
-  const featRes = await fetch(`${dev}/api/creators/featured`);
-  const allCreators = await allRes.json();
-  const featuredCreators = await featRes.json();
+  const allCreators = await getAllCreators();
+  const featuredCreators = await getFeaturedCreators();
 
   return {
     props: {
@@ -42,4 +36,4 @@ export async function getServerSideProps() {
   };
 }
 
-export default Creators;
+export default CreatorsPage;

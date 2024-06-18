@@ -11,14 +11,12 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import Slide from "@mui/material/Slide";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-
-import { CREATOR_LIST_TYPE } from "../../types";
+import { Creators } from "@prisma/client";
 
 interface Props {
-  creators: CREATOR_LIST_TYPE[];
+  creators: Creators[];
 }
-function CreatorCarousel(props: Props) {
-  const { creators } = props;
+function CreatorCarousel({ creators }: Props) {
   const [currentPage, setCurrentPage] = useState(0);
   const [slideDirection, setSlideDirection] = useState<
     "right" | "left" | undefined
@@ -121,18 +119,18 @@ function CreatorCarousel(props: Props) {
   );
 }
 
-function CreatorCard(props: any) {
+function CreatorCard(creator: any) {
   return (
-    <Link href={props.link} underline="none">
+    <Link href={creator.link} underline="none">
       <Card sx={{ width: "250px", height: "250px", cursor: "pointer" }}>
         <CardMedia
           sx={{ height: 140 }}
-          image={props.image}
-          title={props.name}
+          image={creator.image}
+          title={creator.name}
         />
         <CardContent>
           <Typography variant="h6" component="div">
-            {props.name}
+            {creator.name}
           </Typography>
         </CardContent>
       </Card>

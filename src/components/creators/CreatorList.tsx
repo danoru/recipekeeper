@@ -4,11 +4,9 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-
-import { CREATOR_LIST_TYPE } from "../../types";
-
+import { Creators } from "@prisma/client";
 interface Props {
-  creators: CREATOR_LIST_TYPE[];
+  creators: Creators[];
   header: string;
   style?:
     | "h1"
@@ -26,8 +24,7 @@ interface Props {
     | "overline"
     | undefined;
 }
-function CreatorList(props: Props) {
-  const { creators, header, style } = props;
+function CreatorList({ creators, header, style }: Props) {
   const styledHeader = header.toUpperCase();
   const typographyStyle = style || "h6";
 
@@ -80,10 +77,10 @@ function CreatorList(props: Props) {
   );
 }
 
-function CreatorCard(props: any) {
+function CreatorCard(creator: any) {
   return (
     <Grid item>
-      <Link href={props.link} underline="none">
+      <Link href={creator.link} underline="none">
         <Card
           sx={{
             width: "250px",
@@ -93,12 +90,12 @@ function CreatorCard(props: any) {
         >
           <CardMedia
             sx={{ height: 140 }}
-            image={props.image}
-            title={props.name}
+            image={creator.image}
+            title={creator.name}
           />
           <CardContent>
             <Typography variant="h6" component="div">
-              {props.name}
+              {creator.name}
             </Typography>
           </CardContent>
         </Card>

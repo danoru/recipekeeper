@@ -10,14 +10,13 @@ import OutdoorGrillIcon from "@mui/icons-material/OutdoorGrill";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import { getAllUsers } from "../../src/data/users";
-import { USER_LIST_TYPE } from "../../src/types";
+import { Users } from "@prisma/client";
 
 interface Props {
-  users: USER_LIST_TYPE[];
+  users: Users[];
 }
 
-function Members(props: Props) {
-  const { users } = props;
+function Members({ users }: Props) {
   const filteredUsers = users.filter((user) => user.username !== "guest");
 
   return (
@@ -90,7 +89,7 @@ function Members(props: Props) {
 }
 
 export async function getStaticProps() {
-  const users = getAllUsers();
+  const users = await getAllUsers();
 
   return {
     props: {

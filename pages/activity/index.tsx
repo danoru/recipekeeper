@@ -6,43 +6,21 @@ import moment from "moment";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import Rating from "@mui/material/Rating";
 import Stack from "@mui/material/Stack";
-import { findUserByUsername } from "../../src/data/users";
+import { findUserByUsername, getFollowing } from "../../src/data/users";
 import { getSession } from "next-auth/react";
-import { getAllRecipes } from "../../src/data/recipes";
-import { RECIPE_LIST_TYPE, USER_LIST_TYPE, UserDiary } from "../../src/types";
+import { GetServerSidePropsContext } from "next";
+import { DiaryEntries, Recipes, Users } from "@prisma/client";
+import { getDiaryEntriesByUsernames } from "../../src/data/diary";
 
 interface Props {
-  recipes: RECIPE_LIST_TYPE[];
-  session: any;
-  sessionUser: USER_LIST_TYPE;
+  diaryEntries: (DiaryEntries & { recipes: Recipes; users: Users })[];
+  user: Users;
 }
 
-function Activity({ session, sessionUser, recipes }: Props) {
-  const username = session?.user.username;
+function Activity({ diaryEntries, user }: Props) {
+  const username = user.username;
   const title = `${username}'s Activity Stream`;
   const avatarSize = "56px";
-
-  function getDiaryEntries(followingList: string[]) {
-    let allDiaryEntries: UserDiary[] = [];
-
-    followingList.forEach((username) => {
-      const user = findUserByUsername(username);
-      if (user && user.diary) {
-        const userEntries = user.diary.map((entry) => ({ ...entry, username }));
-        allDiaryEntries = allDiaryEntries.concat(userEntries);
-      }
-    });
-
-    return allDiaryEntries;
-  }
-
-  let diaryEntries: UserDiary[] = [];
-
-  if (sessionUser) {
-    const followingList = sessionUser.following ?? [];
-    const selfIncludedFollowingList = [...followingList, sessionUser.username];
-    diaryEntries = getDiaryEntries(selfIncludedFollowingList);
-  }
 
   return (
     <div>
@@ -58,61 +36,79 @@ function Activity({ session, sessionUser, recipes }: Props) {
           spacing={1}
           divider={<Divider orientation="horizontal" flexItem />}
         >
-          {diaryEntries?.map((entry: UserDiary, i: number) => {
-            const recipe = recipes.find((r) => r.name === entry.recipe);
-            if (!recipe) return null;
-            return (
-              <Stack key={i} direction="row">
-                <div style={{ display: "inline-flex", alignItems: "center" }}>
-                  <Link href={`/${entry.username}`} underline="none">
-                    <span style={{ margin: "0 2px" }}>{entry.username}</span>
-                  </Link>
-                  <span style={{ margin: "0 2px" }}>made</span>
-                  <Link
-                    href={`/recipe/${entry.recipe
-                      .toLowerCase()
-                      .replace(/ /g, "-")}`}
-                    underline="none"
-                  >
-                    <span style={{ margin: "0 2px" }}>{entry.recipe}</span>
-                  </Link>
-                  <span style={{ margin: "0 2px" }}>on</span>
-                  <span style={{ margin: "0 2px" }}>
-                    {moment(entry.date).format("dddd, MMMM Do YYYY")}
-                  </span>
-                  <span style={{ margin: "0 2px" }}>and rated it</span>
-                  {entry.rating !== undefined && (
+          {diaryEntries?.map(
+            (
+              entry: DiaryEntries & { recipes: Recipes; users: Users },
+              i: number
+            ) => {
+              return (
+                <Stack key={i} direction="row">
+                  <div style={{ display: "inline-flex", alignItems: "center" }}>
+                    <Link href={`/${entry.users.username}`} underline="none">
+                      <span style={{ margin: "0 2px" }}>
+                        {entry.users.username}
+                      </span>
+                    </Link>
+                    <span style={{ margin: "0 2px" }}>made</span>
+                    <Link
+                      href={`/recipe/${entry.recipes.name
+                        .toLowerCase()
+                        .replace(/ /g, "-")}`}
+                      underline="none"
+                    >
+                      <span style={{ margin: "0 2px" }}>
+                        {entry.recipes.name}
+                      </span>
+                    </Link>
+                    <span style={{ margin: "0 2px" }}>on</span>
                     <span style={{ margin: "0 2px" }}>
-                      <Rating value={entry.rating} precision={0.5} readOnly />
+                      {moment(entry.date).format("dddd, MMMM Do YYYY")}
                     </span>
-                  )}
-                  <span>.</span>
-                </div>
-              </Stack>
-            );
-          })}
+                    <span style={{ margin: "0 2px" }}>and rated it</span>
+                    {entry.rating !== undefined && (
+                      <span style={{ margin: "0 2px" }}>
+                        <Rating
+                          value={entry.rating.toNumber()}
+                          precision={0.5}
+                          readOnly
+                        />
+                      </span>
+                    )}
+                    <span>.</span>
+                  </div>
+                </Stack>
+              );
+            }
+          )}
         </Stack>
       </Grid>
     </div>
   );
 }
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
-  let sessionUser = null;
+  let user = null;
+  let usernames: string[] = [];
+  let diaryEntries: DiaryEntries[] = [];
 
   if (session) {
-    const sessionUsername = session.user.username;
-    sessionUser = findUserByUsername(sessionUsername);
-  }
+    const username = session.user.username;
+    user = await findUserByUsername(username);
 
-  const recipes = getAllRecipes();
+    if (user) {
+      const following = await getFollowing(user.id);
+      usernames = following.map((user) => user.followingUsername);
+      usernames.push(username);
+    }
+    diaryEntries = await getDiaryEntriesByUsernames(usernames);
+  }
 
   return {
     props: {
-      recipes,
+      diaryEntries,
       session,
-      sessionUser,
+      user,
     },
   };
 }
