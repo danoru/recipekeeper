@@ -5,21 +5,13 @@ import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
-import { RECIPE_LIST_TYPE, USER_LIST_TYPE, UserDiary } from "../../types";
+import { DiaryEntries, Recipes, Users } from "@prisma/client";
 
 interface Props {
-  user: USER_LIST_TYPE;
-  recipes: RECIPE_LIST_TYPE[];
+  recentDiaryEntries: (DiaryEntries & { recipes: Recipes })[];
 }
 
-function UserRecentRecipes({ recipes, user }: Props) {
-  const diaryEntries: UserDiary[] = user.diary || [];
-
-  const sortedEntries = diaryEntries.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
-
-  const mostRecentEntries = sortedEntries.slice(0, 4);
+function UserRecentRecipes({ recentDiaryEntries }: Props) {
   return (
     <Grid item>
       <Grid
@@ -48,24 +40,22 @@ function UserRecentRecipes({ recipes, user }: Props) {
           maxWidth: "75%",
         }}
       >
-        {mostRecentEntries.map((entry: UserDiary, i: number) => {
-          const recipe = recipes.find((r) => r.name === entry.recipe);
-
-          return (
-            recipe && (
+        {recentDiaryEntries.map(
+          (entry: DiaryEntries & { recipes: Recipes }, i: number) => {
+            return (
               <RecipeCard
                 key={`card-${i}`}
-                name={recipe.name}
-                image={recipe.image}
+                name={entry.recipes.name}
+                image={entry.recipes.image}
                 rating={entry.rating}
                 sx={{
                   width: "100%",
                   height: "100%",
                 }}
               />
-            )
-          );
-        })}
+            );
+          }
+        )}
       </Grid>
     </Grid>
   );

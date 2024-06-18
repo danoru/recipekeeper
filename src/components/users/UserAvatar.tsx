@@ -5,9 +5,7 @@ interface Props {
   name: string;
 }
 
-function UserAvatar(props: Props) {
-  const { avatarSize, name } = props;
-
+function UserAvatar({ avatarSize, name }: Props) {
   function stringToColor(string: string) {
     let hash = 0;
     let i;

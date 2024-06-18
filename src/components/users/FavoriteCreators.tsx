@@ -4,11 +4,19 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { CREATOR_LIST_TYPE } from "../../types";
+import { Creators } from "@prisma/client";
 
 interface Props {
-  creators: CREATOR_LIST_TYPE[];
+  creators: Creators[];
 }
+
+interface CardProps {
+  image: string;
+  link: string;
+  name: string;
+  sx: any;
+}
+
 function FavoriteCreators({ creators }: Props) {
   return (
     <Grid item>
@@ -39,15 +47,12 @@ function FavoriteCreators({ creators }: Props) {
           maxWidth: "75%",
         }}
       >
-        {creators.map((creator: any, i: number) => (
+        {creators.map((creator: Creators, i: number) => (
           <CreatorCard
             key={`card-${i}`}
             name={creator.name}
             link={`creators/${creator.link}`}
             image={creator.image}
-            website={creator.website}
-            instagram={creator.instagram}
-            youtube={creator.youtube}
             sx={{
               width: "100%",
               height: "100%",
@@ -59,10 +64,10 @@ function FavoriteCreators({ creators }: Props) {
   );
 }
 
-function CreatorCard(props: any) {
+function CreatorCard(creator: CardProps) {
   return (
     <Grid item>
-      <Link href={props.link} underline="none">
+      <Link href={creator.link} underline="none">
         <Card
           sx={{
             width: "200px",
@@ -72,12 +77,12 @@ function CreatorCard(props: any) {
         >
           <CardMedia
             sx={{ height: 140 }}
-            image={props.image}
-            title={props.name}
+            image={creator.image}
+            title={creator.name}
           />
           <CardContent>
             <Typography variant="h6" component="div">
-              {props.name}
+              {creator.name}
             </Typography>
           </CardContent>
         </Card>

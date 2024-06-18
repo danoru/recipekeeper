@@ -1,11 +1,11 @@
-import Grid from "@mui/material/Grid";
-import { RECIPE_LIST_TYPE } from "../../types";
-import Link from "@mui/material/Link";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import { Cooklist, Recipes } from "@prisma/client";
 
 interface CooklistProps {
-  cooklist: RECIPE_LIST_TYPE[];
+  cooklist: (Cooklist & { recipes: Recipes })[];
 }
 
 interface RecipeCardProps {
@@ -31,11 +31,11 @@ function UserCooklistPreview({ cooklist }: CooklistProps) {
         <Grid item>{cooklist?.length}</Grid>
       </Grid>
       <Grid container>
-        {cooklist.map((recipe, i: number) => (
+        {cooklist.map((item, i: number) => (
           <RecipeCard
             key={`card-${i}`}
-            name={recipe.name}
-            image={recipe.image}
+            name={item.recipes.name}
+            image={item.recipes.image}
           />
         ))}
       </Grid>

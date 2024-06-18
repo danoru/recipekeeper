@@ -2,13 +2,13 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";
-import { USER_LIST_TYPE } from "../../types";
+import { Following } from "@prisma/client";
 
 interface Props {
-  user: USER_LIST_TYPE;
+  following: Following[];
 }
 
-function UserFollowing({ user }: Props) {
+function UserFollowing({ following }: Props) {
   return (
     <Grid item>
       <Grid
@@ -38,10 +38,10 @@ function UserFollowing({ user }: Props) {
           maxWidth: "75%",
         }}
       >
-        {user?.following?.map((user: any, i: number) => (
+        {following?.map((user: any, i: number) => (
           <Grid item key={i}>
-            <Button href={`/${user}`}>
-              <UserAvatar avatarSize="56px" name={user} />
+            <Button href={`/${user.followingUsername}`}>
+              <UserAvatar avatarSize="56px" name={user.followingUsername} />
             </Button>
           </Grid>
         ))}

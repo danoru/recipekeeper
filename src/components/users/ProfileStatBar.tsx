@@ -7,18 +7,24 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";
-import { getAllUsers } from "../../data/users";
-import { USER_LIST_TYPE } from "../../types";
+import { DiaryEntries, Following, Users } from "@prisma/client";
 
 interface Props {
   avatarSize: string;
-  user: USER_LIST_TYPE;
+  diaryEntries: DiaryEntries[];
+  user: Users;
+  followers: Following[];
+  following: Following[];
 }
 
-function ProfileStatBar({ avatarSize, user }: Props) {
-  const following = getAllUsers().filter((u) =>
-    user.following?.includes(u.username)
-  );
+function ProfileStatBar({
+  avatarSize,
+  diaryEntries,
+  following,
+  followers,
+  user,
+}: Props) {
+  const fullName = user.firstName + " " + user.lastName;
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -47,7 +53,7 @@ function ProfileStatBar({ avatarSize, user }: Props) {
   return (
     <Grid container item sx={{ marginTop: "10px" }}>
       <Grid container item xs={6} justifyContent="center" alignItems="center">
-        <UserAvatar avatarSize={avatarSize} name={user.profile.name} />
+        <UserAvatar avatarSize={avatarSize} name={fullName} />
         <Typography variant="h5" sx={{ margin: "0 10px" }}>
           {user.username}
         </Typography>
@@ -87,17 +93,17 @@ function ProfileStatBar({ avatarSize, user }: Props) {
         <Button
           size="small"
           href={`${user.username}/recipes`}
-        >{`${user.diary?.length} RECIPES`}</Button>
+        >{`${diaryEntries.length} RECIPES`}</Button>
         <Button
           size="small"
           href={`${user.username}/recipes`}
-        >{`${user.diary?.length} THIS YEAR`}</Button>
+        >{`${diaryEntries.length} THIS YEAR`}</Button>
         <Button
           size="small"
           href={`${user.username}/following`}
-        >{`${user.following?.length} FOLLOWING`}</Button>
+        >{`${following?.length} FOLLOWING`}</Button>
         <Button size="small" href={`${user.username}/followers`}>
-          {`${following.length} FOLLOWERS`}
+          {`${followers?.length} FOLLOWERS`}
         </Button>
       </Grid>
     </Grid>

@@ -5,10 +5,10 @@ import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 
-import { RECIPE_LIST_TYPE } from "../../types";
+import { Recipes } from "@prisma/client";
 
 interface Props {
-  recipes: RECIPE_LIST_TYPE[];
+  recipes: Recipes[];
 }
 
 function FavoriteRecipes({ recipes }: Props) {

@@ -5,17 +5,24 @@ import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import RecipeList from "../../src/components/recipes/RecipeList";
 import { getAllCreators } from "../../src/data/creators";
 import { getAllRecipes } from "../../src/data/recipes";
-import { getAllUsers } from "../../src/data/users";
+import { getAllUsers, getUserLikes } from "../../src/data/users";
 import {
-  CREATOR_LIST_TYPE,
-  RECIPE_LIST_TYPE,
-  USER_LIST_TYPE,
-} from "../../src/types";
+  Creators,
+  LikedCreators,
+  LikedRecipes,
+  Recipes,
+  Users,
+} from "@prisma/client";
 
 interface Props {
-  creators: CREATOR_LIST_TYPE[];
-  recipes: RECIPE_LIST_TYPE[];
-  user: USER_LIST_TYPE;
+  user: Users & {
+    likedCreators: (LikedCreators & {
+      creators: Creators;
+    })[];
+    likedRecipes: (LikedRecipes & {
+      recipes: Recipes;
+    })[];
+  };
 }
 
 interface Params {
@@ -24,11 +31,12 @@ interface Params {
   };
 }
 
-function UserCooklist(props: Props) {
-  const { creators, recipes, user } = props;
-  const title = `${user.profile.name}'s Likes • Savry`;
-  const recipeHeader = `${user.profile.name} LIKED RECIPES`;
-  const creatorHeader = `${user.profile.name} LIKED CREATORS`;
+function UserCooklist({ user }: Props) {
+  const title = `${user.username}'s Likes • Savry`;
+  const creatorHeader = `${user.username}'S LIKED CREATORS`;
+  const creators = user.likedCreators.map((user) => user.creators);
+  const recipeHeader = `${user.username}'S LIKED RECIPES`;
+  const recipes = user.likedRecipes.map((user) => user.recipes);
   const style = "overline";
 
   return (
@@ -46,7 +54,7 @@ function UserCooklist(props: Props) {
 }
 
 export async function getStaticPaths() {
-  const users = getAllUsers();
+  const users = await getAllUsers();
   const paths = users.map((user) => ({
     params: { username: user.username },
   }));
@@ -59,18 +67,9 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: Params) {
   const { username } = params;
-  const user = getAllUsers().find((user) => user.username === username);
-  const creators = getAllCreators().filter((creator) =>
-    user?.liked?.creators?.includes(creator.link)
-  );
-  const recipes = getAllRecipes().filter((recipe) =>
-    user?.liked?.recipes?.includes(recipe.name)
-  );
-
+  const user = await getUserLikes(username);
   return {
     props: {
-      creators,
-      recipes,
       user,
     },
     revalidate: 1800,

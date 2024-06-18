@@ -2,13 +2,13 @@ import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import RecipeList from "../../src/components/recipes/RecipeList";
-import { getAllUsers } from "../../src/data/users";
-import { RECIPE_LIST_TYPE, USER_LIST_TYPE } from "../../src/types";
-import { getAllRecipes } from "../../src/data/recipes";
+import { findUserByUsername, getAllUsers } from "../../src/data/users";
+import { getCooklist } from "../../src/data/recipes";
+import { Cooklist, Recipes, Users } from "@prisma/client";
 
 interface Props {
-  user: USER_LIST_TYPE;
-  recipes: RECIPE_LIST_TYPE[];
+  user: Users;
+  cooklist: (Cooklist & { recipes: Recipes })[];
 }
 
 interface Params {
@@ -17,11 +17,11 @@ interface Params {
   };
 }
 
-function UserCooklist(props: Props) {
-  const { user, recipes } = props;
-  const title = `${user.profile.name}'s Cooklist • Savry`;
-  const header = `${user.profile.name} WANTS TO COOK ${recipes.length} RECIPES`;
+function UserCooklist({ cooklist, user }: Props) {
+  const title = `${user.username}'s Cooklist • Savry`;
+  const header = `${user.username} WANTS TO COOK ${cooklist.length} RECIPES`;
   const style = "overline";
+  const recipes = cooklist.map((item) => item.recipes);
 
   return (
     <div>
@@ -37,7 +37,7 @@ function UserCooklist(props: Props) {
 }
 
 export async function getStaticPaths() {
-  const users = getAllUsers();
+  const users = await getAllUsers();
   const paths = users.map((user) => ({
     params: { username: user.username },
   }));
@@ -50,15 +50,16 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: Params) {
   const { username } = params;
-  const user = getAllUsers().find((user) => user.username === username);
+  const user = await findUserByUsername(username);
+  let cooklist: Cooklist[] = [];
 
-  const recipes = getAllRecipes().filter((recipe) =>
-    user?.cooklist?.includes(recipe.name)
-  );
+  if (user) {
+    cooklist = await getCooklist(user.id);
+  }
 
   return {
     props: {
-      recipes,
+      cooklist,
       user,
     },
     revalidate: 1800,

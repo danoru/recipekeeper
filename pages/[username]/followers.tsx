@@ -9,11 +9,16 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import OutdoorGrillIcon from "@mui/icons-material/OutdoorGrill";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import Stack from "@mui/material/Stack";
-import { getAllUsers } from "../../src/data/users";
-import { USER_LIST_TYPE } from "../../src/types";
+import {
+  findUserByUsername,
+  getAllUsers,
+  getFollowers,
+} from "../../src/data/users";
+import { Users, Following } from "@prisma/client";
 
 interface Props {
-  user: USER_LIST_TYPE;
+  user: Users;
+  followers: (Following & { users: Users })[];
 }
 
 interface Params {
@@ -22,12 +27,8 @@ interface Params {
   };
 }
 
-function UserFollowers(props: Props) {
-  const { user } = props;
-  const title = `${user.profile.name}'s Followers • Savry`;
-  const followers = getAllUsers().filter((follower) =>
-    follower?.following?.includes(user.username)
-  );
+function UserFollowers({ user, followers }: Props) {
+  const title = `${user.username}'s Followers • Savry`;
 
   return (
     <div>
@@ -53,15 +54,15 @@ function UserFollowers(props: Props) {
             spacing={1}
             divider={<Divider orientation="horizontal" flexItem />}
           >
-            {followers.map((user) => (
+            {followers.map((follower) => (
               <Stack
-                key={user.username}
+                key={follower.users.username}
                 direction="row"
                 sx={{ alignItems: "center", paddingLeft: "10px" }}
               >
                 <div style={{ width: "25%" }}>
-                  <Link href={`/${user.username}`} underline="none">
-                    {user.username}
+                  <Link href={`/${follower.users.username}`} underline="none">
+                    {follower.users.username}
                   </Link>
                 </div>
                 <div style={{ width: "25%" }}>
@@ -83,7 +84,7 @@ function UserFollowers(props: Props) {
 }
 
 export async function getStaticPaths() {
-  const users = getAllUsers();
+  const users = await getAllUsers();
   const paths = users.map((user) => ({
     params: { username: user.username },
   }));
@@ -96,11 +97,13 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: Params) {
   const { username } = params;
-  const user = getAllUsers().find((user) => user.username === username);
+  const user = await findUserByUsername(username);
+  const followers = await getFollowers(username);
 
   return {
     props: {
       user,
+      followers,
     },
     revalidate: 1800,
   };
