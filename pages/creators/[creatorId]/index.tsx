@@ -11,13 +11,13 @@ import Rating from "@mui/material/Rating";
 import RecipeList from "../../../src/components/recipes/RecipeList";
 import Typography from "@mui/material/Typography";
 import YouTubeIcon from "@mui/icons-material/YouTube";
-import { getCreatorByLink } from "../../../src/data/creators";
+import { getAllCreators, getCreatorByLink } from "../../../src/data/creators";
 import { getRecipesByCreator } from "../../../src/data/recipes";
-import { Creators, PrismaClient, Recipes } from "@prisma/client";
+import { Creators, Recipes, Reviews } from "@prisma/client";
 
 interface Props {
-  creatorId: Creators;
-  filteredRecipes: Recipes[];
+  creator: Creators;
+  recipes: (Recipes & { reviews: Reviews })[];
 }
 
 interface Params {
@@ -26,18 +26,16 @@ interface Params {
   };
 }
 
-function CreatorPage({ creatorId, filteredRecipes }: Props) {
-  const title = creatorId.name + " • Savry";
+function CreatorPage({ creator, recipes }: Props) {
+  const title = creator.name + " • Savry";
   const header = "All Recipes by Creator";
-  // const creatorRating = filteredRecipes.reduce(
-  //   (n, { rating }) => n + rating,
-  //   0
-  // );
-  // const creatorReview = filteredRecipes.reduce(
-  //   (n, { reviews }) => n + reviews,
-  //   0
-  // );
-  // const creatorAverageRating = creatorRating / creatorReview;
+
+  const reviews = recipes.flatMap((recipe) => recipe.reviews);
+
+  const rating = reviews.reduce(
+    (sum, review) => sum + review.rating.toNumber(),
+    0
+  );
 
   return (
     <Grid container>
@@ -45,19 +43,16 @@ function CreatorPage({ creatorId, filteredRecipes }: Props) {
         <title>{title}</title>
       </Head>
       <Grid item xs={10}>
-        <RecipeList recipes={filteredRecipes} header={header} />
+        <RecipeList recipes={recipes} header={header} />
       </Grid>
       <Grid item xs={2}>
-        <CreatorCard
-          creatorId={creatorId}
-          // rating={creatorAverageRating}
-        />
+        <CreatorCard creator={creator} rating={rating} />
       </Grid>
     </Grid>
   );
 }
 
-function CreatorCard({ creatorId, rating }: any) {
+function CreatorCard({ creator, rating }: any) {
   return (
     <Box>
       <Card
@@ -67,21 +62,21 @@ function CreatorCard({ creatorId, rating }: any) {
       >
         <CardMedia
           sx={{ height: 140 }}
-          image={creatorId.image}
-          title={creatorId.name}
+          image={creator.image}
+          title={creator.name}
         />
         <CardContent>
           <Typography variant="h6" component="div">
-            {creatorId.name}
+            {creator.name}
           </Typography>
           <Rating value={rating} precision={0.5} readOnly />
-          <Link href={creatorId.website}>
+          <Link href={creator.website}>
             <LinkIcon />
           </Link>
-          <Link href={creatorId.instagram}>
+          <Link href={creator.instagram}>
             <InstagramIcon />
           </Link>
-          <Link href={creatorId.youtube}>
+          <Link href={creator.youtube}>
             <YouTubeIcon />
           </Link>
         </CardContent>
@@ -91,8 +86,7 @@ function CreatorCard({ creatorId, rating }: any) {
 }
 
 export async function getStaticPaths() {
-  const prisma = new PrismaClient();
-  const creators = await prisma.creators.findMany();
+  const creators = await getAllCreators();
   const paths = creators.map((creator) => ({
     params: { creatorId: creator.link },
   }));
@@ -104,13 +98,13 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: Params) {
-  const creatorId = await getCreatorByLink(params.creatorId);
-  const filteredRecipes = await getRecipesByCreator(params.creatorId);
+  const creator = await getCreatorByLink(params.creatorId);
+  const recipes = await getRecipesByCreator(params.creatorId);
 
   return {
     props: {
-      creatorId,
-      filteredRecipes,
+      creator,
+      recipes,
     },
     revalidate: 1800,
   };

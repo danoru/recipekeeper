@@ -63,9 +63,6 @@ function CreatorList({ creators, header, style }: Props) {
             name={creator.name}
             link={`creators/${creator.link}`}
             image={creator.image}
-            website={creator.website}
-            instagram={creator.instagram}
-            youtube={creator.youtube}
             sx={{
               width: "100%",
               height: "100%",
