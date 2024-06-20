@@ -41,23 +41,43 @@ export async function getStaticPaths() {
   const uniqueFilters = ["category", "cuisine", "course", "method", "diet"];
 
   for (const filter of uniqueFilters) {
-    const uniqueValues = await prisma.recipes.findMany({
-      distinct: [filter],
-      select: {[filter]: true}
-    }),
-  });
-  uniqueValues.forEach((value) => {
-    const filterValue = value[filter];
-    if (filterValue) {
+    let uniqueFilters: any[];
+
+    switch (filter) {
+      case "category":
+        uniqueFilters = Object.values("category");
+        break;
+      case "cuisine":
+        uniqueFilters = Object.values("cuisine");
+        break;
+      case "course":
+        uniqueFilters = Object.values("course");
+        break;
+      case "method":
+        uniqueFilters = Object.values("method");
+        break;
+      case "diet":
+        uniqueFilters = Object.values("diet");
+        break;
+      default:
+        uniqueFilters = [];
+    }
+
+    for (const filterValue of uniqueFilters) {
+      if (filterValue) {
         paths.push({
           params: {
             recipeFilterId: filter,
-            recipeSubfilterId: filterValue.replace(/\s/g, "").toLowerCase(),
+            recipeSubfilterId: filterValue
+              .toString()
+              .toLowerCase()
+              .replace(/\s/g, ""),
           },
         });
       }
-    });
+    }
   }
+
   return {
     paths,
     fallback: false,
