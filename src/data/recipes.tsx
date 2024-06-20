@@ -316,7 +316,7 @@ export async function getRecipeByName(name: string) {
         mode: "insensitive", // Case-insensitive comparison
       },
     },
-    include: { creators: true },
+    include: { creators: true, reviews: true },
   });
   return recipe;
 }
@@ -395,12 +395,15 @@ export async function getFilteredRecipes(
   return recipes;
 }
 
-export async function getRecipesByCreator(creatorName: string) {
+export async function getRecipesByCreator(creatorId: string) {
   const recipes = await prisma.recipes.findMany({
     where: {
       creators: {
-        name: creatorName,
+        link: creatorId,
       },
+    },
+    include: {
+      reviews: true,
     },
     orderBy: {
       name: "asc",

@@ -12,13 +12,13 @@ import Slide from "@mui/material/Slide";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import { RECIPE_LIST_TYPE } from "../../types";
+import { Recipes } from "@prisma/client";
 
 interface Props {
-  items: RECIPE_LIST_TYPE[];
+  recipes: Recipes[];
 }
 
-function PopCarousel({ items }: Props) {
+function PopCarousel({ recipes }: Props) {
   const [currentPage, setCurrentPage] = useState(0);
   const [slideDirection, setSlideDirection] = useState<
     "right" | "left" | undefined
@@ -82,20 +82,17 @@ function PopCarousel({ items }: Props) {
               justifyContent="center"
               sx={{ width: "100%", maxWidth: "1200px" }}
             >
-              {items
+              {recipes
                 .slice(
                   currentPage * cardsPerPage,
                   (currentPage + 1) * cardsPerPage
                 )
-                .map((item: any, i: number) => (
+                .map((recipe: any, i: number) => (
                   <PopCard
                     key={`card-${i}`}
-                    name={item.name}
-                    creator={item.creator}
-                    link={item.link}
-                    description={item.description}
-                    image={item.image}
-                    value={item.rating}
+                    name={recipe.name}
+                    description={recipe.description}
+                    image={recipe.image}
                     underline="none"
                     sx={{
                       width: "100%",
@@ -110,7 +107,7 @@ function PopCarousel({ items }: Props) {
         <IconButton
           onClick={handleNextPage}
           disabled={
-            currentPage >= Math.ceil((items.length || 0) / cardsPerPage) - 1
+            currentPage >= Math.ceil((recipes.length || 0) / cardsPerPage) - 1
           }
         >
           <NavigateNextIcon />
@@ -120,23 +117,25 @@ function PopCarousel({ items }: Props) {
   );
 }
 
-function PopCard(props: any) {
-  const recipeSlug = `/recipe/${props.name.replace(/\s+/g, "-").toLowerCase()}`;
+function PopCard(recipe: any) {
+  const recipeSlug = `/recipe/${recipe.name
+    .replace(/\s+/g, "-")
+    .toLowerCase()}`;
 
   return (
     <Link href={recipeSlug} underline="none">
       <Card sx={{ width: "250px", height: "360px", cursor: "pointer" }}>
         <CardMedia
           sx={{ height: 140, width: "100%" }}
-          image={props.image}
-          title={props.name}
+          image={recipe.image}
+          title={recipe.name}
         />
         <CardContent>
           <Typography variant="h6" component="div">
-            {props.name}
+            {recipe.name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {props.description}
+            {recipe.description}
           </Typography>
         </CardContent>
       </Card>

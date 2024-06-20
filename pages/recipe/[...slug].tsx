@@ -6,9 +6,9 @@ import RecipeActionBar from "../../src/components/recipes/RecipeActionBar";
 import RecipeRatings from "../../src/components/recipes/RecipeRatings";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { getAllRecipes, getRecipeId } from "../../src/data/recipes";
+import { getAllRecipes, getRecipeByName } from "../../src/data/recipes";
 import { getAllUsers } from "../../src/data/users";
-import { RECIPE_LIST_TYPE, USER_LIST_TYPE } from "../../src/types";
+import { Creators, Recipes, Reviews, Users } from "@prisma/client";
 
 interface Params {
   params: {
@@ -17,14 +17,19 @@ interface Params {
 }
 
 interface Props {
-  recipe: RECIPE_LIST_TYPE;
+  recipe: Recipes & { creators: Creators; reviews: Reviews[] };
   slug: string;
-  users: USER_LIST_TYPE[];
+  users: Users[];
 }
 
 function RecipePage({ recipe, slug, users }: Props) {
-  const title = recipe.name + " by " + recipe.creator + " • Savry";
-  const rating: number = recipe.rating / recipe.reviews;
+  const title = `${recipe.name} by ${recipe.creators.name} • Savry`;
+  const totalRating = recipe.reviews.reduce(
+    (sum, review) => sum + review.rating.toNumber(),
+    0
+  );
+  const ratingCount = recipe.reviews.length;
+  const averageRating = ratingCount > 0 ? totalRating / ratingCount : 0;
 
   return (
     <div>
@@ -48,19 +53,21 @@ function RecipePage({ recipe, slug, users }: Props) {
           <Typography variant="h6">{recipe.name}</Typography>
           <Typography variant="body1">
             by{" "}
-            <Link href={`/creators/${recipe.creatorId}`}>{recipe.creator}</Link>
+            <Link href={`/creators/${recipe.creatorId}`}>
+              {recipe.creators.name}
+            </Link>
           </Typography>
 
           <Typography variant="body1">{recipe.description}</Typography>
-          <Rating value={rating} precision={0.5} readOnly />
+          <Rating value={averageRating} precision={0.5} readOnly />
           <Typography variant="body1">
-            <strong>Ratings:</strong> {rating}/5 Stars based on {recipe.reviews}{" "}
-            Reviews
+            <strong>Ratings:</strong> {averageRating}/5 Stars based on{" "}
+            {ratingCount} Reviews
           </Typography>
         </div>
         <Stack direction="column" maxWidth="15%">
           <RecipeActionBar recipe={recipe} />
-          <RecipeRatings slug={slug} users={users} />
+          {/* <RecipeRatings slug={slug} users={users} /> */}
         </Stack>
       </Stack>
     </div>
@@ -68,7 +75,7 @@ function RecipePage({ recipe, slug, users }: Props) {
 }
 
 export async function getStaticPaths() {
-  const recipes = getAllRecipes();
+  const recipes = await getAllRecipes();
   const paths = recipes.map((recipe) => ({
     params: { slug: [recipe.name.replace(/\s+/g, "-").toLowerCase()] },
   }));
@@ -81,9 +88,9 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: Params) {
   const { slug } = params;
-
-  const recipe = getRecipeId(slug[0].replace(/-/g, " "));
-  const users = getAllUsers();
+  const recipeName = slug[0].replace(/-/g, " ");
+  const recipe = await getRecipeByName(recipeName);
+  const users = await getAllUsers();
 
   if (!recipe) {
     return {

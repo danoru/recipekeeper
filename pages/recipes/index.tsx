@@ -15,7 +15,6 @@ interface Props {
 }
 
 function RecipesPage({ recipes }: Props) {
-  console.log(recipes);
   return (
     <div>
       <Head>

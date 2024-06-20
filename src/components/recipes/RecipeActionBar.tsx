@@ -12,10 +12,10 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import OutdoorGrillIcon from "@mui/icons-material/OutdoorGrill";
 import OutdoorGrillOutlinedIcon from "@mui/icons-material/OutdoorGrillOutlined";
-import { RECIPE_LIST_TYPE } from "../../types";
+import { Recipes } from "@prisma/client";
 
 interface Props {
-  recipe: RECIPE_LIST_TYPE;
+  recipe: Recipes;
 }
 
 function RecipeActionBar({ recipe }: Props) {
