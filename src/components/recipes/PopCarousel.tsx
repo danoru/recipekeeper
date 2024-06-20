@@ -53,7 +53,7 @@ function PopCarousel({ recipes }: Props) {
         }}
       >
         <p>POPULAR RECIPES THIS WEEK</p>
-        <Link href="/recipes/popular/week">
+        <Link href="/recipes/popular/week" underline="none">
           <p style={{ cursor: "pointer" }}>MORE</p>
         </Link>
       </Grid>

@@ -6,43 +6,15 @@ import Link from "@mui/material/Link";
 import moment from "moment";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
-import { UserDiary, RECIPE_LIST_TYPE, USER_LIST_TYPE } from "../../types";
-import { findUserByUsername } from "../../data/users";
+import { DiaryEntries, Recipes, Users } from "@prisma/client";
 
 interface Props {
-  recipes: RECIPE_LIST_TYPE[];
-  sessionUser: USER_LIST_TYPE;
+  recipes: Recipes[];
+  sessionUser: Users | null;
+  recentEntries: (DiaryEntries & { users: Users })[];
 }
 
-function FriendRecipeActivity({ recipes, sessionUser }: Props) {
-  function getFollowingDiaryEntries(followingList: string[]) {
-    let allDiaryEntries: UserDiary[] = [];
-
-    followingList.forEach((username) => {
-      const user = findUserByUsername(username);
-      if (user && user.diary) {
-        const userEntries = user.diary.map((entry) => ({ ...entry, username }));
-        allDiaryEntries = allDiaryEntries.concat(userEntries);
-      }
-    });
-
-    return allDiaryEntries;
-  }
-
-  function getRecentDiaryEntries(allDiaryEntries: UserDiary[]) {
-    return allDiaryEntries
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 5);
-  }
-
-  let recentEntries: UserDiary[] = [];
-
-  if (sessionUser) {
-    const followingList = sessionUser.following ?? [];
-    const allDiaryEntries = getFollowingDiaryEntries(followingList);
-    recentEntries = getRecentDiaryEntries(allDiaryEntries);
-  }
-
+function FriendRecipeActivity({ recipes, recentEntries }: Props) {
   return (
     <Grid container>
       <Grid
@@ -72,24 +44,26 @@ function FriendRecipeActivity({ recipes, sessionUser }: Props) {
           maxWidth: "75%",
         }}
       >
-        {recentEntries?.map((entry: UserDiary, i: number) => {
-          const recipe = recipes.find((r) => r.name === entry.recipe);
-          if (!recipe) return null;
-          return (
-            <RecipeCard
-              key={`card-${i}`}
-              name={recipe.name}
-              image={recipe.image}
-              rating={entry.rating}
-              date={entry.date}
-              username={entry.username}
-              sx={{
-                height: "100%",
-                width: "100%",
-              }}
-            />
-          );
-        })}
+        {recentEntries?.map(
+          (entry: DiaryEntries & { users: Users }, i: number) => {
+            const recipe = recipes.find((r) => r.id === entry.recipeId);
+            if (!recipe) return null;
+            return (
+              <RecipeCard
+                key={`card-${i}`}
+                name={recipe.name}
+                image={recipe.image}
+                rating={entry.rating}
+                date={entry.date}
+                username={entry.users.username}
+                sx={{
+                  height: "100%",
+                  width: "100%",
+                }}
+              />
+            );
+          }
+        )}
       </Grid>
     </Grid>
   );

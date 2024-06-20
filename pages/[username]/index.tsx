@@ -87,9 +87,9 @@ function UserPage({
         </Grid>
         <Grid item xs={4}>
           <UserCooklistPreview cooklist={cooklist} />
-          <UserRecipeDiary user={user} />
-          <UserRatings user={user} />
-          <UserActivity user={user} />
+          {/* <UserRecipeDiary user={user} /> */}
+          {/* <UserRatings user={user} /> */}
+          {/* <UserActivity user={user} /> */}
         </Grid>
       </Grid>
     </div>

@@ -3,27 +3,34 @@ import Link from "@mui/material/Link";
 import PopularCreatorActivity from "./PopularCreatorActivity";
 import PopularRecipeActivity from "./PopularRecipeActivity";
 import Typography from "@mui/material/Typography";
-import {
-  CREATOR_LIST_TYPE,
-  RECIPE_LIST_TYPE,
-  USER_LIST_TYPE,
-} from "../../types";
+import { Creators, Recipes, Users, DiaryEntries } from "@prisma/client";
 
 interface Props {
-  creators: CREATOR_LIST_TYPE[];
-  recipes: RECIPE_LIST_TYPE[];
+  creators: Creators[];
+  recentEntries: (DiaryEntries & { users: Users })[];
+  recipes: Recipes[];
   username: string;
-  sessionUser: USER_LIST_TYPE;
+  sessionUser: Users;
 }
 
-function LoggedInHomePage({ creators, recipes, username, sessionUser }: Props) {
+function LoggedInHomePage({
+  creators,
+  recentEntries,
+  recipes,
+  username,
+  sessionUser,
+}: Props) {
   return (
     <main style={{ marginTop: "20px", textAlign: "center" }}>
       <Typography variant="h6">
         Welcome back, <Link href={`/${username}`}>{username}</Link>. Here&apos;s
         what your friends have been cooking...
       </Typography>
-      <FriendRecipeActivity recipes={recipes} sessionUser={sessionUser} />
+      <FriendRecipeActivity
+        recentEntries={recentEntries}
+        recipes={recipes}
+        sessionUser={sessionUser}
+      />
       <PopularRecipeActivity recipes={recipes} sessionUser={sessionUser} />
       <PopularCreatorActivity creators={creators} sessionUser={sessionUser} />
     </main>

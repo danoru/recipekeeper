@@ -22,7 +22,7 @@ function RecipesPage({ recipes }: Props) {
       </Head>
       <main>
         <Grid container>
-          <BrowseBar />
+          {/* <BrowseBar /> */}
           <PopCarousel recipes={recipes} />
           {/* <RecentReviews />
           <PopularReviews />

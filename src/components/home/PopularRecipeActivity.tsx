@@ -4,45 +4,14 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { RECIPE_LIST_TYPE, USER_LIST_TYPE } from "../../types";
-import { findUserByUsername } from "../../data/users";
+import { Recipes, Users } from "@prisma/client";
 
 interface Props {
-  recipes: RECIPE_LIST_TYPE[];
-  sessionUser: USER_LIST_TYPE;
+  recipes: Recipes[];
+  sessionUser: Users;
 }
 
 function PopularRecipeActivity({ recipes, sessionUser }: Props) {
-  function getTopLikedRecipes(followingList: string[]) {
-    const recipeCount: { [key: string]: number } = {};
-
-    followingList.forEach((username) => {
-      const user = findUserByUsername(username);
-      if (user && user.liked && user.liked.recipes) {
-        user.liked.recipes.forEach((recipe) => {
-          if (recipeCount[recipe]) {
-            recipeCount[recipe]++;
-          } else {
-            recipeCount[recipe] = 1;
-          }
-        });
-      }
-    });
-
-    const sortedRecipes = Object.entries(recipeCount)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
-      .map(([recipe]) => recipe);
-    return sortedRecipes;
-  }
-
-  let topLikedRecipes: string[] = [];
-
-  if (sessionUser) {
-    const followingList = sessionUser.following ?? [];
-    topLikedRecipes = getTopLikedRecipes(followingList);
-  }
-
   return (
     <Grid container>
       <Grid
@@ -72,9 +41,7 @@ function PopularRecipeActivity({ recipes, sessionUser }: Props) {
           maxWidth: "75%",
         }}
       >
-        {topLikedRecipes.map((recipeName, i) => {
-          const recipe = recipes.find((r) => r.name === recipeName);
-          if (!recipe) return null;
+        {recipes.map((recipe, i) => {
           return (
             <RecipeCard
               key={`card-${i}`}

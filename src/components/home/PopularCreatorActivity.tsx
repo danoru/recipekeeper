@@ -4,45 +4,14 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { CREATOR_LIST_TYPE, USER_LIST_TYPE } from "../../types";
-import { findUserByUsername } from "../../data/users";
+import { Creators, Users } from "@prisma/client";
 
 interface Props {
-  creators: CREATOR_LIST_TYPE[];
-  sessionUser: USER_LIST_TYPE;
+  creators: Creators[];
+  sessionUser: Users | null;
 }
 
-function PopularCreatorActivity({ creators, sessionUser }: Props) {
-  function getTopLikedCreators(followingList: string[]) {
-    const creatorCount: { [key: string]: number } = {};
-
-    followingList.forEach((username) => {
-      const user = findUserByUsername(username);
-      if (user && user.liked && user.liked.creators) {
-        user.liked.creators.forEach((creator) => {
-          if (creatorCount[creator]) {
-            creatorCount[creator]++;
-          } else {
-            creatorCount[creator] = 1;
-          }
-        });
-      }
-    });
-
-    const sortedCreators = Object.entries(creatorCount)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
-      .map(([creator]) => creator);
-    return sortedCreators;
-  }
-
-  let topLikedCreators: string[] = [];
-
-  if (sessionUser) {
-    const followingList = sessionUser.following ?? [];
-    topLikedCreators = getTopLikedCreators(followingList);
-  }
-
+function PopularCreatorActivity({ creators }: Props) {
   return (
     <Grid container>
       <Grid
@@ -72,9 +41,7 @@ function PopularCreatorActivity({ creators, sessionUser }: Props) {
           maxWidth: "75%",
         }}
       >
-        {topLikedCreators.map((creatorName, i) => {
-          const creator = creators.find((c) => c.link === creatorName);
-          if (!creator) return null;
+        {creators.map((creator, i) => {
           return (
             <CreatorCard
               key={`card-${i}`}

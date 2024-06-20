@@ -1,12 +1,30 @@
 import Head from "next/head";
 import LoggedInHomePage from "../src/components/home/LoggedInHomePage";
 import LoggedOutHomePage from "../src/components/home/LoggedOutHomePage";
+import superjson from "superjson";
+import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
-import { getAllCreators } from "../src/data/creators";
-import { getAllRecipes } from "../src/data/recipes";
-import { findUserByUsername } from "../src/data/users";
+import { getTopLikedRecipes } from "../src/data/recipes";
+import { getTopLikedCreators } from "../src/data/creators";
+import { findUserByUserId } from "../src/data/users";
+import { getRecentDiaryEntries } from "../src/data/diary";
+import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
 
-function Home({ creators, recipes, session, sessionUser }: any) {
+interface Props {
+  recentEntries: (DiaryEntries & { users: Users })[];
+  session: any;
+  sessionUser: Users;
+  topLikedCreators: Creators[];
+  topLikedRecipes: Recipes[];
+}
+
+function Home({
+  recentEntries,
+  session,
+  sessionUser,
+  topLikedCreators,
+  topLikedRecipes,
+}: Props) {
   const username = session?.user?.username;
 
   return (
@@ -18,8 +36,9 @@ function Home({ creators, recipes, session, sessionUser }: any) {
       </Head>
       {session ? (
         <LoggedInHomePage
-          creators={creators}
-          recipes={recipes}
+          creators={topLikedCreators}
+          recentEntries={recentEntries}
+          recipes={topLikedRecipes}
           username={username}
           sessionUser={sessionUser}
         />
@@ -30,24 +49,43 @@ function Home({ creators, recipes, session, sessionUser }: any) {
   );
 }
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
-  const recipes = getAllRecipes();
-  const creators = getAllCreators();
-  let sessionUser = null;
+  let sessionUser: Users | null = null;
+  let recentEntries;
+  let topLikedCreators;
+  let topLikedRecipes;
 
+  // if (!session) {
+  //   return {
+  //     redirect: {
+  //       destination: "/login",
+  //       permanent: false,
+  //     },
+  //   };
+  // }
   if (session) {
-    const sessionUsername = session.user.username;
-    sessionUser = findUserByUsername(sessionUsername);
-  }
+    const sessionUserId = parseInt(session.user.id);
+    sessionUser = await findUserByUserId(sessionUserId);
 
+    if (sessionUser) {
+      recentEntries = await getRecentDiaryEntries(sessionUserId);
+      topLikedCreators = await getTopLikedCreators(sessionUserId);
+      topLikedRecipes = await getTopLikedRecipes(sessionUserId);
+    }
+
+    return {
+      props: superjson.serialize({
+        recentEntries,
+        session,
+        sessionUser,
+        topLikedCreators,
+        topLikedRecipes,
+      }).json,
+    };
+  }
   return {
-    props: {
-      creators,
-      recipes,
-      session,
-      sessionUser,
-    },
+    props: { session },
   };
 }
 
