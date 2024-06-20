@@ -61,7 +61,7 @@ function LogRecipeButton() {
             Name of Recipe
           </Typography>
           <Autocomplete
-            options={recipes || []} // Ensure recipes is not undefined
+            options={recipes || []}
             value={selectedRecipe}
             onChange={(event, newValue) => setSelectedRecipe(newValue)}
             renderInput={(params) => <TextField {...params} />}

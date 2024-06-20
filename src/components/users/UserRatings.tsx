@@ -1,19 +1,18 @@
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { BarChart } from "@mui/x-charts";
-import { USER_LIST_TYPE, UserDiary } from "../../../src/types";
+import { Reviews, Users } from "@prisma/client";
 
 interface Props {
-  user: USER_LIST_TYPE;
+  reviews: (Reviews & { users: Users })[];
 }
 
-function UserRatings({ user }: Props) {
-  if (!user.diary) {
+function UserRatings({ reviews }: Props) {
+  if (!reviews) {
     return null;
   }
 
-  const diaryEntries = user.diary;
-  const ratingDataset = generateRatingDataset(diaryEntries);
+  const ratingDataset = generateRatingDataset(reviews);
 
   return (
     <Grid item sx={{ marginTop: "10px" }}>
@@ -49,12 +48,12 @@ function UserRatings({ user }: Props) {
 }
 
 function generateRatingDataset(
-  diaryEntries: UserDiary[]
+  reviews: (Reviews & { users: Users })[]
 ): { rating: number; count: number }[] {
   const ratingCounts: { [rating: number]: number } = {};
 
-  diaryEntries.forEach((entry) => {
-    const rating = entry.rating;
+  reviews.forEach((entry) => {
+    const rating = entry.rating.toNumber();
     if (rating !== undefined) {
       if (ratingCounts[rating]) {
         ratingCounts[rating]++;

@@ -2,15 +2,16 @@ import React from "react";
 import Grid from "@mui/material/Grid";
 import moment from "moment";
 import Typography from "@mui/material/Typography";
-import { USER_LIST_TYPE, UserDiary } from "../../types";
+import { DiaryEntries, Recipes } from "@prisma/client";
 
 interface Props {
-  user: USER_LIST_TYPE;
+  diaryEntries: (DiaryEntries & { recipes: Recipes })[];
 }
 
-function UserRecipeDiary({ user }: Props) {
-  const diaryEntries = user.diary;
-  const entriesByMonth: { [month: string]: UserDiary[] } = {};
+function UserRecipeDiary({ diaryEntries }: Props) {
+  const entriesByMonth: {
+    [month: string]: (DiaryEntries & { recipes: Recipes })[];
+  } = {};
   diaryEntries?.forEach((entry) => {
     const date = moment(entry.date);
     const month = date.format("MMM");
@@ -45,7 +46,7 @@ function UserRecipeDiary({ user }: Props) {
                 <Typography>{moment(entry.date).format("D")}</Typography>
               </Grid>
               <Grid item xs={8}>
-                <Typography>{entry.recipe}</Typography>
+                <Typography>{entry.recipes.name}</Typography>
               </Grid>
             </Grid>
           ))}

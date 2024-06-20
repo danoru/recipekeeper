@@ -1,37 +1,14 @@
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { BarChart } from "@mui/x-charts";
-import { USER_LIST_TYPE, UserDiary } from "../../types";
+import { Recipes, Reviews } from "@prisma/client";
 
 interface Props {
-  slug: string;
-  users: USER_LIST_TYPE[];
+  recipe: Recipes & { reviews: Reviews[] };
 }
 
-function RecipeRatings({ slug, users }: Props) {
-  function getDiaryEntries(users: USER_LIST_TYPE[]) {
-    let allDiaryEntries: UserDiary[] = [];
-
-    users.forEach((user) => {
-      const username = user.username;
-      if (user && user.diary) {
-        const userEntries = user.diary.map((entry) => ({ ...entry, username }));
-        allDiaryEntries = allDiaryEntries.concat(userEntries);
-      }
-    });
-
-    return allDiaryEntries;
-  }
-
-  const diaryEntries = getDiaryEntries(users);
-
-  const filteredDiaryEntries = diaryEntries.filter((entry) => {
-    const entrySlug = entry.recipe.replace(/\s+/g, "-").toLowerCase();
-    const [recipeName] = slug;
-    return entrySlug === recipeName;
-  });
-
-  const ratingDataset = generateRatingDataset(filteredDiaryEntries);
+function RecipeRatings({ recipe }: Props) {
+  const ratingDataset = generateRatingDataset(recipe.reviews);
 
   return (
     <Grid item sx={{ marginTop: "10px" }}>
@@ -70,12 +47,12 @@ function RecipeRatings({ slug, users }: Props) {
 }
 
 function generateRatingDataset(
-  diaryEntries: UserDiary[]
+  reviews: Reviews[]
 ): { rating: number; count: number }[] {
   const ratingCounts: { [rating: number]: number } = {};
 
-  diaryEntries.forEach((entry) => {
-    const rating = entry.rating;
+  reviews.forEach((review) => {
+    const rating = review.rating.toNumber();
     if (rating !== undefined) {
       if (ratingCounts[rating]) {
         ratingCounts[rating]++;

@@ -56,14 +56,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   let topLikedCreators;
   let topLikedRecipes;
 
-  // if (!session) {
-  //   return {
-  //     redirect: {
-  //       destination: "/login",
-  //       permanent: false,
-  //     },
-  //   };
-  // }
   if (session) {
     const sessionUserId = parseInt(session.user.id);
     sessionUser = await findUserByUserId(sessionUserId);

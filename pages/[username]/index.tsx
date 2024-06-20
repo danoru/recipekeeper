@@ -19,25 +19,30 @@ import {
   Following,
   PrismaClient,
   Recipes,
+  Reviews,
   Users,
 } from "@prisma/client";
 import { getFavoriteCreators } from "../../src/data/creators";
 import {
+  getDiaryEntriesByUsernames,
   getRecentDiaryEntries,
   getUserDiaryEntries,
 } from "../../src/data/diary";
 import { getAllUsers, getFollowers, getFollowing } from "../../src/data/users";
 import { getCooklist, getFavoriteRecipes } from "../../src/data/recipes";
+import { getUserReviews } from "../../src/data/reviews";
 
 interface Props {
   user: Users;
   cooklist: (Cooklist & { recipes: Recipes })[];
-  diaryEntries: DiaryEntries[];
+  diaryEntries: (DiaryEntries & { recipes: Recipes })[];
   favoriteCreators: (FavoritesCreators & { creators: Creators })[];
   favoriteRecipes: (FavoritesRecipes & { recipes: Recipes })[];
-  following: Following[];
   followers: Following[];
+  following: Following[];
+  friendDiaryEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
   recentDiaryEntries: (DiaryEntries & { recipes: Recipes })[];
+  reviews: (Reviews & { users: Users })[];
   session: any;
 }
 
@@ -53,9 +58,11 @@ function UserPage({
   diaryEntries,
   favoriteCreators,
   favoriteRecipes,
-  recentDiaryEntries,
   followers,
   following,
+  friendDiaryEntries,
+  recentDiaryEntries,
+  reviews,
   session,
 }: Props) {
   const title = `${user.username}'s Profile • Savry`;
@@ -87,9 +94,9 @@ function UserPage({
         </Grid>
         <Grid item xs={4}>
           <UserCooklistPreview cooklist={cooklist} />
-          {/* <UserRecipeDiary user={user} /> */}
-          {/* <UserRatings user={user} /> */}
-          {/* <UserActivity user={user} /> */}
+          <UserRecipeDiary diaryEntries={diaryEntries} />
+          <UserRatings reviews={reviews} />
+          <UserActivity friendDiaryEntries={friendDiaryEntries} />
         </Grid>
       </Grid>
     </div>
@@ -116,20 +123,30 @@ export async function getStaticProps({ params }: Params) {
   let diaryEntries: DiaryEntries[] = [];
   let favoriteCreators: FavoritesCreators[] = [];
   let favoriteRecipes: FavoritesRecipes[] = [];
-  let following: Following[] = [];
   let followers: Following[] = [];
+  let following: Following[] = [];
+  let friendDiaryEntries: DiaryEntries[] = [];
   let recentDiaryEntries: DiaryEntries[] = [];
+  let reviews: Reviews[] = [];
+  let usernames: string[] = [];
 
-  const user = await prisma.users.findUnique({ where: { username } });
+  const user = await prisma.users.findUnique({
+    where: { username },
+    include: { reviews: true },
+  });
 
   if (user) {
     cooklist = await getCooklist(user.id);
     diaryEntries = await getUserDiaryEntries(user.id);
     favoriteCreators = await getFavoriteCreators(user.id);
     favoriteRecipes = await getFavoriteRecipes(user.id);
-    following = await getFollowing(user.id);
     followers = await getFollowers(username);
+    following = await getFollowing(user.id);
     recentDiaryEntries = await getRecentDiaryEntries(user.id);
+    reviews = await getUserReviews(user.id);
+    usernames = following.map((user) => user.followingUsername);
+    usernames.push(username);
+    friendDiaryEntries = await getDiaryEntriesByUsernames(usernames);
   }
 
   return {
@@ -141,7 +158,9 @@ export async function getStaticProps({ params }: Params) {
       favoriteRecipes,
       following,
       followers,
+      friendDiaryEntries,
       recentDiaryEntries,
+      reviews,
     },
     revalidate: 1800,
   };

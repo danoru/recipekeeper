@@ -7,8 +7,7 @@ import RecipeRatings from "../../src/components/recipes/RecipeRatings";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { getAllRecipes, getRecipeByName } from "../../src/data/recipes";
-import { getAllUsers } from "../../src/data/users";
-import { Creators, Recipes, Reviews, Users } from "@prisma/client";
+import { Creators, Recipes, Reviews } from "@prisma/client";
 
 interface Params {
   params: {
@@ -18,11 +17,9 @@ interface Params {
 
 interface Props {
   recipe: Recipes & { creators: Creators; reviews: Reviews[] };
-  slug: string;
-  users: Users[];
 }
 
-function RecipePage({ recipe, slug, users }: Props) {
+function RecipePage({ recipe }: Props) {
   const title = `${recipe.name} by ${recipe.creators.name} • Savry`;
   const totalRating = recipe.reviews.reduce(
     (sum, review) => sum + review.rating.toNumber(),
@@ -67,7 +64,7 @@ function RecipePage({ recipe, slug, users }: Props) {
         </div>
         <Stack direction="column" maxWidth="15%">
           <RecipeActionBar recipe={recipe} />
-          {/* <RecipeRatings slug={slug} users={users} /> */}
+          <RecipeRatings recipe={recipe} />
         </Stack>
       </Stack>
     </div>
@@ -90,7 +87,6 @@ export async function getStaticProps({ params }: Params) {
   const { slug } = params;
   const recipeName = slug[0].replace(/-/g, " ");
   const recipe = await getRecipeByName(recipeName);
-  const users = await getAllUsers();
 
   if (!recipe) {
     return {
@@ -101,8 +97,6 @@ export async function getStaticProps({ params }: Params) {
   return {
     props: {
       recipe,
-      slug,
-      users,
     },
     revalidate: 1800,
   };

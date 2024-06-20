@@ -1,11 +1,11 @@
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import RecipeList from "../../../../src/components/recipes/RecipeList";
-import { RECIPE_LIST, getFilteredRecipes } from "../../../../src/data/recipes";
-import { RECIPE_LIST_TYPE } from "../../../../src/types";
+import { getFilteredRecipes } from "../../../../src/data/recipes";
+import { PrismaClient, Recipes } from "@prisma/client";
 
 interface Props {
-  recipes: RECIPE_LIST_TYPE[];
+  recipes: Recipes[];
   recipeSubfilterId: string;
 }
 
@@ -36,23 +36,28 @@ function FilterRecipePage({ recipes, recipeSubfilterId }: Props) {
 }
 
 export async function getStaticPaths() {
+  const prisma = new PrismaClient();
   const paths: any = [];
   const uniqueFilters = ["category", "cuisine", "course", "method", "diet"];
 
   for (const filter of uniqueFilters) {
-    const uniqueValues = [
-      ...new Set(RECIPE_LIST.map((recipe: any) => recipe[filter])),
-    ];
-    uniqueValues.forEach((value) => {
-      paths.push({
-        params: {
-          recipeFilterId: filter,
-          recipeSubfilterId: value.replace(/\s/g, "").toLowerCase(),
-        },
-      });
+    const uniqueValues = await prisma.recipes.findMany({
+      distinct: [filter],
+      select: {[filter]: true}
+    }),
+  });
+  uniqueValues.forEach((value) => {
+    const filterValue = value[filter];
+    if (filterValue) {
+        paths.push({
+          params: {
+            recipeFilterId: filter,
+            recipeSubfilterId: filterValue.replace(/\s/g, "").toLowerCase(),
+          },
+        });
+      }
     });
   }
-
   return {
     paths,
     fallback: false,
@@ -61,7 +66,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: { params: Params }) {
   const { recipeFilterId, recipeSubfilterId } = params;
-  const recipes = getFilteredRecipes(recipeFilterId, recipeSubfilterId);
+  const recipes = await getFilteredRecipes(recipeFilterId, recipeSubfilterId);
 
   return {
     props: {
