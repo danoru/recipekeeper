@@ -5,13 +5,11 @@ import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import { RECIPE_LIST_TYPE } from "../../types";
+import { Recipes } from "@prisma/client";
 
 function LogRecipeButton() {
   const [modalOpen, modalSetOpen] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<RECIPE_LIST_TYPE | null>(
-    null
-  );
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipes | null>(null);
   const handleModalOpen = () => modalSetOpen(true);
   const handleModalClose = () => modalSetOpen(false);
 

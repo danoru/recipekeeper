@@ -1,9 +1,8 @@
-import { RECIPE_LIST_TYPE } from "../types";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const RECIPE_LIST: RECIPE_LIST_TYPE[] = [
+export const RECIPE_LIST = [
   {
     name: "Butternut Squash and Pork Lasagna",
     creatorId: "littlefatboy",

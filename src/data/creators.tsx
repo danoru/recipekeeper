@@ -1,9 +1,8 @@
-import { CREATOR_LIST_TYPE } from "../types";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
+export const CREATOR_LIST = [
   {
     name: "Babish Culinary Universe",
     link: "babish",
@@ -118,6 +117,7 @@ export const CREATOR_LIST: CREATOR_LIST_TYPE[] = [
       "https://www.thegoodbite.co.uk/wp-content/uploads/2020/10/WhatsApp-Image-2020-08-14-at-12.21.22.jpeg",
     website: "https://www.thegoodbite.co.uk/",
     instagram: "https://www.instagram.com/thegoodbite/",
+    youtube: "https://www.youtube.com/@thegoodbite9270",
   },
   {
     name: "Trader Joe's Five Items or Less",

@@ -1,9 +1,8 @@
-import { USER_LIST_TYPE } from "../types";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const USER_LIST: USER_LIST_TYPE[] = [
+export const USER_LIST = [
   {
     username: "danoru",
     profile: {
