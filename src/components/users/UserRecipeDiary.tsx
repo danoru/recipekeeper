@@ -9,10 +9,11 @@ interface Props {
 }
 
 function UserRecipeDiary({ diaryEntries }: Props) {
+  const userDiary = diaryEntries.slice(0, 9);
   const entriesByMonth: {
     [month: string]: (DiaryEntries & { recipes: Recipes })[];
   } = {};
-  diaryEntries?.forEach((entry) => {
+  userDiary?.forEach((entry) => {
     const date = moment(entry.date);
     const month = date.format("MMM");
     if (!entriesByMonth[month]) {

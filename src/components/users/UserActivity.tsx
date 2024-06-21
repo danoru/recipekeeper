@@ -10,6 +10,7 @@ interface Props {
 }
 
 function UserActivity({ diaryEntries }: Props) {
+  const activity = diaryEntries.slice(0, 4);
   return (
     <Grid item sx={{ marginTop: "10px" }}>
       <Grid
@@ -26,7 +27,7 @@ function UserActivity({ diaryEntries }: Props) {
         <Grid item>ACTIVITY</Grid>
       </Grid>
       <Stack spacing={1}>
-        {diaryEntries?.map((diaryEntry, i) => (
+        {activity?.map((diaryEntry, i) => (
           <Stack key={i} direction="row">
             <div>
               <Link href={`/${diaryEntry.users.username}`} underline="none">

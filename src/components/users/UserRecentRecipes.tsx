@@ -12,6 +12,7 @@ interface Props {
 }
 
 function UserRecentRecipes({ diaryEntries }: Props) {
+  const userDiary = diaryEntries.slice(0, 3);
   return (
     <Grid item>
       <Grid
@@ -40,7 +41,7 @@ function UserRecentRecipes({ diaryEntries }: Props) {
           maxWidth: "75%",
         }}
       >
-        {diaryEntries.map(
+        {userDiary.map(
           (entry: DiaryEntries & { recipes: Recipes }, i: number) => {
             return (
               <RecipeCard

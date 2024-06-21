@@ -6,8 +6,8 @@ import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import { getTopLikedRecipes } from "../src/data/recipes";
 import { getTopLikedCreators } from "../src/data/creators";
-import { findUserByUserId } from "../src/data/users";
-import { getRecentDiaryEntries } from "../src/data/diary";
+import { findUserByUserId, getFollowing } from "../src/data/users";
+import { getDiaryEntriesByUsernames } from "../src/data/diary";
 import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
 
 interface Props {
@@ -61,7 +61,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     sessionUser = await findUserByUserId(sessionUserId);
 
     if (sessionUser) {
-      recentEntries = await getRecentDiaryEntries(sessionUserId);
+      const following = await getFollowing(sessionUserId);
+      const followingList = following.map((user) => user.followingUsername);
+      recentEntries = await getDiaryEntriesByUsernames(followingList);
       topLikedCreators = await getTopLikedCreators(sessionUserId);
       topLikedRecipes = await getTopLikedRecipes(sessionUserId);
     }

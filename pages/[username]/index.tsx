@@ -31,13 +31,11 @@ import { getUserReviews } from "../../src/data/reviews";
 interface Props {
   user: Users;
   cooklist: (Cooklist & { recipes: Recipes })[];
-  diaryEntries: (DiaryEntries & { recipes: Recipes })[];
+  diaryEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
   favoriteCreators: (FavoritesCreators & { creators: Creators })[];
   favoriteRecipes: (FavoritesRecipes & { recipes: Recipes })[];
   followers: Following[];
   following: Following[];
-  recentActivityEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
-  recentDiaryEntries: (DiaryEntries & { recipes: Recipes })[];
   reviews: (Reviews & { users: Users })[];
 }
 
@@ -55,8 +53,6 @@ function UserPage({
   favoriteRecipes,
   followers,
   following,
-  recentActivityEntries,
-  recentDiaryEntries,
   reviews,
 }: Props) {
   const title = `${user.username}'s Profile • Savry`;
@@ -83,14 +79,14 @@ function UserPage({
         <Grid item xs={8}>
           <FavoriteCreators creators={creators} />
           <FavoriteRecipes recipes={recipes} />
-          <UserRecentRecipes diaryEntries={recentDiaryEntries} />
+          <UserRecentRecipes diaryEntries={diaryEntries} />
           <UserFollowing following={following} />
         </Grid>
         <Grid item xs={4}>
           <UserCooklistPreview cooklist={cooklist} />
           <UserRecipeDiary diaryEntries={diaryEntries} />
           <UserRatings reviews={reviews} />
-          <UserActivity diaryEntries={recentActivityEntries} />
+          <UserActivity diaryEntries={diaryEntries} />
         </Grid>
       </Grid>
     </div>
@@ -119,8 +115,6 @@ export async function getStaticProps({ params }: Params) {
   let favoriteRecipes: FavoritesRecipes[] = [];
   let followers: Following[] = [];
   let following: Following[] = [];
-  let recentActivityEntries: DiaryEntries[] = [];
-  let recentDiaryEntries: DiaryEntries[] = [];
   let reviews: Reviews[] = [];
   let usernames: string[] = [];
 
@@ -131,13 +125,11 @@ export async function getStaticProps({ params }: Params) {
 
   if (user) {
     cooklist = await getCooklist(user.id);
-    diaryEntries = await getUserDiaryEntries(user.id, 4);
+    diaryEntries = await getUserDiaryEntries(user.id);
     favoriteCreators = await getFavoriteCreators(user.id);
     favoriteRecipes = await getFavoriteRecipes(user.id);
     followers = await getFollowers(username);
     following = await getFollowing(user.id);
-    recentActivityEntries = await getUserDiaryEntries(user.id, 5);
-    recentDiaryEntries = await getUserDiaryEntries(user.id, 10);
     reviews = await getUserReviews(user.id);
     usernames = following.map((user) => user.followingUsername);
     usernames.push(username);
@@ -152,8 +144,6 @@ export async function getStaticProps({ params }: Params) {
       favoriteRecipes,
       following,
       followers,
-      recentActivityEntries,
-      recentDiaryEntries,
       reviews,
     },
     revalidate: 1800,
