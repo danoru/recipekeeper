@@ -41,7 +41,11 @@ function RecipeFriendRatings({ reviews }: Props) {
       >
         {reviews?.map((entry: Reviews & { users: Users }, i: number) => {
           return (
-            <ReviewCard username={entry.users.username} rating={entry.rating} />
+            <ReviewCard
+              key={i}
+              username={entry.users.username}
+              rating={entry.rating}
+            />
           );
         })}
       </Grid>

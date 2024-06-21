@@ -65,7 +65,7 @@ function RecipePage({ recipe, reviews }: Props) {
             <strong>Ratings:</strong> {averageRating}/5 Stars based on{" "}
             {ratingCount} Reviews
           </Typography>
-          <RecipeFriendRatings reviews={reviews} />
+          {reviews.length > 0 && <RecipeFriendRatings reviews={reviews} />}
         </div>
         <Stack direction="column" maxWidth="15%">
           <RecipeActionBar recipe={recipe} />
