@@ -81,7 +81,7 @@ export const USER_LIST = [
         "joshuaweismann",
       ],
     },
-    following: ["chiquitabananna", "boeboekitty", "mallorylaabs"],
+    following: ["chiquitabananna", "boeboe", "mallorylaabs"],
   },
   {
     username: "chiquitabananna",
@@ -123,10 +123,10 @@ export const USER_LIST = [
         "littlefatboy",
       ],
     },
-    following: ["danoru", "boeboekitty", "mallorylaabs"],
+    following: ["danoru", "boeboe", "mallorylaabs"],
   },
   {
-    username: "boeboekitty",
+    username: "boeboe",
     profile: {
       name: "Boe",
       email: "",
@@ -206,7 +206,7 @@ export const USER_LIST = [
       recipes: ["Mango Lime Coconut Chicken", "Tender Chicken and Broccoli"],
       creators: ["cafemaddy", "cjeats", "oliviaadriance", "emthenutrionist"],
     },
-    following: ["danoru", "chiquitabananna", "boeboekitty"],
+    following: ["danoru", "chiquitabananna", "boeboe"],
   },
   {
     username: "guest",
@@ -281,7 +281,7 @@ export const USER_LIST = [
         "joshuaweismann",
       ],
     },
-    following: ["danoru", "chiquitabananna", "boeboekitty", "mallorylaabs"],
+    following: ["danoru", "chiquitabananna", "boeboe", "mallorylaabs"],
   },
 ];
 export async function getAllUsers() {

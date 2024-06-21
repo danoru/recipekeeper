@@ -24,6 +24,7 @@ export async function getDiaryEntriesByUsernames(usernames: string[]) {
       recipes: true,
       users: true,
     },
+    orderBy: { date: "desc" },
   });
 
   return entries;
