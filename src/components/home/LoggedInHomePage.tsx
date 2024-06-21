@@ -7,7 +7,7 @@ import { Creators, Recipes, Users, DiaryEntries } from "@prisma/client";
 
 interface Props {
   creators: Creators[];
-  recentEntries: (DiaryEntries & { users: Users })[];
+  recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
   recipes: Recipes[];
   username: string;
   sessionUser: Users;
@@ -26,11 +26,7 @@ function LoggedInHomePage({
         Welcome back, <Link href={`/${username}`}>{username}</Link>. Here&apos;s
         what your friends have been cooking...
       </Typography>
-      <FriendRecipeActivity
-        recentEntries={recentEntries}
-        recipes={recipes}
-        sessionUser={sessionUser}
-      />
+      <FriendRecipeActivity recentEntries={recentEntries} />
       <PopularRecipeActivity recipes={recipes} sessionUser={sessionUser} />
       <PopularCreatorActivity creators={creators} sessionUser={sessionUser} />
     </main>

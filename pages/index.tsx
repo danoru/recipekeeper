@@ -11,7 +11,7 @@ import { getDiaryEntriesByUsernames } from "../src/data/diary";
 import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
 
 interface Props {
-  recentEntries: (DiaryEntries & { users: Users })[];
+  recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
   session: any;
   sessionUser: Users;
   topLikedCreators: Creators[];
