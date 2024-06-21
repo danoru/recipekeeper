@@ -9,3 +9,21 @@ export async function getUserReviews(userId: number) {
   });
   return reviews;
 }
+
+export async function getReviewsByRecipe(recipe: number, usernames: string[]) {
+  const reviews = await prisma.reviews.findMany({
+    where: {
+      recipeId: recipe,
+      users: {
+        username: {
+          in: usernames,
+        },
+      },
+    },
+    include: {
+      users: true,
+    },
+  });
+
+  return reviews;
+}
