@@ -9,12 +9,10 @@ import Typography from "@mui/material/Typography";
 import { DiaryEntries, Recipes, Users } from "@prisma/client";
 
 interface Props {
-  recipes: Recipes[];
-  sessionUser: Users | null;
-  recentEntries: (DiaryEntries & { users: Users })[];
+  recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
 }
 
-function FriendRecipeActivity({ recipes, recentEntries }: Props) {
+function FriendRecipeActivity({ recentEntries }: Props) {
   return (
     <Grid container>
       <Grid
@@ -45,14 +43,15 @@ function FriendRecipeActivity({ recipes, recentEntries }: Props) {
         }}
       >
         {recentEntries?.map(
-          (entry: DiaryEntries & { users: Users }, i: number) => {
-            const recipe = recipes.find((r) => r.id === entry.recipeId);
-            if (!recipe) return null;
+          (
+            entry: DiaryEntries & { users: Users; recipes: Recipes },
+            i: number
+          ) => {
             return (
               <RecipeCard
                 key={`card-${i}`}
-                name={recipe.name}
-                image={recipe.image}
+                name={entry.recipes.name}
+                image={entry.recipes.image}
                 rating={entry.rating}
                 date={entry.date}
                 username={entry.users.username}
