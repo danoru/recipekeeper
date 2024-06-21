@@ -6,10 +6,10 @@ import Stack from "@mui/material/Stack";
 import { DiaryEntries, Recipes, Users } from "@prisma/client";
 
 interface Props {
-  friendDiaryEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
+  diaryEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
 }
 
-function UserActivity({ friendDiaryEntries }: Props) {
+function UserActivity({ diaryEntries }: Props) {
   return (
     <Grid item sx={{ marginTop: "10px" }}>
       <Grid
@@ -26,7 +26,7 @@ function UserActivity({ friendDiaryEntries }: Props) {
         <Grid item>ACTIVITY</Grid>
       </Grid>
       <Stack spacing={1}>
-        {friendDiaryEntries?.map((diaryEntry, i) => (
+        {diaryEntries?.map((diaryEntry, i) => (
           <Stack key={i} direction="row">
             <div>
               <Link href={`/${diaryEntry.users.username}`} underline="none">

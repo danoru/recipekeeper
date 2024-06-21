@@ -1,11 +1,17 @@
 import { PrismaClient } from "@prisma/client";
+import { number } from "yup";
 
 const prisma = new PrismaClient();
 
-export async function getUserDiaryEntries(userId: number) {
+export async function getUserDiaryEntries(
+  userId: number,
+  numberOfEntries: number
+) {
   const diaryEntries = await prisma.diaryEntries.findMany({
     where: { userId },
     include: { recipes: true },
+    orderBy: { date: "desc" },
+    take: numberOfEntries,
   });
 
   return diaryEntries;

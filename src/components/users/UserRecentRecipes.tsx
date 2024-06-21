@@ -5,13 +5,13 @@ import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
-import { DiaryEntries, Recipes, Users } from "@prisma/client";
+import { DiaryEntries, Recipes } from "@prisma/client";
 
 interface Props {
-  recentDiaryEntries: (DiaryEntries & { recipes: Recipes })[];
+  diaryEntries: (DiaryEntries & { recipes: Recipes })[];
 }
 
-function UserRecentRecipes({ recentDiaryEntries }: Props) {
+function UserRecentRecipes({ diaryEntries }: Props) {
   return (
     <Grid item>
       <Grid
@@ -40,7 +40,7 @@ function UserRecentRecipes({ recentDiaryEntries }: Props) {
           maxWidth: "75%",
         }}
       >
-        {recentDiaryEntries.map(
+        {diaryEntries.map(
           (entry: DiaryEntries & { recipes: Recipes }, i: number) => {
             return (
               <RecipeCard

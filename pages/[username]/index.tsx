@@ -23,11 +23,7 @@ import {
   Users,
 } from "@prisma/client";
 import { getFavoriteCreators } from "../../src/data/creators";
-import {
-  getDiaryEntriesByUsernames,
-  getRecentDiaryEntries,
-  getUserDiaryEntries,
-} from "../../src/data/diary";
+import { getUserDiaryEntries } from "../../src/data/diary";
 import { getAllUsers, getFollowers, getFollowing } from "../../src/data/users";
 import { getCooklist, getFavoriteRecipes } from "../../src/data/recipes";
 import { getUserReviews } from "../../src/data/reviews";
@@ -40,10 +36,9 @@ interface Props {
   favoriteRecipes: (FavoritesRecipes & { recipes: Recipes })[];
   followers: Following[];
   following: Following[];
-  friendDiaryEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
+  recentActivityEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
   recentDiaryEntries: (DiaryEntries & { recipes: Recipes })[];
   reviews: (Reviews & { users: Users })[];
-  session: any;
 }
 
 interface Params {
@@ -60,10 +55,9 @@ function UserPage({
   favoriteRecipes,
   followers,
   following,
-  friendDiaryEntries,
+  recentActivityEntries,
   recentDiaryEntries,
   reviews,
-  session,
 }: Props) {
   const title = `${user.username}'s Profile • Savry`;
   const avatarSize = "56px";
@@ -89,14 +83,14 @@ function UserPage({
         <Grid item xs={8}>
           <FavoriteCreators creators={creators} />
           <FavoriteRecipes recipes={recipes} />
-          <UserRecentRecipes recentDiaryEntries={recentDiaryEntries} />
+          <UserRecentRecipes diaryEntries={recentDiaryEntries} />
           <UserFollowing following={following} />
         </Grid>
         <Grid item xs={4}>
           <UserCooklistPreview cooklist={cooklist} />
           <UserRecipeDiary diaryEntries={diaryEntries} />
           <UserRatings reviews={reviews} />
-          <UserActivity friendDiaryEntries={friendDiaryEntries} />
+          <UserActivity diaryEntries={recentActivityEntries} />
         </Grid>
       </Grid>
     </div>
@@ -125,7 +119,7 @@ export async function getStaticProps({ params }: Params) {
   let favoriteRecipes: FavoritesRecipes[] = [];
   let followers: Following[] = [];
   let following: Following[] = [];
-  let friendDiaryEntries: DiaryEntries[] = [];
+  let recentActivityEntries: DiaryEntries[] = [];
   let recentDiaryEntries: DiaryEntries[] = [];
   let reviews: Reviews[] = [];
   let usernames: string[] = [];
@@ -137,16 +131,16 @@ export async function getStaticProps({ params }: Params) {
 
   if (user) {
     cooklist = await getCooklist(user.id);
-    diaryEntries = await getUserDiaryEntries(user.id);
+    diaryEntries = await getUserDiaryEntries(user.id, 4);
     favoriteCreators = await getFavoriteCreators(user.id);
     favoriteRecipes = await getFavoriteRecipes(user.id);
     followers = await getFollowers(username);
     following = await getFollowing(user.id);
-    recentDiaryEntries = await getRecentDiaryEntries(user.id);
+    recentActivityEntries = await getUserDiaryEntries(user.id, 5);
+    recentDiaryEntries = await getUserDiaryEntries(user.id, 10);
     reviews = await getUserReviews(user.id);
     usernames = following.map((user) => user.followingUsername);
     usernames.push(username);
-    friendDiaryEntries = await getDiaryEntriesByUsernames(usernames);
   }
 
   return {
@@ -158,7 +152,7 @@ export async function getStaticProps({ params }: Params) {
       favoriteRecipes,
       following,
       followers,
-      friendDiaryEntries,
+      recentActivityEntries,
       recentDiaryEntries,
       reviews,
     },
