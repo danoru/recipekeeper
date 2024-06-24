@@ -2,6 +2,7 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
+import Image from "next/image";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { Recipes } from "@prisma/client";
@@ -75,8 +76,8 @@ function RecipeList({ header, recipes, style }: Props) {
   );
 }
 
-function RecipeCard(props: any) {
-  const recipeSlug = `/recipe/${props.name.replace(/\s+/g, "-").toLowerCase()}`;
+function RecipeCard(card: any) {
+  const recipeSlug = `/recipe/${card.name.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <Grid item>
       <Link href={recipeSlug} underline="none">
@@ -87,14 +88,17 @@ function RecipeCard(props: any) {
             cursor: "pointer",
           }}
         >
-          <CardMedia
-            sx={{ height: 140 }}
-            image={props.image}
-            title={props.name}
-          />
+          <CardMedia style={{ position: "relative", height: 140 }}>
+            <Image
+              src={card.image}
+              alt={card.name}
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </CardMedia>
           <CardContent>
             <Typography variant="h6" component="div">
-              {props.name}
+              {card.name}
             </Typography>
           </CardContent>
         </Card>

@@ -2,13 +2,13 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
+import Image from "next/image";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { Creators, Users } from "@prisma/client";
 
 interface Props {
   creators: Creators[];
-  sessionUser: Users | null;
 }
 
 function PopularCreatorActivity({ creators }: Props) {
@@ -41,7 +41,7 @@ function PopularCreatorActivity({ creators }: Props) {
           maxWidth: "75%",
         }}
       >
-        {creators.map((creator, i) => {
+        {creators.slice(0, 4).map((creator, i) => {
           return (
             <CreatorCard
               key={`card-${i}`}
@@ -60,10 +60,10 @@ function PopularCreatorActivity({ creators }: Props) {
   );
 }
 
-function CreatorCard(props: any) {
+function CreatorCard(card: any) {
   return (
     <Grid item>
-      <Link href={props.link} underline="none">
+      <Link href={card.link} underline="none">
         <Card
           sx={{
             width: "250px",
@@ -71,14 +71,17 @@ function CreatorCard(props: any) {
             cursor: "pointer",
           }}
         >
-          <CardMedia
-            sx={{ height: 140 }}
-            image={props.image}
-            title={props.name}
-          />
+          <CardMedia style={{ position: "relative", height: 140 }}>
+            <Image
+              src={card.image}
+              alt={card.name}
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </CardMedia>
           <CardContent>
             <Typography variant="h6" component="div">
-              {props.name}
+              {card.name}
             </Typography>
           </CardContent>
         </Card>

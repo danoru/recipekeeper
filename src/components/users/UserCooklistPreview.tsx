@@ -1,6 +1,7 @@
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
+import Image from "next/image";
 import Link from "@mui/material/Link";
 import { Cooklist, Recipes } from "@prisma/client";
 
@@ -55,7 +56,9 @@ function RecipeCard({ name, image }: RecipeCardProps) {
             cursor: "pointer",
           }}
         >
-          <CardMedia sx={{ height: "105px" }} image={image} title={name} />
+          <CardMedia style={{ position: "relative", height: 140 }}>
+            <Image src={image} alt={name} fill style={{ objectFit: "cover" }} />
+          </CardMedia>
         </Card>
       </Link>
     </Grid>

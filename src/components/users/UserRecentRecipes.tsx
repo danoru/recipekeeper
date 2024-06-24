@@ -2,13 +2,22 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
+import Image from "next/image";
 import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 import { DiaryEntries, Recipes } from "@prisma/client";
+import Decimal from "decimal.js";
 
 interface Props {
   diaryEntries: (DiaryEntries & { recipes: Recipes })[];
+}
+
+interface CardProps {
+  name: string;
+  image: string;
+  rating: Decimal;
+  sx: any;
 }
 
 function UserRecentRecipes({ diaryEntries }: Props) {
@@ -62,8 +71,9 @@ function UserRecentRecipes({ diaryEntries }: Props) {
   );
 }
 
-function RecipeCard(props: any) {
-  const recipeSlug = `/recipe/${props.name.replace(/\s+/g, "-").toLowerCase()}`;
+function RecipeCard(card: CardProps) {
+  const recipeSlug = `/recipe/${card.name.replace(/\s+/g, "-").toLowerCase()}`;
+  const rating = new Decimal(card.rating).toNumber();
   return (
     <Grid item>
       <Link href={recipeSlug}>
@@ -74,13 +84,16 @@ function RecipeCard(props: any) {
             cursor: "pointer",
           }}
         >
-          <CardMedia
-            sx={{ height: 140 }}
-            image={props.image}
-            title={props.name}
-          />
+          <CardMedia style={{ position: "relative", height: 140 }}>
+            <Image
+              src={card.image}
+              alt={card.name}
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </CardMedia>
           <CardContent>
-            <Rating value={props.rating} precision={0.5} readOnly />
+            <Rating value={rating} precision={0.5} readOnly />
           </CardContent>
         </Card>
       </Link>

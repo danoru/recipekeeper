@@ -4,6 +4,7 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
+import Image from "next/image";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
@@ -125,11 +126,14 @@ function PopCard(recipe: any) {
   return (
     <Link href={recipeSlug} underline="none">
       <Card sx={{ width: "250px", height: "360px", cursor: "pointer" }}>
-        <CardMedia
-          sx={{ height: 140, width: "100%" }}
-          image={recipe.image}
-          title={recipe.name}
-        />
+        <CardMedia style={{ position: "relative", height: 140 }}>
+          <Image
+            src={recipe.image}
+            alt={recipe.name}
+            fill
+            style={{ objectFit: "cover" }}
+          />
+        </CardMedia>
         <CardContent>
           <Typography variant="h6" component="div">
             {recipe.name}

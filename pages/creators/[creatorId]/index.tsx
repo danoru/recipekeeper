@@ -4,6 +4,7 @@ import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
+import Image from "next/image";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import Link from "@mui/material/Link";
 import LinkIcon from "@mui/icons-material/Link";
@@ -60,11 +61,14 @@ function CreatorCard({ creator, rating }: any) {
           width: "250px",
         }}
       >
-        <CardMedia
-          sx={{ height: 140 }}
-          image={creator.image}
-          title={creator.name}
-        />
+        <CardMedia style={{ position: "relative", height: 140 }}>
+          <Image
+            src={creator.image}
+            alt={creator.name}
+            fill
+            style={{ objectFit: "cover" }}
+          />
+        </CardMedia>
         <CardContent>
           <Typography variant="h6" component="div">
             {creator.name}

@@ -13,7 +13,6 @@ import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
 interface Props {
   recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
   session: any;
-  sessionUser: Users;
   topLikedCreators: Creators[];
   topLikedRecipes: Recipes[];
 }
@@ -21,7 +20,6 @@ interface Props {
 function Home({
   recentEntries,
   session,
-  sessionUser,
   topLikedCreators,
   topLikedRecipes,
 }: Props) {
@@ -40,7 +38,6 @@ function Home({
           recentEntries={recentEntries}
           recipes={topLikedRecipes}
           username={username}
-          sessionUser={sessionUser}
         />
       ) : (
         <LoggedOutHomePage />

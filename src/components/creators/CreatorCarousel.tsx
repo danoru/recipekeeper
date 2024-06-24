@@ -5,6 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
+import Image from "next/image";
 import Link from "@mui/material/Link";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
@@ -120,11 +121,14 @@ function CreatorCard(creator: any) {
   return (
     <Link href={creator.link} underline="none">
       <Card sx={{ width: "250px", height: "250px", cursor: "pointer" }}>
-        <CardMedia
-          sx={{ height: 140 }}
-          image={creator.image}
-          title={creator.name}
-        />
+        <CardMedia style={{ position: "relative", height: 140 }}>
+          <Image
+            src={creator.image}
+            alt={creator.name}
+            fill
+            style={{ objectFit: "cover" }}
+          />
+        </CardMedia>
         <CardContent>
           <Typography variant="h6" component="div">
             {creator.name}

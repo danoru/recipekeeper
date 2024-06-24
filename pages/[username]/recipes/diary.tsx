@@ -11,12 +11,7 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import {
-  findUserByUserId,
-  findUserByUsername,
-  getAllUsers,
-} from "../../../src/data/users";
-import { getAllRecipes } from "../../../src/data/recipes";
+import { findUserByUsername, getAllUsers } from "../../../src/data/users";
 import { DiaryEntries, Recipes, Users } from "@prisma/client";
 import { getUserDiaryEntries } from "../../../src/data/diary";
 

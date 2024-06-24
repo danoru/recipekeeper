@@ -2,6 +2,7 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
+import Image from "next/image";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { Creators } from "@prisma/client";
@@ -75,11 +76,14 @@ function CreatorCard(creator: CardProps) {
             cursor: "pointer",
           }}
         >
-          <CardMedia
-            sx={{ height: 140 }}
-            image={creator.image}
-            title={creator.name}
-          />
+          <CardMedia style={{ position: "relative", height: 140 }}>
+            <Image
+              src={creator.image}
+              alt={creator.name}
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </CardMedia>
           <CardContent>
             <Typography variant="h6" component="div">
               {creator.name}

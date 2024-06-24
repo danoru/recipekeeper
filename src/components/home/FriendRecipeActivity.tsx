@@ -1,7 +1,9 @@
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
+import Decimal from "decimal.js";
 import Grid from "@mui/material/Grid";
+import Image from "next/image";
 import Link from "@mui/material/Link";
 import moment from "moment";
 import Rating from "@mui/material/Rating";
@@ -10,6 +12,15 @@ import { DiaryEntries, Recipes, Users } from "@prisma/client";
 
 interface Props {
   recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
+}
+
+interface CardProps {
+  name: string;
+  image: string;
+  rating: Decimal;
+  username: string;
+  date: Date;
+  sx: any;
 }
 
 function FriendRecipeActivity({ recentEntries }: Props) {
@@ -68,8 +79,9 @@ function FriendRecipeActivity({ recentEntries }: Props) {
   );
 }
 
-function RecipeCard(props: any) {
-  const recipeSlug = `/recipe/${props.name.replace(/\s+/g, "-").toLowerCase()}`;
+function RecipeCard(card: CardProps) {
+  const recipeSlug = `/recipe/${card.name.replace(/\s+/g, "-").toLowerCase()}`;
+  const rating = new Decimal(card.rating).toNumber();
   return (
     <Grid item>
       <Link href={recipeSlug} underline="none">
@@ -80,21 +92,24 @@ function RecipeCard(props: any) {
             cursor: "pointer",
           }}
         >
-          <CardMedia
-            sx={{ height: 140 }}
-            image={props.image}
-            title={props.name}
-          />
+          <CardMedia style={{ position: "relative", height: 140 }}>
+            <Image
+              src={card.image}
+              alt={card.name}
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </CardMedia>
           <CardContent>
             <Typography variant="body1" component="div">
-              {props.name}
+              {card.name}
             </Typography>
             <Typography variant="body2" component="div">
-              {props.username}
+              {card.username}
             </Typography>
-            <Rating value={props.rating} size="small" readOnly />
+            <Rating value={rating} size="small" readOnly />
             <Typography variant="body2" component="div">
-              {moment(props.date).format("MMM DD")}
+              {moment(card.date).format("MMM DD")}
             </Typography>
           </CardContent>
         </Card>

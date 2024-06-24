@@ -10,7 +10,6 @@ interface Props {
   recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
   recipes: Recipes[];
   username: string;
-  sessionUser: Users;
 }
 
 function LoggedInHomePage({
@@ -18,7 +17,6 @@ function LoggedInHomePage({
   recentEntries,
   recipes,
   username,
-  sessionUser,
 }: Props) {
   return (
     <main style={{ marginTop: "20px", textAlign: "center" }}>
@@ -27,8 +25,8 @@ function LoggedInHomePage({
         what your friends have been cooking...
       </Typography>
       <FriendRecipeActivity recentEntries={recentEntries} />
-      <PopularRecipeActivity recipes={recipes} sessionUser={sessionUser} />
-      <PopularCreatorActivity creators={creators} sessionUser={sessionUser} />
+      <PopularRecipeActivity recipes={recipes} />
+      <PopularCreatorActivity creators={creators} />
     </main>
   );
 }
