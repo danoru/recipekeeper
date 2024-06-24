@@ -86,11 +86,14 @@ function CreatorCard(creator: any) {
             cursor: "pointer",
           }}
         >
-          <CardMedia style={{ position: "relative", height: 140 }}>
+          <CardMedia
+            style={{ position: "relative", height: 140, width: "100%" }}
+          >
             <Image
               src={creator.image}
               alt={creator.name}
               fill
+              sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
               style={{ objectFit: "cover" }}
             />
           </CardMedia>

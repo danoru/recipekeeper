@@ -126,11 +126,12 @@ function PopCard(recipe: any) {
   return (
     <Link href={recipeSlug} underline="none">
       <Card sx={{ width: "250px", height: "360px", cursor: "pointer" }}>
-        <CardMedia style={{ position: "relative", height: 140 }}>
+        <CardMedia style={{ position: "relative", height: 140, width: "100%" }}>
           <Image
             src={recipe.image}
             alt={recipe.name}
             fill
+            sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
             style={{ objectFit: "cover" }}
           />
         </CardMedia>

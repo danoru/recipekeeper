@@ -56,8 +56,16 @@ function RecipeCard({ name, image }: RecipeCardProps) {
             cursor: "pointer",
           }}
         >
-          <CardMedia style={{ position: "relative", height: 140 }}>
-            <Image src={image} alt={name} fill style={{ objectFit: "cover" }} />
+          <CardMedia
+            style={{ position: "relative", height: 140, width: "100%" }}
+          >
+            <Image
+              src={image}
+              alt={name}
+              fill
+              sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+              style={{ objectFit: "cover" }}
+            />
           </CardMedia>
         </Card>
       </Link>
