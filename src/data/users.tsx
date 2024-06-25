@@ -385,3 +385,39 @@ export async function getUserLikes(username: string) {
   });
   return user;
 }
+
+export async function followUser(userId: number, followingUsername: string) {
+  try {
+    await fetch("/api/follow", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        followingUsername,
+        action: "follow",
+      }),
+    });
+  } catch (error) {
+    console.error("Failed to follow user:", error);
+  }
+}
+
+export async function unfollowUser(userId: number, followingUsername: string) {
+  try {
+    await fetch("/api/follow", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        followingUsername,
+        action: "unfollow",
+      }),
+    });
+  } catch (error) {
+    console.error("Failed to unfollow user:", error);
+  }
+}

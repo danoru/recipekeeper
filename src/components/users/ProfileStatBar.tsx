@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
@@ -8,13 +8,15 @@ import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";
 import { DiaryEntries, Following, Users } from "@prisma/client";
+import { followUser, unfollowUser } from "../../data/users";
 
 interface Props {
   avatarSize: string;
   diaryEntries: DiaryEntries[];
-  user: Users;
   followers: Following[];
   following: Following[];
+  sessionUser: any;
+  user: Users;
 }
 
 function ProfileStatBar({
@@ -22,6 +24,7 @@ function ProfileStatBar({
   diaryEntries,
   following,
   followers,
+  sessionUser,
   user,
 }: Props) {
   const fullName = user.firstName + " " + user.lastName;
@@ -50,6 +53,54 @@ function ProfileStatBar({
     setAnchorEl(null);
   };
 
+  const isSessionUser = sessionUser?.username === user.username;
+  const followingStatus = followers.some(
+    (f) => f.followingUsername === user.username
+  );
+
+  console.log(followers);
+  console.log(followingStatus);
+
+  const [isFollowing, setIsFollowing] = useState(followingStatus);
+
+  const handleFollow = async () => {
+    if (sessionUser) {
+      if (isFollowing) {
+        await unfollowUser(sessionUser.id, user.username);
+        setIsFollowing(false);
+      } else {
+        await followUser(sessionUser.id, user.username);
+        setIsFollowing(true);
+      }
+    }
+  };
+
+  const editButton = (
+    <Button variant="outlined" size="small" href={`/settings`}>
+      Edit Profile
+    </Button>
+  );
+
+  const followButton = (
+    <Button
+      variant="outlined"
+      size="small"
+      onClick={handleFollow}
+      onMouseEnter={(e) => {
+        if (isFollowing) {
+          e.currentTarget.textContent = "Unfollow";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (isFollowing) {
+          e.currentTarget.textContent = "Following";
+        }
+      }}
+    >
+      {isFollowing ? "Following" : "Follow"}
+    </Button>
+  );
+
   return (
     <Grid container item sx={{ marginTop: "10px" }}>
       <Grid container item xs={6} justifyContent="center" alignItems="center">
@@ -57,9 +108,7 @@ function ProfileStatBar({
         <Typography variant="h5" sx={{ margin: "0 10px" }}>
           {user.username}
         </Typography>
-        <Button variant="outlined" size="small">
-          Edit Profile
-        </Button>
+        {isSessionUser ? editButton : followButton}
         <Grid item>
           <Button
             aria-controls={open ? "basic-menu" : undefined}

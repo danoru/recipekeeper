@@ -27,6 +27,7 @@ import { getUserDiaryEntries } from "../../src/data/diary";
 import { getAllUsers, getFollowers, getFollowing } from "../../src/data/users";
 import { getCooklist, getFavoriteRecipes } from "../../src/data/recipes";
 import { getUserReviews } from "../../src/data/reviews";
+import { getSession } from "next-auth/react";
 
 interface Props {
   user: Users;
@@ -37,12 +38,11 @@ interface Props {
   followers: Following[];
   following: Following[];
   reviews: (Reviews & { users: Users })[];
+  sessionUser: any;
 }
 
 interface Params {
-  params: {
-    username: string;
-  };
+  username: string;
 }
 
 function UserPage({
@@ -54,6 +54,7 @@ function UserPage({
   followers,
   following,
   reviews,
+  sessionUser,
 }: Props) {
   const title = `${user.username}'s Profile • Savry`;
   const avatarSize = "56px";
@@ -73,6 +74,7 @@ function UserPage({
           diaryEntries={diaryEntries}
           following={following}
           followers={followers}
+          sessionUser={sessionUser}
           user={user}
         />
         <ProfileLinkBar username={user.username} />
@@ -93,21 +95,14 @@ function UserPage({
   );
 }
 
-export async function getStaticPaths() {
-  const users = await getAllUsers();
-  const paths = users.map((user) => ({
-    params: { username: user.username },
-  }));
-
-  return {
-    paths,
-    fallback: false,
-  };
-}
-
-export async function getStaticProps({ params }: Params) {
+export async function getServerSideProps(context: {
+  params: Params;
+  req: any;
+}) {
   const prisma = new PrismaClient();
-  const { username } = params;
+  const { username } = context.params;
+  const session = await getSession({ req: context.req });
+  const sessionUser = session?.user || null;
 
   let cooklist: Cooklist[] = [];
   let diaryEntries: DiaryEntries[] = [];
@@ -116,7 +111,6 @@ export async function getStaticProps({ params }: Params) {
   let followers: Following[] = [];
   let following: Following[] = [];
   let reviews: Reviews[] = [];
-  let usernames: string[] = [];
 
   const user = await prisma.users.findUnique({
     where: { username },
@@ -131,8 +125,6 @@ export async function getStaticProps({ params }: Params) {
     followers = await getFollowers(username);
     following = await getFollowing(user.id);
     reviews = await getUserReviews(user.id);
-    usernames = following.map((user) => user.followingUsername);
-    usernames.push(username);
   }
 
   return {
@@ -145,8 +137,8 @@ export async function getStaticProps({ params }: Params) {
       following,
       followers,
       reviews,
+      sessionUser,
     },
-    revalidate: 1800,
   };
 }
 
