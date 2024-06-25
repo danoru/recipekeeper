@@ -3,10 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { userId, followingUsername, action } = req.body;
 
   try {
@@ -29,6 +26,8 @@ export default async function handle(
     }
     res.status(200).json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: "Failed to update follow status" });
+    res.status(500).json({ error: "Failed to update follow status." });
   }
 }
+
+export default handler;

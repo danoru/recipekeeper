@@ -24,7 +24,7 @@ import {
 } from "@prisma/client";
 import { getFavoriteCreators } from "../../src/data/creators";
 import { getUserDiaryEntries } from "../../src/data/diary";
-import { getAllUsers, getFollowers, getFollowing } from "../../src/data/users";
+import { getFollowers, getFollowing } from "../../src/data/users";
 import { getCooklist, getFavoriteRecipes } from "../../src/data/recipes";
 import { getUserReviews } from "../../src/data/reviews";
 import { getSession } from "next-auth/react";

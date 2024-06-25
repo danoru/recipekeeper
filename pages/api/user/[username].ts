@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
-import { sql } from "@vercel/postgres";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getSession({ req });
@@ -11,38 +13,38 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const { username } = req.query;
 
-  if (typeof username !== "string") {
-    return res.status(400).json({ message: "Invalid username." });
-  }
-
   if (req.method === "GET") {
     try {
-      const result = await sql`
-        SELECT * FROM users WHERE username = ${username}`;
-      if (result.rows.length === 0) {
-        return res.status(404).json({ message: "User not found." });
-      }
-
-      return res.status(200).json(result.rows[0]);
+      const user = await prisma.users.findUnique({
+        where: { username: String(username) },
+      });
+      return res.status(200).json(user);
     } catch (error) {
-      return res.status(500).json({ message: "Internal server error." });
+      return res.status(500).json({ message: "Error fetching user data." });
     }
-    // } else if (req.method === "PUT") {
-    //   const { firstName, lastName, email, location, website, bio } = req.body;
+  }
 
-    //   try {
-    //     const result =
-    //       await sql`UPDATE users SET first_name = $1, last_name = $2, email = $3, location = $4, website = $5, bio = $6 WHERE username = $7 RETURNING *`;
-    //     // (firstName, lastName, email, location, website, bio, username)
-    //     return res.status(200).json(result.rows[0]);
-    //   } catch (error) {
-    //     return res.status(500).json({ message: "Internal Server Error" });
-    //   }
+  if (req.method === "PUT") {
+    const { firstName, lastName, email, location, website, bio } = req.body;
+
+    if (session.user.username !== username) {
+      return res.status(403).json({ message: "Forbidden." });
+    }
+
+    try {
+      const updatedUser = await prisma.users.update({
+        where: { username },
+        data: { firstName, lastName, email, location, website, bio },
+      });
+      return res.status(200).json(updatedUser);
+    } catch (error) {
+      return res.status(500).json({ message: "Error updating user data." });
+    }
   } else {
-    res.setHeader("Allow", ["GET"]);
+    res.setHeader("Allow", ["GET", "PUT"]);
     return res
       .status(405)
-      .json({ message: `Method ${req.method} not allowed` });
+      .json({ error: `Method ${req.method} is not allowed.` });
   }
 }
 
