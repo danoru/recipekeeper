@@ -1,9 +1,7 @@
+import prisma from "../../../src/data/db";
 import { NextApiRequest, NextApiResponse } from "next";
 import { hash } from "bcrypt";
 import * as yup from "yup";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
 
 const schema = yup.object().shape({
   username: yup

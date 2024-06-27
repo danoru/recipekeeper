@@ -32,15 +32,15 @@ function ProfileStatBar({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
+  }
+  function handleClose() {
     setAnchorEl(null);
-  };
+  }
 
   const [copied, setCopied] = useState(false);
-  const copyUrlToClipboard = () => {
+  function copyUrlToClipboard() {
     navigator.clipboard
       .writeText(window.location.href)
       .then(() => {
@@ -51,19 +51,17 @@ function ProfileStatBar({
         console.error("Failed to copy:", err);
       });
     setAnchorEl(null);
-  };
+  }
 
   const isSessionUser = sessionUser?.username === user.username;
   const followingStatus = followers.some(
-    (f) => f.followingUsername === user.username
+    (f) => f.userId === sessionUser.id && f.followingUsername === user.username
   );
-
-  console.log(followers);
   console.log(followingStatus);
 
   const [isFollowing, setIsFollowing] = useState(followingStatus);
 
-  const handleFollow = async () => {
+  async function handleFollow() {
     if (sessionUser) {
       if (isFollowing) {
         await unfollowUser(sessionUser.id, user.username);
@@ -73,7 +71,7 @@ function ProfileStatBar({
         setIsFollowing(true);
       }
     }
-  };
+  }
 
   const editButton = (
     <Button variant="outlined" size="small" href={`/settings`}>

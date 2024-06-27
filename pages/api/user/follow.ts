@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../../../src/data/db";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { userId, followingUsername, action } = req.body;
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed." });
+  }
 
   try {
     if (action === "follow") {
@@ -14,6 +15,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           followingUsername,
         },
       });
+      res.status(200).json({ message: "Successfully followed user." });
     } else if (action === "unfollow") {
       await prisma.following.delete({
         where: {
@@ -23,10 +25,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       });
+      res.status(200).json({ message: "Successfully unfollowed user." });
     }
-    res.status(200).json({ success: true });
-  } catch (error) {
+  } catch (e) {
+    console.error({ e });
     res.status(500).json({ error: "Failed to update follow status." });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 

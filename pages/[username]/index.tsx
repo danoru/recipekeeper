@@ -2,6 +2,7 @@ import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import FavoriteCreators from "../../src/components/users/FavoriteCreators";
 import FavoriteRecipes from "../../src/components/users/FavoriteRecipes";
+import prisma from "../../src/data/db";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import ProfileStatBar from "../../src/components/users/ProfileStatBar";
 import UserActivity from "../../src/components/users/UserActivity";
@@ -17,7 +18,6 @@ import {
   FavoritesCreators,
   FavoritesRecipes,
   Following,
-  PrismaClient,
   Recipes,
   Reviews,
   Users,
@@ -99,7 +99,6 @@ export async function getServerSideProps(context: {
   params: Params;
   req: any;
 }) {
-  const prisma = new PrismaClient();
   const { username } = context.params;
   const session = await getSession({ req: context.req });
   const sessionUser = session?.user || null;

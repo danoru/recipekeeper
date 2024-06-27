@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "./db";
 
 export const USER_LIST = [
   {
@@ -388,7 +386,7 @@ export async function getUserLikes(username: string) {
 
 export async function followUser(userId: number, followingUsername: string) {
   try {
-    await fetch("/api/follow", {
+    await fetch("/api/user/follow", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -406,7 +404,7 @@ export async function followUser(userId: number, followingUsername: string) {
 
 export async function unfollowUser(userId: number, followingUsername: string) {
   try {
-    await fetch("/api/follow", {
+    await fetch("/api/user/follow", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

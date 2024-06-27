@@ -2,7 +2,7 @@ import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import RecipeList from "../../../../src/components/recipes/RecipeList";
 import { getFilteredRecipes } from "../../../../src/data/recipes";
-import { PrismaClient, Recipes } from "@prisma/client";
+import { Recipes } from "@prisma/client";
 
 interface Props {
   recipes: Recipes[];
@@ -36,7 +36,6 @@ function FilterRecipePage({ recipes, recipeSubfilterId }: Props) {
 }
 
 export async function getStaticPaths() {
-  const prisma = new PrismaClient();
   const paths: any = [];
   const uniqueFilters = ["category", "cuisine", "course", "method", "diet"];
 

@@ -5,9 +5,6 @@ import TextField from "@mui/material/TextField";
 import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
 
 function SettingsPage({ session }: any) {
   const username = session?.user?.username;
