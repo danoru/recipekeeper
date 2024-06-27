@@ -11,6 +11,7 @@ function SettingsPage({ session }: any) {
   const router = useRouter();
 
   const [userData, setUserData] = useState({
+    username: username,
     firstName: "",
     lastName: "",
     email: "",

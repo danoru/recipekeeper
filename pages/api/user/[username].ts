@@ -1,14 +1,7 @@
 import prisma from "../../../src/data/db";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const session = await getSession({ req });
-
-  if (!session) {
-    return res.status(401).json({ message: "Unauthorized access." });
-  }
-
   const { username } = req.query;
 
   if (req.method === "GET") {
@@ -23,11 +16,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   if (req.method === "PUT") {
-    const { firstName, lastName, email, location, website, bio } = req.body;
-
-    if (session.user.username !== username) {
-      return res.status(403).json({ message: "Forbidden." });
-    }
+    const { username, firstName, lastName, email, location, website, bio } =
+      req.body;
 
     try {
       const updatedUser = await prisma.users.update({
