@@ -54,11 +54,10 @@ function ProfileStatBar({
   }
 
   const isSessionUser = sessionUser?.username === user.username;
-  const followingStatus = followers.some(
-    (f) => f.userId === sessionUser.id && f.followingUsername === user.username
-  );
-
   const sessionUserId = +sessionUser.id;
+  const followingStatus = followers.some(
+    (f) => f.userId === sessionUserId && f.followingUsername === user.username
+  );
 
   const [isFollowing, setIsFollowing] = useState(followingStatus);
 
