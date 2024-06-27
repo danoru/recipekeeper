@@ -57,17 +57,18 @@ function ProfileStatBar({
   const followingStatus = followers.some(
     (f) => f.userId === sessionUser.id && f.followingUsername === user.username
   );
-  console.log(followingStatus);
+
+  const sessionUserId = +sessionUser.id;
 
   const [isFollowing, setIsFollowing] = useState(followingStatus);
 
   async function handleFollow() {
     if (sessionUser) {
       if (isFollowing) {
-        await unfollowUser(sessionUser.id, user.username);
+        await unfollowUser(sessionUserId, user.username);
         setIsFollowing(false);
       } else {
-        await followUser(sessionUser.id, user.username);
+        await followUser(sessionUserId, user.username);
         setIsFollowing(true);
       }
     }
