@@ -56,13 +56,16 @@ function UserFollowing({ user, following }: Props) {
           >
             {following?.map((following) => (
               <Stack
-                key={following.users.username}
+                key={following.followingUsername}
                 direction="row"
                 sx={{ alignItems: "center", paddingLeft: "10px" }}
               >
                 <div style={{ width: "25%" }}>
-                  <Link href={`/${following.users.username}`} underline="none">
-                    {following.users.username}
+                  <Link
+                    href={`/${following.followingUsername}`}
+                    underline="none"
+                  >
+                    {following.followingUsername}
                   </Link>
                 </div>
                 <div style={{ width: "25%" }}>
@@ -107,6 +110,7 @@ export async function getStaticProps({ params }: Params) {
   return {
     props: {
       user,
+      following,
     },
     revalidate: 1800,
   };
