@@ -41,7 +41,7 @@ function PopularRecipeActivity({ recipes }: Props) {
           maxWidth: "75%",
         }}
       >
-        {recipes.slice(0, 4).map((recipe, i) => {
+        {recipes.slice(0, 5).map((recipe, i) => {
           return (
             <RecipeCard
               key={`card-${i}`}

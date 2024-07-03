@@ -24,6 +24,7 @@ interface CardProps {
 }
 
 function FriendRecipeActivity({ recentEntries }: Props) {
+  const userDiary = recentEntries.slice(0, 5);
   return (
     <Grid container>
       <Grid
@@ -53,7 +54,7 @@ function FriendRecipeActivity({ recentEntries }: Props) {
           maxWidth: "75%",
         }}
       >
-        {recentEntries?.map(
+        {userDiary.map(
           (
             entry: DiaryEntries & { users: Users; recipes: Recipes },
             i: number

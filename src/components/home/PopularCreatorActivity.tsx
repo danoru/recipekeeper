@@ -41,7 +41,7 @@ function PopularCreatorActivity({ creators }: Props) {
           maxWidth: "75%",
         }}
       >
-        {creators.slice(0, 4).map((creator, i) => {
+        {creators.slice(0, 5).map((creator, i) => {
           return (
             <CreatorCard
               key={`card-${i}`}

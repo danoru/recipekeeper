@@ -36,7 +36,7 @@ function RecipeActionBar({ recipe }: Props) {
       <Stack direction="row" justifyContent="center">
         <Stack alignItems="center" padding="1vh 0" width="33%">
           <OutdoorGrillOutlinedIcon />
-          <Typography variant="subtitle1">Watch</Typography>
+          <Typography variant="subtitle1">Cook</Typography>
         </Stack>
         <Stack alignItems="center" padding="1vh 0" width="33%">
           <FavoriteBorderIcon />
@@ -57,7 +57,7 @@ function RecipeActionBar({ recipe }: Props) {
         variant="subtitle1"
         style={{ padding: "1vh 0", textAlign: "center" }}
       >
-        Review or Log
+        Review
       </Typography>
       <Divider />
       <Typography
