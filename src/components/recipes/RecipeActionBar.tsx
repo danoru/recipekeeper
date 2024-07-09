@@ -15,10 +15,11 @@ import OutdoorGrillOutlinedIcon from "@mui/icons-material/OutdoorGrillOutlined";
 import { Recipes } from "@prisma/client";
 
 interface Props {
+  likeStatus: boolean;
   recipe: Recipes;
 }
 
-function RecipeActionBar({ recipe }: Props) {
+function RecipeActionBar({ recipe, likeStatus }: Props) {
   const [copied, setCopied] = useState(false);
   const copyUrlToClipboard = () => {
     navigator.clipboard
@@ -31,6 +32,9 @@ function RecipeActionBar({ recipe }: Props) {
         console.error("Failed to copy:", err);
       });
   };
+
+  const [isLiked, setIsLiked] = useState(likeStatus);
+
   return (
     <Paper sx={{ borderRadius: "1%" }}>
       <Stack direction="row" justifyContent="center">
@@ -39,8 +43,10 @@ function RecipeActionBar({ recipe }: Props) {
           <Typography variant="subtitle1">Cook</Typography>
         </Stack>
         <Stack alignItems="center" padding="1vh 0" width="33%">
-          <FavoriteBorderIcon />
-          <Typography variant="subtitle1">Like</Typography>
+          {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          <Typography variant="subtitle1">
+            {isLiked ? "Liked" : "Like"}
+          </Typography>
         </Stack>
         <Stack alignItems="center" padding="1vh 0" width="33%">
           <MenuBookTwoToneIcon />

@@ -7,22 +7,33 @@ import RecipeFriendRatings from "../../src/components/recipes/RecipeFriendRating
 import RecipeRatings from "../../src/components/recipes/RecipeRatings";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { findUserByUsername, getFollowing } from "../../src/data/users";
+import {
+  findUserByUsername,
+  getFollowing,
+  getUserLikes,
+} from "../../src/data/users";
 import { getRecipeByName } from "../../src/data/recipes";
 import { getReviewsByRecipe } from "../../src/data/reviews";
 import { getSession } from "next-auth/react";
-import { Creators, Recipes, Reviews, Users } from "@prisma/client";
+import {
+  Creators,
+  Recipes,
+  Reviews,
+  Users,
+  LikedRecipes,
+} from "@prisma/client";
 
 interface Params {
   slug: string;
 }
 
 interface Props {
+  likeStatus: boolean;
   recipe: Recipes & { creators: Creators; reviews: Reviews[] };
   reviews: (Reviews & { users: Users })[];
 }
 
-function RecipePage({ recipe, reviews }: Props) {
+function RecipePage({ recipe, reviews, likeStatus }: Props) {
   const title = `${recipe.name} by ${recipe.creators.name} • Savry`;
   const totalRating = recipe.reviews.reduce(
     (sum, review) => sum + review.rating.toNumber(),
@@ -68,7 +79,7 @@ function RecipePage({ recipe, reviews }: Props) {
           {reviews.length > 0 && <RecipeFriendRatings reviews={reviews} />}
         </div>
         <Stack direction="column" maxWidth="15%">
-          <RecipeActionBar recipe={recipe} />
+          <RecipeActionBar recipe={recipe} likeStatus={likeStatus} />
           <RecipeRatings recipe={recipe} />
         </Stack>
       </Stack>
@@ -103,18 +114,26 @@ export async function getServerSideProps(context: {
   }
 
   let reviews: (Reviews & { users: Users })[] = [];
+  let likedRecipes: (LikedRecipes & { recipes: Recipes })[] = [];
+  let likeStatus: boolean = false;
 
   const user = await findUserByUsername(sessionUser);
 
   if (user && recipe) {
     const following = await getFollowing(user.id);
     const followingList = following.map((f) => f.followingUsername);
+    const userLikes = await getUserLikes(user.username);
 
     reviews = await getReviewsByRecipe(recipe.id, followingList);
+    likedRecipes = userLikes?.likedRecipes || [];
+    likeStatus = likedRecipes?.some(
+      (recipe) => recipe.recipes.name.toLowerCase() === recipeName
+    );
   }
 
   return {
     props: {
+      likeStatus,
       recipe,
       reviews,
     },
