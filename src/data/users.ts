@@ -309,6 +309,23 @@ export async function findUserByUsername(username: string) {
   return user;
 }
 
+export async function getUserProfile(username: string) {
+  const user = await prisma.users.findUnique({
+    where: {
+      username,
+    },
+    include: {
+      cooklist: { include: { recipes: true } },
+      diaryEntries: { include: { recipes: true, users: true } },
+      favoritesCreators: { include: { creators: true } },
+      favoritesRecipes: { include: { recipes: true } },
+      following: true,
+      reviews: { include: { recipes: true } },
+    },
+  });
+  return user;
+}
+
 export async function getFollowers(username: string) {
   const followers = await prisma.following.findMany({
     where: {
