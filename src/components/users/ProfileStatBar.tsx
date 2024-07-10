@@ -15,7 +15,7 @@ interface Props {
   diaryEntries: DiaryEntries[];
   followers: Following[];
   following: Following[];
-  sessionUser: any;
+  sessionUser: any | null;
   user: Users;
 }
 
@@ -55,7 +55,7 @@ function ProfileStatBar({
 
   const isSessionUser = sessionUser?.username === user.username;
   const followingStatus = followers.some(
-    (f) => f.userId === sessionUser.id && f.followingUsername === user.username
+    (f) => f.userId === sessionUser?.id && f.followingUsername === user.username
   );
 
   const [isFollowing, setIsFollowing] = useState(followingStatus);
@@ -105,7 +105,7 @@ function ProfileStatBar({
         <Typography variant="h5" sx={{ margin: "0 10px" }}>
           {user.username}
         </Typography>
-        {isSessionUser ? editButton : followButton}
+        {sessionUser && isSessionUser ? editButton : followButton}
         <Grid item>
           <Button
             aria-controls={open ? "basic-menu" : undefined}
