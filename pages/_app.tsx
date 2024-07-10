@@ -9,6 +9,7 @@ import theme from "../src/styles/theme";
 import { CacheProvider } from "@emotion/react";
 import { Decimal } from "decimal.js";
 import { SessionProvider } from "next-auth/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@mui/material/styles";
 import type { AppProps } from "next/app";
 
@@ -34,6 +35,7 @@ export default function App(props: AppProps) {
             </Head>
             <CssBaseline />
             <Component {...pageProps} />
+            <SpeedInsights />
           </Layout>
         </ThemeProvider>
       </CacheProvider>

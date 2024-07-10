@@ -12,15 +12,16 @@ import UserFollowing from "../../src/components/users/UserFollowing";
 import UserRatings from "../../src/components/users/UserRatings";
 import UserRecentRecipes from "../../src/components/users/UserRecentRecipes";
 import {
-  Cooklist,
-  Creators,
-  DiaryEntries,
-  FavoritesCreators,
-  FavoritesRecipes,
-  Following,
-  Recipes,
-  Reviews,
-  Users,
+  Prisma,
+  // Cooklist,
+  // Creators,
+  // DiaryEntries,
+  // FavoritesCreators,
+  // FavoritesRecipes,
+  // Following,
+  // Recipes,
+  // Reviews,
+  // Users,
 } from "@prisma/client";
 import { getFavoriteCreators } from "../../src/data/creators";
 import { getUserDiaryEntries } from "../../src/data/diary";
@@ -29,15 +30,29 @@ import { getCooklist, getFavoriteRecipes } from "../../src/data/recipes";
 import { getUserReviews } from "../../src/data/reviews";
 import { getSession } from "next-auth/react";
 
+// interface Props {
+//   user: Users;
+//   cooklist: (Cooklist & { recipes: Recipes })[];
+//   diaryEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
+//   favoriteCreators: (FavoritesCreators & { creators: Creators })[];
+//   favoriteRecipes: (FavoritesRecipes & { recipes: Recipes })[];
+//   followers: Following[];
+//   following: Following[];
+//   reviews: (Reviews & { users: Users })[];
+//   sessionUser: any;
+// }
+
 interface Props {
-  user: Users;
-  cooklist: (Cooklist & { recipes: Recipes })[];
-  diaryEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
-  favoriteCreators: (FavoritesCreators & { creators: Creators })[];
-  favoriteRecipes: (FavoritesRecipes & { recipes: Recipes })[];
-  followers: Following[];
-  following: Following[];
-  reviews: (Reviews & { users: Users })[];
+  user: Prisma.UsersGetPayload<{
+    include: { reviews: true };
+  }>;
+  cooklist: any[];
+  diaryEntries: any[];
+  favoriteCreators: any[];
+  favoriteRecipes: any[];
+  followers: any[];
+  following: any[];
+  reviews: any[];
   sessionUser: any;
 }
 
@@ -67,8 +82,7 @@ function UserPage({
       <Head>
         <title>{title}</title>
       </Head>
-      <Grid container></Grid>
-      <Grid container>
+      <Grid container spacing={2}>
         <ProfileStatBar
           avatarSize={avatarSize}
           diaryEntries={diaryEntries}
@@ -103,42 +117,102 @@ export async function getServerSideProps(context: {
   const session = await getSession({ req: context.req });
   const sessionUser = session?.user || null;
 
-  let cooklist: Cooklist[] = [];
-  let diaryEntries: DiaryEntries[] = [];
-  let favoriteCreators: FavoritesCreators[] = [];
-  let favoriteRecipes: FavoritesRecipes[] = [];
-  let followers: Following[] = [];
-  let following: Following[] = [];
-  let reviews: Reviews[] = [];
+  //   let cooklist: Cooklist[] = [];
+  //   let diaryEntries: DiaryEntries[] = [];
+  //   let favoriteCreators: FavoritesCreators[] = [];
+  //   let favoriteRecipes: FavoritesRecipes[] = [];
+  //   let followers: Following[] = [];
+  //   let following: Following[] = [];
+  //   let reviews: Reviews[] = [];
 
-  const user = await prisma.users.findUnique({
-    where: { username },
-    include: { reviews: true },
-  });
+  //   const user = await prisma.users.findUnique({
+  //     where: { username },
+  //     include: { reviews: true },
+  //   });
 
-  if (user) {
-    cooklist = await getCooklist(user.id);
-    diaryEntries = await getUserDiaryEntries(user.id);
-    favoriteCreators = await getFavoriteCreators(user.id);
-    favoriteRecipes = await getFavoriteRecipes(user.id);
-    followers = await getFollowers(username);
-    following = await getFollowing(user.id);
-    reviews = await getUserReviews(user.id);
-  }
+  //   if (user) {
+  //     cooklist = await getCooklist(user.id);
+  //     diaryEntries = await getUserDiaryEntries(user.id);
+  //     favoriteCreators = await getFavoriteCreators(user.id);
+  //     favoriteRecipes = await getFavoriteRecipes(user.id);
+  //     followers = await getFollowers(username);
+  //     following = await getFollowing(user.id);
+  //     reviews = await getUserReviews(user.id);
+  //   }
 
-  return {
-    props: {
-      user,
+  //   return {
+  //     props: {
+  //       user,
+  //       cooklist,
+  //       diaryEntries,
+  //       favoriteCreators,
+  //       favoriteRecipes,
+  //       following,
+  //       followers,
+  //       reviews,
+  //       sessionUser,
+  //     },
+  //   };
+  // }
+  try {
+    const user = await prisma.users.findUnique({
+      where: { username },
+      include: { reviews: true },
+    });
+
+    if (!user) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const [
       cooklist,
       diaryEntries,
       favoriteCreators,
       favoriteRecipes,
-      following,
       followers,
+      following,
       reviews,
-      sessionUser,
-    },
-  };
+    ] = await Promise.all([
+      getCooklist(user.id),
+      getUserDiaryEntries(user.id),
+      getFavoriteCreators(user.id),
+      getFavoriteRecipes(user.id),
+      getFollowers(username),
+      getFollowing(user.id),
+      getUserReviews(user.id),
+    ]);
+
+    return {
+      props: {
+        user,
+        cooklist,
+        diaryEntries,
+        favoriteCreators,
+        favoriteRecipes,
+        following,
+        followers,
+        reviews,
+        sessionUser,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return {
+      props: {
+        user: null,
+        cooklist: [],
+        diaryEntries: [],
+        favoriteCreators: [],
+        favoriteRecipes: [],
+        following: [],
+        followers: [],
+        reviews: [],
+        sessionUser,
+      },
+    };
+  }
 }
 
 export default UserPage;
