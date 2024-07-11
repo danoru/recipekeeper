@@ -21,7 +21,7 @@ interface CardProps {
 }
 
 function UserRecentRecipes({ diaryEntries }: Props) {
-  const userDiary = diaryEntries.slice(0, 3);
+  const userDiary = diaryEntries.slice(0, 4);
   return (
     <Grid item>
       <Grid

@@ -3,7 +3,7 @@ import prisma from "./db";
 export async function getUserReviews(userId: number) {
   const reviews = await prisma.reviews.findMany({
     where: { userId },
-    include: { users: true },
+    include: { recipes: true, users: true },
   });
   return reviews;
 }

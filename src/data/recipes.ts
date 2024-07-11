@@ -427,7 +427,7 @@ export async function getTopLikedRecipes(userId: number) {
 
     if (user?.likedRecipes) {
       for (const likedRecipe of user.likedRecipes) {
-        const recipeId = Number(likedRecipe.recipeId); // Ensure recipeId is parsed as number
+        const recipeId = Number(likedRecipe.recipeId);
         if (recipeId in recipeCount) {
           recipeCount[recipeId]++;
         } else {
@@ -438,7 +438,7 @@ export async function getTopLikedRecipes(userId: number) {
   }
 
   const sortedRecipes = Object.keys(recipeCount).map((recipeId) => ({
-    recipeId: Number(recipeId), // Parse recipeId as number
+    recipeId: Number(recipeId),
     count: recipeCount[Number(recipeId)],
   }));
 

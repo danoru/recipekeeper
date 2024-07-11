@@ -316,7 +316,10 @@ export async function getUserProfile(username: string) {
     },
     include: {
       cooklist: { include: { recipes: true } },
-      diaryEntries: { include: { recipes: true, users: true } },
+      diaryEntries: {
+        include: { recipes: true, users: true },
+        orderBy: { date: "desc" },
+      },
       favoritesCreators: { include: { creators: true } },
       favoritesRecipes: { include: { recipes: true } },
       following: true,
@@ -350,35 +353,6 @@ export async function getFollowing(userId: number) {
 
   return following;
 }
-
-// export async function getTopLikedCreators(followingList: string[]) {
-//   const creatorCount: { [key: string]: number } = {};
-
-//   for (const username of followingList) {
-//     const user = await prisma.users.findUnique({
-//       where: { username },
-//       include: { likedCreators: true },
-//     });
-
-//     if (user?.likedCreators) {
-//       for (const likedCreator of user.likedCreators) {
-//         const { creatorId } = likedCreator;
-//         if (creatorId in creatorCount) {
-//           creatorCount[creatorId]++;
-//         } else {
-//           creatorCount[creatorId] = 1;
-//         }
-//       }
-//     }
-//   }
-
-//   const sortedCreators = Object.entries(creatorCount)
-//     .sort((a, b) => b[1] - a[1])
-//     .slice(0, 5)
-//     .map(([creatorId]) => creatorId);
-
-//   return sortedCreators;
-// }
 
 export async function getUserLikes(username: string) {
   const user = await prisma.users.findUnique({

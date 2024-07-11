@@ -1,5 +1,4 @@
 import prisma from "./db";
-import { number } from "yup";
 
 export async function getUserDiaryEntries(userId: number) {
   const diaryEntries = await prisma.diaryEntries.findMany({
