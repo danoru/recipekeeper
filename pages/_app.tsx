@@ -6,8 +6,10 @@ import Layout from "../src/components/layout/Layout";
 import PropTypes from "prop-types";
 import superjson from "superjson";
 import theme from "../src/styles/theme";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { CacheProvider } from "@emotion/react";
 import { Decimal } from "decimal.js";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import { SessionProvider } from "next-auth/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@mui/material/styles";
@@ -23,20 +25,22 @@ export default function App(props: AppProps) {
     <SessionProvider session={pageProps.session}>
       <CacheProvider value={emotionCache}>
         <ThemeProvider theme={theme}>
-          <Layout>
-            <Head>
-              <title>Savry</title>
-              <meta charSet="utf-8" />
-              <meta
-                name="viewport"
-                content="initial-scale=1.0, width=device-width"
-              />
-              <link rel="shortcut icon" href="/favicon.ico" />
-            </Head>
-            <CssBaseline />
-            <Component {...pageProps} />
-            <SpeedInsights />
-          </Layout>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <Layout>
+              <Head>
+                <title>Savry</title>
+                <meta charSet="utf-8" />
+                <meta
+                  name="viewport"
+                  content="initial-scale=1.0, width=device-width"
+                />
+                <link rel="shortcut icon" href="/favicon.ico" />
+              </Head>
+              <CssBaseline />
+              <Component {...pageProps} />
+              <SpeedInsights />
+            </Layout>
+          </LocalizationProvider>
         </ThemeProvider>
       </CacheProvider>
     </SessionProvider>
