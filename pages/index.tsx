@@ -49,21 +49,19 @@ function Home({
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
   let sessionUser: Users | null = null;
-  let recentEntries;
-  let topLikedCreators;
-  let topLikedRecipes;
 
   if (session) {
     const sessionUserId = parseInt(session.user.id);
     sessionUser = await findUserByUserId(sessionUserId);
 
-    if (sessionUser) {
-      const following = await getFollowing(sessionUserId);
-      const followingList = following.map((user) => user.followingUsername);
-      recentEntries = await getDiaryEntriesByUsernames(followingList);
-      topLikedCreators = await getTopLikedCreators(sessionUserId);
-      topLikedRecipes = await getTopLikedRecipes(sessionUserId);
-    }
+    const following = await getFollowing(sessionUserId);
+    const followingList = following.map((user) => user.followingUsername);
+    const [recentEntries, topLikedCreators, topLikedRecipes] =
+      await Promise.all([
+        getDiaryEntriesByUsernames(followingList),
+        getTopLikedCreators(sessionUserId),
+        getTopLikedRecipes(sessionUserId),
+      ]);
 
     return {
       props: superjson.serialize({
