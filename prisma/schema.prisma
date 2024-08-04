@@ -35,7 +35,7 @@ model DiaryEntries {
   recipeId        Int
   rating          Decimal
   comment         String?
-  date            DateTime @db.Date
+  date            DateTime @db.Timestamptz(6)
   hasCookedBefore Boolean  @default(false)
   recipes         Recipes? @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users           Users?   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)

@@ -31,7 +31,7 @@ interface Params {
   };
 }
 
-function UserCooklist({ user }: Props) {
+function UserLikes({ user }: Props) {
   const title = `${user.username}'s Likes • Savry`;
   const creatorHeader = `${user.username}'S LIKED CREATORS`;
   const creators = user.likedCreators.map((user) => user.creators);
@@ -76,4 +76,4 @@ export async function getStaticProps({ params }: Params) {
   };
 }
 
-export default UserCooklist;
+export default UserLikes;

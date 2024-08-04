@@ -1,13 +1,16 @@
+import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
+import Snackbar from "@mui/material/Snackbar";
 import TextField from "@mui/material/TextField";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 function LoginForm() {
   const router = useRouter();
@@ -16,6 +19,11 @@ function LoginForm() {
     username: Yup.string().required("Username is required."),
     password: Yup.string().required("Password is required."),
   });
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
 
   async function handleSubmit(
     values: { username: string; password: string; rememberMe: Boolean },
@@ -30,7 +38,13 @@ function LoginForm() {
 
     if (response?.error) {
       setErrors({ submit: response.error });
+      setSnackbarMessage("Login failed. Your credentials do not match.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     } else {
+      setSnackbarMessage("Login successful. You are being redirected.");
+      setSnackbarOpen(true);
+      setSnackbarSeverity("success");
       router.push("/");
       router.refresh();
     }
@@ -39,8 +53,8 @@ function LoginForm() {
   }
 
   return (
-    <Grid container justifyContent="center">
-      <Grid item xs={12} sm={8} md={5}>
+    <Grid container justifyContent="center" sx={{ margin: "auto", p: 4 }}>
+      <Grid item xs={3} sm={8} md={5}>
         {/* <Stack direction="column">
           <Avatar>
             <LockOutlinedIcon />
@@ -125,6 +139,18 @@ function LoginForm() {
           )}
         </Formik>
       </Grid>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 }
