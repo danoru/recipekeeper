@@ -148,6 +148,7 @@ function LogRecipeButton() {
                 />
                 <Rating
                   value={rating}
+                  precision={0.5}
                   onChange={(event, newValue) => setRating(newValue)}
                 />
                 {/* <FormControlLabel
