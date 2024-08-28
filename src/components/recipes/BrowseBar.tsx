@@ -63,25 +63,25 @@ function BrowseBar() {
             <Link href="/recipes/cuisine/carribean" underline="none">
               <MenuItem value="carribean">Carribean Cuisine</MenuItem>
             </Link>
-            <Link href="/recipes/cuisine/centralamerican" underline="none">
-              <MenuItem value="centralamerican">
+            <Link href="/recipes/cuisine/central-american" underline="none">
+              <MenuItem value="central-american">
                 Central American Cuisine
               </MenuItem>
             </Link>
             <Link href="/recipes/cuisine/european" underline="none">
               <MenuItem value="european">European Cuisine</MenuItem>
             </Link>
-            <Link href="/recipes/cuisine/middleeastern" underline="none">
-              <MenuItem value="middleeastern">Middle Eastern Cuisine</MenuItem>
+            <Link href="/recipes/cuisine/middle-eastern" underline="none">
+              <MenuItem value="middle-eastern">Middle Eastern Cuisine</MenuItem>
             </Link>
-            <Link href="/recipes/cuisine/northamerican" underline="none">
-              <MenuItem value="northamerican">North American Cuisine</MenuItem>
+            <Link href="/recipes/cuisine/north-american" underline="none">
+              <MenuItem value="north-american">North American Cuisine</MenuItem>
             </Link>
             <Link href="/recipes/cuisine/oceanic" underline="none">
               <MenuItem value="oceanic">Oceanic Cuisine</MenuItem>
             </Link>
-            <Link href="/recipes/cuisine/southamerica" underline="none">
-              <MenuItem value="southamerica">South American Cuisine</MenuItem>
+            <Link href="/recipes/cuisine/south-america" underline="none">
+              <MenuItem value="south-america">South American Cuisine</MenuItem>
             </Link>
           </Select>
         </FormControl>
@@ -90,20 +90,20 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="course-label">Course</InputLabel>
           <Select labelId="course-label" id="course" value="" label="course">
-            <Link href="/recipes/course/appetizer" underline="none">
-              <MenuItem value="appetizer">Appetizers</MenuItem>
+            <Link href="/recipes/course/appetizers" underline="none">
+              <MenuItem value="appetizers">Appetizers</MenuItem>
             </Link>
             <Link href="/recipes/course/breakfast" underline="none">
               <MenuItem value="breakfast">Breakfast</MenuItem>
             </Link>
-            <Link href="/recipes/course/dessert" underline="none">
-              <MenuItem value="dessert">Desserts</MenuItem>
+            <Link href="/recipes/course/desserts" underline="none">
+              <MenuItem value="desserts">Desserts</MenuItem>
             </Link>
-            <Link href="/recipes/course/main" underline="none">
-              <MenuItem value="main">Mains</MenuItem>
+            <Link href="/recipes/course/mains" underline="none">
+              <MenuItem value="mains">Mains</MenuItem>
             </Link>
             <Link href="/recipes/course/side" underline="none">
-              <MenuItem value="side">Sides</MenuItem>
+              <MenuItem value="sides">Sides</MenuItem>
             </Link>
           </Select>
         </FormControl>
@@ -112,16 +112,16 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="method-label">Method</InputLabel>
           <Select labelId="method-label" id="method" value="" label="method">
-            <Link href="/recipes/method/airfryer" underline="none">
+            <Link href="/recipes/method/air-fryer" underline="none">
               <MenuItem value="air-fryer">Air Fryer</MenuItem>
             </Link>
-            <Link href="/recipes/method/onepot" underline="none">
+            <Link href="/recipes/method/one-pot" underline="none">
               <MenuItem value="one-pot">One Pot</MenuItem>
             </Link>
-            <Link href="/recipes/method/pressurecooker" underline="none">
+            <Link href="/recipes/method/pressure-cooker" underline="none">
               <MenuItem value="pressure-cooker">Pressure Cooker</MenuItem>
             </Link>
-            <Link href="/recipes/method/slowcooker" underline="none">
+            <Link href="/recipes/method/slow-cooker" underline="none">
               <MenuItem value="slow-cooker">Slow Cooker</MenuItem>
             </Link>
           </Select>
@@ -131,10 +131,10 @@ function BrowseBar() {
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <InputLabel id="diet-label">Diet</InputLabel>
           <Select labelId="diet-label" id="diet" value="" label="diet">
-            <Link href="/recipes/diet/dairyfree" underline="none">
+            <Link href="/recipes/diet/dairy-free" underline="none">
               <MenuItem value="dairy-free">Dairy Free</MenuItem>
             </Link>
-            <Link href="/recipes/diet/glutenfree" underline="none">
+            <Link href="/recipes/diet/gluten-free" underline="none">
               <MenuItem value="gluten-free">Gluten Free</MenuItem>
             </Link>
             <Link href="/recipes/diet/paleo" underline="none">

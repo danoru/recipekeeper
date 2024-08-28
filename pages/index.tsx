@@ -48,12 +48,9 @@ function Home({
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
-  let sessionUser: Users | null = null;
 
   if (session) {
     const sessionUserId = parseInt(session.user.id);
-    sessionUser = await findUserByUserId(sessionUserId);
-
     const following = await getFollowing(sessionUserId);
     const followingList = following.map((user) => user.followingUsername);
     const [recentEntries, topLikedCreators, topLikedRecipes] =
@@ -67,7 +64,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       props: superjson.serialize({
         recentEntries,
         session,
-        sessionUser,
         topLikedCreators,
         topLikedRecipes,
       }).json,

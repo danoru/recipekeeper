@@ -310,7 +310,7 @@ export async function getRecipeByName(name: string) {
     where: {
       name: {
         equals: name,
-        mode: "insensitive", // Case-insensitive comparison
+        mode: "insensitive",
       },
     },
     include: { creators: true, reviews: true },
@@ -377,13 +377,19 @@ export async function getFeaturedRecipes() {
   return featuredRecipes;
 }
 
+type RecipeKey = "category" | "cuisine" | "course" | "method" | "diet";
+
 export async function getFilteredRecipes(
   filterId: string,
   subfilterId: string
 ) {
+  const recipeFilterId = filterId as RecipeKey;
+
   const recipes = await prisma.recipes.findMany({
     where: {
-      [filterId]: subfilterId,
+      [recipeFilterId]: subfilterId
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (match: string) => match.toUpperCase()),
     },
     orderBy: {
       name: "asc",
