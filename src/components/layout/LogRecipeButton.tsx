@@ -1,4 +1,5 @@
 import Autocomplete from "@mui/material/Autocomplete";
+import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
@@ -7,6 +8,7 @@ import Image from "next/image";
 import Modal from "@mui/material/Modal";
 import moment, { Moment } from "moment";
 import Rating from "@mui/material/Rating";
+import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -20,10 +22,15 @@ function LogRecipeButton() {
   const [modalOpen, modalSetOpen] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipes | null>(null);
   const [date, setDate] = useState<Moment | null>(moment());
-  const [hasCookedBefore, sethasCookedBefore] = useState(false);
+  const [hasCookedBefore, setHasCookedBefore] = useState(false);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState<number | null>(null);
   const [recipes, setRecipes] = useState<Recipes[]>([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
   const { data: session } = useSession();
 
   const handleModalOpen = () => modalSetOpen(true);
@@ -37,22 +44,42 @@ function LogRecipeButton() {
 
   const handleSave = async () => {
     if (session && session.user) {
-      await fetch("/api/recipe/log", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: parseInt(session.user.id),
-          recipeId: selectedRecipe?.id,
-          name: selectedRecipe?.name,
-          date,
-          hasCookedBefore,
-          comment,
-          rating,
-        }),
-      });
-      handleModalClose();
+      try {
+        const response = await fetch("/api/recipe/log", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: parseInt(session.user.id),
+            recipeId: selectedRecipe?.id,
+            name: selectedRecipe?.name,
+            date,
+            hasCookedBefore,
+            comment,
+            rating,
+          }),
+        });
+        if (response.ok) {
+          handleModalClose();
+          setSnackbarMessage("Recipe successfully added.");
+          setSnackbarSeverity("success");
+          setSelectedRecipe(null);
+          setDate(moment());
+          setHasCookedBefore(false);
+          setComment("");
+          setRating(null);
+        } else {
+          const errorData = await response.json();
+          setSnackbarMessage(errorData.error || "Failed to log recipe.");
+          setSnackbarSeverity("error");
+        }
+      } catch (error) {
+        setSnackbarMessage("Failed to log recipe. Please try again.");
+        setSnackbarSeverity("error");
+      } finally {
+        setSnackbarOpen(true);
+      }
     }
   };
 
@@ -167,7 +194,7 @@ function LogRecipeButton() {
                   control={
                     <Checkbox
                       checked={hasCookedBefore}
-                      onChange={(e) => sethasCookedBefore(e.target.checked)}
+                      onChange={(e) => setHasCookedBefore(e.target.checked)}
                     />
                   }
                   label="I've made this recipe before"
@@ -180,6 +207,18 @@ function LogRecipeButton() {
           )}
         </Box>
       </Modal>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
