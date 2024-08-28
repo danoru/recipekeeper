@@ -60,6 +60,9 @@ function LogRecipeButton() {
     const fetchRecipes = async () => {
       const response = await fetch("/api/recipes");
       const data = await response.json();
+      data.sort((a: any, b: any) =>
+        a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+      );
       setRecipes(data);
     };
     fetchRecipes();
