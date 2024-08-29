@@ -8,32 +8,45 @@ import RecipeRatings from "../../src/components/recipes/RecipeRatings";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import {
-  findUserByUsername,
-  getFollowing,
-  getUserLikes,
-} from "../../src/data/users";
-import { getRecipeByName } from "../../src/data/recipes";
-import { getReviewsByRecipe } from "../../src/data/reviews";
-import { getSession } from "next-auth/react";
-import {
+  Cooklist,
   Creators,
+  DiaryEntries,
+  LikedRecipes,
   Recipes,
   Reviews,
   Users,
-  LikedRecipes,
 } from "@prisma/client";
+import { findUserByUsername, getFollowing } from "../../src/data/users";
+import {
+  getCooklist,
+  getLikedRecipes,
+  getRecipeByName,
+} from "../../src/data/recipes";
+import { getReviewsByRecipe } from "../../src/data/reviews";
+import { getSession } from "next-auth/react";
+import { getUserDiaryEntries } from "../../src/data/diary";
 
 interface Params {
   slug: string;
 }
 
 interface Props {
-  likeStatus: boolean;
+  cooklist: Cooklist[];
+  diaryEntries: DiaryEntries[];
+  likedRecipes: LikedRecipes[];
   recipe: Recipes & { creators: Creators; reviews: Reviews[] };
   reviews: (Reviews & { users: Users })[];
+  sessionUser: any;
 }
 
-function RecipePage({ recipe, reviews, likeStatus }: Props) {
+function RecipePage({
+  cooklist,
+  diaryEntries,
+  likedRecipes,
+  recipe,
+  reviews,
+  sessionUser,
+}: Props) {
   const title = `${recipe.name} by ${recipe.creators.name} • Savry`;
   const totalRating = recipe.reviews.reduce(
     (sum, review) => sum + review.rating.toNumber(),
@@ -79,7 +92,13 @@ function RecipePage({ recipe, reviews, likeStatus }: Props) {
           {reviews.length > 0 && <RecipeFriendRatings reviews={reviews} />}
         </div>
         <Stack direction="column" maxWidth="15%">
-          <RecipeActionBar recipe={recipe} likeStatus={likeStatus} />
+          <RecipeActionBar
+            cooklist={cooklist}
+            diaryEntries={diaryEntries}
+            likedRecipes={likedRecipes}
+            recipe={recipe}
+            sessionUser={sessionUser}
+          />
           <RecipeRatings recipe={recipe} />
         </Stack>
       </Stack>
@@ -94,48 +113,49 @@ export async function getServerSideProps(context: {
   const { slug } = context.params;
   const session = await getSession({ req: context.req });
 
-  if (!session || !session.user) {
-    return {
-      props: {
-        recipe: await getRecipeByName(slug[0].replace(/-/g, " ")),
-        reviews: [],
-      },
-    };
-  }
-  const sessionUser = session.user.username;
+  console.log(session);
 
-  const recipeName = slug[0].replace(/-/g, " ");
-  const recipe = await getRecipeByName(recipeName);
+  if (session) {
+    const sessionUser = session.user;
+    const [recipe, user] = await Promise.all([
+      getRecipeByName(slug[0].replace(/-/g, " ")),
+      findUserByUsername(sessionUser.username),
+    ]);
 
-  if (!recipe) {
-    return {
-      notFound: true,
-    };
-  }
+    if (user && recipe) {
+      const [cooklist, diaryEntries, following, likedRecipes] =
+        await Promise.all([
+          getCooklist(user.id),
+          getUserDiaryEntries(user.id),
+          getFollowing(user.id),
+          getLikedRecipes(user.id),
+        ]);
 
-  let reviews: (Reviews & { users: Users })[] = [];
-  let likedRecipes: (LikedRecipes & { recipes: Recipes })[] = [];
-  let likeStatus: boolean = false;
-
-  const user = await findUserByUsername(sessionUser);
-
-  if (user && recipe) {
-    const following = await getFollowing(user.id);
-    const followingList = following.map((f) => f.followingUsername);
-    const userLikes = await getUserLikes(user.username);
-
-    reviews = await getReviewsByRecipe(recipe.id, followingList);
-    likedRecipes = userLikes?.likedRecipes || [];
-    likeStatus = likedRecipes?.some(
-      (recipe) => recipe.recipes.name.toLowerCase() === recipeName
-    );
+      const followingList = following.map((f) => f.followingUsername);
+      const reviews = await getReviewsByRecipe(recipe.id, followingList);
+      if (!recipe) {
+        return {
+          notFound: true,
+        };
+      }
+      return {
+        props: {
+          cooklist,
+          diaryEntries,
+          following,
+          likedRecipes,
+          recipe,
+          reviews,
+          sessionUser,
+        },
+      };
+    }
   }
 
   return {
     props: {
-      likeStatus,
-      recipe,
-      reviews,
+      recipe: await getRecipeByName(slug[0].replace(/-/g, " ")),
+      reviews: [],
     },
   };
 }

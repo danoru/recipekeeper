@@ -35,7 +35,7 @@ function UserActivity({ diaryEntries }: Props) {
               </Link>
               {" made "}
               <Link
-                href={`/recipe/${diaryEntry.recipes.name
+                href={`/recipes/${diaryEntry.recipes.name
                   .toLowerCase()
                   .replace(/ /g, "-")}`}
                 underline="none"

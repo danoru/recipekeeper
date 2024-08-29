@@ -45,7 +45,7 @@ function UserCooklistPreview({ cooklist }: CooklistProps) {
 }
 
 function RecipeCard({ name, image }: RecipeCardProps) {
-  const recipeSlug = `/recipe/${name.replace(/\s+/g, "-").toLowerCase()}`;
+  const recipeSlug = `/recipes/${name.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <Grid item>
       <Link href={recipeSlug}>

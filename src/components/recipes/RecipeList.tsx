@@ -77,7 +77,7 @@ function RecipeList({ header, recipes, style }: Props) {
 }
 
 function RecipeCard(card: any) {
-  const recipeSlug = `/recipe/${card.name.replace(/\s+/g, "-").toLowerCase()}`;
+  const recipeSlug = `/recipes/${card.name.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <Grid item>
       <Link href={recipeSlug} underline="none">

@@ -45,7 +45,7 @@ function LogRecipeButton() {
   const handleSave = async () => {
     if (session && session.user) {
       try {
-        const response = await fetch("/api/recipe/log", {
+        const response = await fetch("/api/recipes/log", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

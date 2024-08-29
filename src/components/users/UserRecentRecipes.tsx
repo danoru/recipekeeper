@@ -72,7 +72,7 @@ function UserRecentRecipes({ diaryEntries }: Props) {
 }
 
 function RecipeCard(card: CardProps) {
-  const recipeSlug = `/recipe/${card.name.replace(/\s+/g, "-").toLowerCase()}`;
+  const recipeSlug = `/recipes/${card.name.replace(/\s+/g, "-").toLowerCase()}`;
   const rating = new Decimal(card.rating).toNumber();
   return (
     <Grid item>

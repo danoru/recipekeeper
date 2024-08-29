@@ -51,7 +51,7 @@ function Activity({ diaryEntries, user }: Props) {
                     </Link>
                     <span style={{ margin: "0 2px" }}>made</span>
                     <Link
-                      href={`/recipe/${entry.recipes.name
+                      href={`/recipes/${entry.recipes.name
                         .toLowerCase()
                         .replace(/ /g, "-")}`}
                       underline="none"

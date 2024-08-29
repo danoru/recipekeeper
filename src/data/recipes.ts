@@ -415,6 +415,18 @@ export async function getRecipesByCreator(creatorId: string) {
   return recipes;
 }
 
+export async function getLikedRecipes(userId: number) {
+  const likedRecipes = await prisma.likedRecipes.findMany({
+    where: { userId },
+    include: { recipes: true },
+    orderBy: {
+      recipes: { name: "asc" },
+    },
+  });
+
+  return likedRecipes;
+}
+
 export async function getTopLikedRecipes(userId: number) {
   const user = await prisma.users.findUnique({
     where: { id: userId },

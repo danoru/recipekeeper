@@ -119,7 +119,7 @@ function PopCarousel({ recipes }: Props) {
 }
 
 function PopCard(recipe: any) {
-  const recipeSlug = `/recipe/${recipe.name
+  const recipeSlug = `/recipes/${recipe.name
     .replace(/\s+/g, "-")
     .toLowerCase()}`;
 
