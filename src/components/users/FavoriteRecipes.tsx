@@ -1,11 +1,6 @@
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
-import Image from "next/image";
-import Link from "@mui/material/Link";
+import RecipeCard from "../cards/RecipeCard";
 import Typography from "@mui/material/Typography";
-
 import { Recipes } from "@prisma/client";
 
 interface Props {
@@ -46,48 +41,11 @@ function FavoriteRecipes({ recipes }: Props) {
           <RecipeCard
             key={`card-${i}`}
             name={recipe.name}
+            link={`/recipes/${recipe.name.replace(/\s+/g, "-").toLowerCase()}`}
             image={recipe.image}
-            sx={{
-              width: "100%",
-              height: "100%",
-            }}
           />
         ))}
       </Grid>
-    </Grid>
-  );
-}
-
-function RecipeCard(card: any) {
-  const recipeSlug = `/recipes/${card.name.replace(/\s+/g, "-").toLowerCase()}`;
-  return (
-    <Grid item>
-      <Link href={recipeSlug} underline="none">
-        <Card
-          sx={{
-            width: "200px",
-            height: "250px",
-            cursor: "pointer",
-          }}
-        >
-          <CardMedia
-            style={{ position: "relative", height: 140, width: "100%" }}
-          >
-            <Image
-              src={card.image}
-              alt={card.name}
-              fill
-              sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-              style={{ objectFit: "cover" }}
-            />
-          </CardMedia>
-          <CardContent>
-            <Typography variant="h6" component="div">
-              {card.name}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Link>
     </Grid>
   );
 }

@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
+import CreatorCard from "../cards/CreatorCard";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
-import Image from "next/image";
-import Link from "@mui/material/Link";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import Slide from "@mui/material/Slide";
@@ -92,8 +88,6 @@ function CreatorCarousel({ creators }: Props) {
                     link={`creators/${creator.link}`}
                     image={creator.image}
                     sx={{
-                      width: "100%",
-                      height: "100%",
                       display: currentPage === i ? "block" : "none",
                     }}
                   />
@@ -114,29 +108,6 @@ function CreatorCarousel({ creators }: Props) {
         </IconButton>
       </Grid>
     </Grid>
-  );
-}
-
-function CreatorCard(creator: any) {
-  return (
-    <Link href={creator.link} underline="none">
-      <Card sx={{ width: "250px", height: "250px", cursor: "pointer" }}>
-        <CardMedia style={{ position: "relative", height: 140, width: "100%" }}>
-          <Image
-            src={creator.image}
-            alt={creator.name}
-            fill
-            sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-            style={{ objectFit: "cover" }}
-          />
-        </CardMedia>
-        <CardContent>
-          <Typography variant="h6" component="div">
-            {creator.name}
-          </Typography>
-        </CardContent>
-      </Card>
-    </Link>
   );
 }
 

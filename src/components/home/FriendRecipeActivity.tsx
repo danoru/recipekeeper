@@ -1,26 +1,10 @@
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import Decimal from "decimal.js";
+import DetailRecipeCard from "../cards/DetailRecipeCard";
 import Grid from "@mui/material/Grid";
-import Image from "next/image";
-import Link from "@mui/material/Link";
-import moment from "moment";
-import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 import { DiaryEntries, Recipes, Users } from "@prisma/client";
 
 interface Props {
   recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
-}
-
-interface CardProps {
-  name: string;
-  image: string;
-  rating: Decimal;
-  username: string;
-  date: Date;
-  sx: any;
 }
 
 function FriendRecipeActivity({ recentEntries }: Props) {
@@ -60,64 +44,21 @@ function FriendRecipeActivity({ recentEntries }: Props) {
             i: number
           ) => {
             return (
-              <RecipeCard
+              <DetailRecipeCard
                 key={`card-${i}`}
-                name={entry.recipes.name}
-                image={entry.recipes.image}
-                rating={entry.rating}
                 date={entry.date}
+                image={entry.recipes.image}
+                link={`/recipes/${entry.recipes.name
+                  .replace(/\s+/g, "-")
+                  .toLowerCase()}`}
+                name={entry.recipes.name}
+                rating={entry.rating}
                 username={entry.users.username}
-                sx={{
-                  height: "100%",
-                  width: "100%",
-                }}
               />
             );
           }
         )}
       </Grid>
-    </Grid>
-  );
-}
-
-function RecipeCard(card: CardProps) {
-  const recipeSlug = `/recipes/${card.name.replace(/\s+/g, "-").toLowerCase()}`;
-  const rating = new Decimal(card.rating).toNumber();
-  return (
-    <Grid item>
-      <Link href={recipeSlug} underline="none">
-        <Card
-          sx={{
-            height: "300px",
-            width: "250px",
-            cursor: "pointer",
-          }}
-        >
-          <CardMedia
-            style={{ position: "relative", height: 140, width: "100%" }}
-          >
-            <Image
-              src={card.image}
-              alt={card.name}
-              fill
-              sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-              style={{ objectFit: "cover" }}
-            />
-          </CardMedia>
-          <CardContent>
-            <Typography variant="body1" component="div">
-              {card.name}
-            </Typography>
-            <Typography variant="body2" component="div">
-              {card.username}
-            </Typography>
-            <Rating value={rating} size="small" readOnly />
-            <Typography variant="body2" component="div">
-              {moment(card.date).format("MMM DD")}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Link>
     </Grid>
   );
 }

@@ -1,11 +1,8 @@
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
+import CreatorCard from "../cards/CreatorCard";
 import Grid from "@mui/material/Grid";
-import Image from "next/image";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { Creators } from "@prisma/client";
+
 interface Props {
   creators: Creators[];
   header: string;
@@ -64,46 +61,9 @@ function CreatorList({ creators, header, style }: Props) {
             name={creator.name}
             link={`creators/${creator.link}`}
             image={creator.image}
-            sx={{
-              width: "100%",
-              height: "100%",
-            }}
           />
         ))}
       </Grid>
-    </Grid>
-  );
-}
-
-function CreatorCard(creator: any) {
-  return (
-    <Grid item>
-      <Link href={creator.link} underline="none">
-        <Card
-          sx={{
-            width: "250px",
-            height: "250px",
-            cursor: "pointer",
-          }}
-        >
-          <CardMedia
-            style={{ position: "relative", height: 140, width: "100%" }}
-          >
-            <Image
-              src={creator.image}
-              alt={creator.name}
-              fill
-              sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-              style={{ objectFit: "cover" }}
-            />
-          </CardMedia>
-          <CardContent>
-            <Typography variant="h6" component="div">
-              {creator.name}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Link>
     </Grid>
   );
 }

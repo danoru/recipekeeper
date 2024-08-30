@@ -1,11 +1,7 @@
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
+import CreatorCard from "../cards/CreatorCard";
 import Grid from "@mui/material/Grid";
-import Image from "next/image";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { Creators, Users } from "@prisma/client";
+import { Creators } from "@prisma/client";
 
 interface Props {
   creators: Creators[];
@@ -48,47 +44,10 @@ function PopularCreatorActivity({ creators }: Props) {
               name={creator.name}
               image={creator.image}
               link={`creators/${creator.link}`}
-              sx={{
-                height: "100%",
-                width: "100%",
-              }}
             />
           );
         })}
       </Grid>
-    </Grid>
-  );
-}
-
-function CreatorCard(card: any) {
-  return (
-    <Grid item>
-      <Link href={card.link} underline="none">
-        <Card
-          sx={{
-            width: "250px",
-            height: "250px",
-            cursor: "pointer",
-          }}
-        >
-          <CardMedia
-            style={{ position: "relative", height: 140, width: "100%" }}
-          >
-            <Image
-              src={card.image}
-              alt={card.name}
-              fill
-              sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-              style={{ objectFit: "cover" }}
-            />
-          </CardMedia>
-          <CardContent>
-            <Typography variant="h6" component="div">
-              {card.name}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Link>
     </Grid>
   );
 }
