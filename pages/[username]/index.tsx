@@ -1,15 +1,7 @@
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
-import FavoriteCreators from "../../src/components/users/FavoriteCreators";
-import FavoriteRecipes from "../../src/components/users/FavoriteRecipes";
-import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
-import ProfileStatBar from "../../src/components/users/ProfileStatBar";
-import UserActivity from "../../src/components/users/UserActivity";
-import UserCooklistPreview from "../../src/components/users/UserCooklistPreview";
-import UserRecipeDiary from "../../src/components/users/UserRecipeDiary";
-import UserFollowing from "../../src/components/users/UserFollowing";
-import UserRatings from "../../src/components/users/UserRatings";
-import UserRecentRecipes from "../../src/components/users/UserRecentRecipes";
+import dynamic from "next/dynamic";
+import { getSession } from "next-auth/react";
 import {
   Cooklist,
   Creators,
@@ -21,31 +13,59 @@ import {
   Reviews,
   Users,
 } from "@prisma/client";
+
 import { getFollowers, getUserProfile } from "../../src/data/users";
-import { getSession } from "next-auth/react";
+import { GetServerSidePropsContext } from "next";
+
+const FavoriteCreators = dynamic(
+  () => import("../../src/components/users/FavoriteCreators")
+);
+const FavoriteRecipes = dynamic(
+  () => import("../../src/components/users/FavoriteRecipes")
+);
+const ProfileLinkBar = dynamic(
+  () => import("../../src/components/users/ProfileLinkBar")
+);
+const ProfileStatBar = dynamic(
+  () => import("../../src/components/users/ProfileStatBar")
+);
+const UserActivity = dynamic(
+  () => import("../../src/components/users/UserActivity")
+);
+const UserCooklistPreview = dynamic(
+  () => import("../../src/components/users/UserCooklistPreview")
+);
+const UserRecipeDiary = dynamic(
+  () => import("../../src/components/users/UserRecipeDiary")
+);
+const UserFollowing = dynamic(
+  () => import("../../src/components/users/UserFollowing")
+);
+const UserRatings = dynamic(
+  () => import("../../src/components/users/UserRatings")
+);
+const UserRecentRecipes = dynamic(
+  () => import("../../src/components/users/UserRecentRecipes")
+);
 
 interface Props {
   user: Users;
   cooklist: (Cooklist & { recipes: Recipes })[];
   diaryEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
-  favoriteCreators: (FavoritesCreators & { creators: Creators })[];
-  favoriteRecipes: (FavoritesRecipes & { recipes: Recipes })[];
+  favoritesCreators: (FavoritesCreators & { creators: Creators })[];
+  favoritesRecipes: (FavoritesRecipes & { recipes: Recipes })[];
   followers: Following[];
   following: Following[];
   reviews: (Reviews & { users: Users })[];
   sessionUser: any;
 }
 
-interface Params {
-  username: string;
-}
-
 function UserPage({
   user,
   cooklist,
   diaryEntries,
-  favoriteCreators,
-  favoriteRecipes,
+  favoritesCreators,
+  favoritesRecipes,
   followers,
   following,
   reviews,
@@ -54,8 +74,8 @@ function UserPage({
   const title = `${user.username}'s Profile • Savry`;
   const avatarSize = "56px";
 
-  const creators = favoriteCreators.map((fav) => fav.creators);
-  const recipes = favoriteRecipes.map((fav) => fav.recipes);
+  const creators = favoritesCreators.map((fav) => fav.creators);
+  const recipes = favoritesRecipes.map((fav) => fav.recipes);
 
   return (
     <div>
@@ -89,41 +109,36 @@ function UserPage({
   );
 }
 
-export async function getServerSideProps(context: {
-  params: Params;
-  req: any;
-}) {
-  const { username } = context.params;
-  const session = await getSession({ req: context.req });
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { username } = context.params as { username: string };
+  const session = await getSession(context);
   const sessionUser = session?.user || null;
-
-  let cooklist: Cooklist[] = [];
-  let diaryEntries: DiaryEntries[] = [];
-  let favoriteCreators: FavoritesCreators[] = [];
-  let favoriteRecipes: FavoritesRecipes[] = [];
-  let followers: Following[] = [];
-  let following: Following[] = [];
-  let reviews: Reviews[] = [];
 
   const user = await getUserProfile(username);
 
-  if (user) {
-    cooklist = user.cooklist;
-    diaryEntries = user.diaryEntries;
-    favoriteCreators = user.favoritesCreators;
-    favoriteRecipes = user.favoritesRecipes;
-    followers = await getFollowers(username);
-    following = user.following;
-    reviews = user.reviews;
+  if (!user) {
+    return {
+      notFound: true,
+    };
   }
+
+  const followers = await getFollowers(username);
+  const {
+    cooklist,
+    diaryEntries,
+    favoritesCreators,
+    favoritesRecipes,
+    following,
+    reviews,
+  } = user;
 
   return {
     props: {
       user,
       cooklist,
       diaryEntries,
-      favoriteCreators,
-      favoriteRecipes,
+      favoritesCreators,
+      favoritesRecipes,
       following,
       followers,
       reviews,

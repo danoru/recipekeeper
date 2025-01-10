@@ -1,7 +1,9 @@
-import DetailRecipeCard from "../cards/DetailRecipeCard";
+import { memo } from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { DiaryEntries, Recipes, Users } from "@prisma/client";
+
+import DetailRecipeCard from "../cards/DetailRecipeCard";
 
 interface Props {
   recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
@@ -63,4 +65,4 @@ function FriendRecipeActivity({ recentEntries }: Props) {
   );
 }
 
-export default FriendRecipeActivity;
+export default memo(FriendRecipeActivity);

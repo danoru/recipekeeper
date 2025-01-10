@@ -1,9 +1,11 @@
-import FriendRecipeActivity from "./FriendRecipeActivity";
+import { memo } from "react";
 import Link from "@mui/material/Link";
-import PopularCreatorActivity from "./PopularCreatorActivity";
-import PopularRecipeActivity from "./PopularRecipeActivity";
 import Typography from "@mui/material/Typography";
 import { Creators, Recipes, Users, DiaryEntries } from "@prisma/client";
+
+import FriendRecipeActivity from "./FriendRecipeActivity";
+import PopularCreatorActivity from "./PopularCreatorActivity";
+import PopularRecipeActivity from "./PopularRecipeActivity";
 
 interface Props {
   creators: Creators[];
@@ -31,4 +33,4 @@ function LoggedInHomePage({
   );
 }
 
-export default LoggedInHomePage;
+export default memo(LoggedInHomePage);

@@ -6,7 +6,7 @@ import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import { getTopLikedRecipes } from "../src/data/recipes";
 import { getTopLikedCreators } from "../src/data/creators";
-import { findUserByUserId, getFollowing } from "../src/data/users";
+import { getFollowing } from "../src/data/users";
 import { getDiaryEntriesByUsernames } from "../src/data/diary";
 import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
 
