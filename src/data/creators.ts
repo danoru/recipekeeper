@@ -262,3 +262,41 @@ export async function getTopLikedCreators(userId: number) {
 
   return topCreatorsDetails;
 }
+
+export async function getTopRatedRecipesByCreator(creatorId: string) {
+  const recipes = await prisma.recipes.findMany({
+    where: {
+      creatorId: creatorId,
+      diaryEntries: {
+        some: {
+          rating: {
+            gte: 3,
+          },
+        },
+      },
+    },
+    include: {
+      diaryEntries: true,
+    },
+  });
+
+  const filteredRecipes = recipes
+    .map((recipe) => {
+      const totalRating = recipe.diaryEntries.reduce(
+        (sum, entry) => sum + (entry.rating.toNumber() || 0),
+        0
+      );
+      const averageRating = recipe.diaryEntries.length
+        ? totalRating / recipe.diaryEntries.length
+        : 0;
+      return { ...recipe, averageRating };
+    })
+    .filter((recipe) => recipe.averageRating >= 3)
+    .sort((a, b) => b.averageRating - a.averageRating);
+
+  if (filteredRecipes.length === 0) {
+    return null;
+  }
+
+  return filteredRecipes;
+}

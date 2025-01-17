@@ -14,12 +14,18 @@ import { Creators, DiaryEntries, Recipes } from "@prisma/client";
 import Head from "next/head";
 
 import RecipeList from "../../../src/components/recipes/RecipeList";
-import { getAllCreators, getCreatorByLink } from "../../../src/data/creators";
+import {
+  getAllCreators,
+  getCreatorByLink,
+  getTopRatedRecipesByCreator,
+} from "../../../src/data/creators";
 import { getRecipesByCreator } from "../../../src/data/recipes";
+import CreatorTopRatedRecipes from "../../../src/components/creators/CreatorTopRatedRecipes";
 
 interface Props {
   creator: Creators;
   recipes: (Recipes & { diaryEntries: DiaryEntries[] })[];
+  topRatedRecipes: Recipes[];
 }
 
 interface CardProps {
@@ -34,9 +40,10 @@ interface Params {
   };
 }
 
-function CreatorPage({ creator, recipes }: Props) {
+function CreatorPage({ creator, recipes, topRatedRecipes }: Props) {
   const title = creator.name + " • Savry";
-  const header = "All Recipes by Creator";
+  const topRatedHeader = "Top Rated Recipes by " + creator.name;
+  const recipeListHeader = "All Recipes by " + creator.name;
 
   const diaryEntries = recipes.flatMap((recipe) => recipe.diaryEntries);
   const totalReviews = diaryEntries.length;
@@ -54,7 +61,13 @@ function CreatorPage({ creator, recipes }: Props) {
         <title>{title}</title>
       </Head>
       <Grid item xs={10}>
-        <RecipeList recipes={recipes} header={header} />
+        <CreatorTopRatedRecipes
+          recipes={topRatedRecipes}
+          header={topRatedHeader}
+        />
+      </Grid>
+      <Grid item xs={10}>
+        <RecipeList recipes={recipes} header={recipeListHeader} />
       </Grid>
       <Grid item xs={2}>
         <CreatorCard
@@ -135,13 +148,17 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: Params) {
-  const creator = await getCreatorByLink(params.creatorId);
-  const recipes = await getRecipesByCreator(params.creatorId);
+  const [creator, recipes, topRatedRecipes] = await Promise.all([
+    getCreatorByLink(params.creatorId),
+    getRecipesByCreator(params.creatorId),
+    getTopRatedRecipesByCreator(params.creatorId),
+  ]);
 
   return {
     props: {
       creator,
       recipes,
+      topRatedRecipes,
     },
     revalidate: 1800,
   };
