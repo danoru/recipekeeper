@@ -3,22 +3,29 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
-import Head from "next/head";
-import Image from "next/image";
-import InstagramIcon from "@mui/icons-material/Instagram";
+import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import LinkIcon from "@mui/icons-material/Link";
 import Rating from "@mui/material/Rating";
-import RecipeList from "../../../src/components/recipes/RecipeList";
 import Typography from "@mui/material/Typography";
+import InstagramIcon from "@mui/icons-material/Instagram";
 import YouTubeIcon from "@mui/icons-material/YouTube";
+import { Creators, DiaryEntries, Recipes } from "@prisma/client";
+import Head from "next/head";
+
+import RecipeList from "../../../src/components/recipes/RecipeList";
 import { getAllCreators, getCreatorByLink } from "../../../src/data/creators";
 import { getRecipesByCreator } from "../../../src/data/recipes";
-import { Creators, Recipes, Reviews } from "@prisma/client";
 
 interface Props {
   creator: Creators;
-  recipes: (Recipes & { reviews: Reviews })[];
+  recipes: (Recipes & { diaryEntries: DiaryEntries[] })[];
+}
+
+interface CardProps {
+  creator: Creators;
+  rating: number;
+  reviewCount: number;
 }
 
 interface Params {
@@ -31,13 +38,17 @@ function CreatorPage({ creator, recipes }: Props) {
   const title = creator.name + " • Savry";
   const header = "All Recipes by Creator";
 
-  const reviews = recipes.flatMap((recipe) => recipe.reviews);
+  const diaryEntries = recipes.flatMap((recipe) => recipe.diaryEntries);
+  const totalReviews = diaryEntries.length;
+  const averageRating =
+    totalReviews === 0
+      ? 0
+      : diaryEntries.reduce(
+          (sum, entry) => sum + entry?.rating?.toNumber(),
+          0
+        ) / totalReviews;
 
-  const rating = reviews.reduce(
-    (sum, review) => sum + review.rating.toNumber(),
-    0
-  );
-
+  console.log(diaryEntries);
   return (
     <Grid container>
       <Head>
@@ -47,46 +58,68 @@ function CreatorPage({ creator, recipes }: Props) {
         <RecipeList recipes={recipes} header={header} />
       </Grid>
       <Grid item xs={2}>
-        <CreatorCard creator={creator} rating={rating} />
+        <CreatorCard
+          creator={creator}
+          rating={averageRating}
+          reviewCount={totalReviews}
+        />
       </Grid>
     </Grid>
   );
 }
 
-function CreatorCard({ creator, rating }: any) {
+function CreatorCard({ creator, rating, reviewCount }: CardProps) {
   return (
-    <Box>
-      <Card
+    <Card
+      sx={{
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: "16px",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        transition: "transform 0.3s",
+      }}
+    >
+      <CardMedia
+        component="img"
+        image={creator.image}
+        title={creator.name}
         sx={{
-          width: "250px",
+          height: 200,
+          filter: "brightness(0.8)",
+          transition: "filter 0.3s",
         }}
-      >
-        <CardMedia style={{ position: "relative", height: 140, width: "100%" }}>
-          <Image
-            src={creator.image}
-            alt={creator.name}
-            fill
-            sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-            style={{ objectFit: "cover" }}
-          />
-        </CardMedia>
-        <CardContent>
-          <Typography variant="h6" component="div">
-            {creator.name}
-          </Typography>
-          <Rating value={rating} precision={0.5} readOnly />
-          <Link href={creator.website}>
+      />
+      <CardContent sx={{ textAlign: "center" }}>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ fontWeight: "bold", marginBottom: "8px" }}
+        >
+          {creator.name}
+        </Typography>
+        <Rating value={rating} precision={0.5} readOnly />
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          sx={{ marginTop: "4px" }}
+        >
+          {reviewCount} reviews
+        </Typography>
+        <Box
+          sx={{ display: "flex", justifyContent: "center", marginTop: "8px" }}
+        >
+          <IconButton href={creator.website}>
             <LinkIcon />
-          </Link>
-          <Link href={creator.instagram}>
+          </IconButton>
+          <IconButton href={creator.instagram}>
             <InstagramIcon />
-          </Link>
-          <Link href={creator.youtube}>
+          </IconButton>
+          <IconButton href={creator.youtube}>
             <YouTubeIcon />
-          </Link>
-        </CardContent>
-      </Card>
-    </Box>
+          </IconButton>
+        </Box>
+      </CardContent>
+    </Card>
   );
 }
 

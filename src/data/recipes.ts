@@ -407,7 +407,7 @@ export async function getRecipesByCreator(creatorId: string) {
       },
     },
     include: {
-      reviews: true,
+      diaryEntries: true,
     },
     orderBy: {
       name: "asc",
