@@ -1,4 +1,5 @@
 import prisma from "./db";
+import { getFollowingList } from "./users";
 
 export const RECIPE_LIST = [
   {
@@ -428,50 +429,38 @@ export async function getLikedRecipes(userId: number) {
 }
 
 export async function getTopLikedRecipes(userId: number) {
-  const user = await prisma.users.findUnique({
-    where: { id: userId },
-    include: { following: { select: { followingUsername: true } } },
+  const followingUsernames = await getFollowingList(userId);
+
+  const likedRecipes = await prisma.likedRecipes.findMany({
+    where: {
+      users: {
+        username: {
+          in: followingUsernames,
+        },
+      },
+    },
+    select: {
+      recipeId: true,
+    },
   });
 
-  const followingList = user?.following.map((f) => f.followingUsername) || [];
+  const recipeCount = likedRecipes.reduce((acc, { recipeId }) => {
+    acc[recipeId] = (acc[recipeId] || 0) + 1;
+    return acc;
+  }, {} as { [key: number]: number });
 
-  const recipeCount: { [key: number]: number } = {};
+  const topRecipeIds = Object.entries(recipeCount)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5)
+    .map(([recipeId]) => Number(recipeId));
 
-  for (const username of followingList) {
-    const user = await prisma.users.findUnique({
-      where: { username },
-      include: { likedRecipes: true },
-    });
-
-    if (user?.likedRecipes) {
-      for (const likedRecipe of user.likedRecipes) {
-        const recipeId = Number(likedRecipe.recipeId);
-        if (recipeId in recipeCount) {
-          recipeCount[recipeId]++;
-        } else {
-          recipeCount[recipeId] = 1;
-        }
-      }
-    }
-  }
-
-  const sortedRecipes = Object.keys(recipeCount).map((recipeId) => ({
-    recipeId: Number(recipeId),
-    count: recipeCount[Number(recipeId)],
-  }));
-
-  const topLikedRecipes = sortedRecipes
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
-
-  const topRecipesDetails = await Promise.all(
-    topLikedRecipes.map(async (recipe) => {
-      const fullRecipeDetails = await prisma.recipes.findUnique({
-        where: { id: recipe.recipeId },
-      });
-      return fullRecipeDetails;
-    })
-  );
+  const topRecipesDetails = await prisma.recipes.findMany({
+    where: {
+      id: {
+        in: topRecipeIds,
+      },
+    },
+  });
 
   return topRecipesDetails;
 }

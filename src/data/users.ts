@@ -354,6 +354,19 @@ export async function getFollowing(userId: number) {
   return following;
 }
 
+export async function getFollowingList(userId: number) {
+  const following = await prisma.following.findMany({
+    where: {
+      userId,
+    },
+    select: {
+      followingUsername: true,
+    },
+  });
+
+  return following.map((f) => f.followingUsername);
+}
+
 export async function getUserLikes(username: string) {
   const user = await prisma.users.findUnique({
     where: {

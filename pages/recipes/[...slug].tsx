@@ -16,7 +16,7 @@ import {
   Reviews,
   Users,
 } from "@prisma/client";
-import { findUserByUsername, getFollowing } from "../../src/data/users";
+import { findUserByUsername, getFollowingList } from "../../src/data/users";
 import {
   getCooklist,
   getLikedRecipes,
@@ -127,12 +127,11 @@ export async function getServerSideProps(context: {
         await Promise.all([
           getCooklist(user.id),
           getUserDiaryEntries(user.id),
-          getFollowing(user.id),
+          getFollowingList(user.id),
           getLikedRecipes(user.id),
         ]);
 
-      const followingList = following.map((f) => f.followingUsername);
-      const reviews = await getReviewsByRecipe(recipe.id, followingList);
+      const reviews = await getReviewsByRecipe(recipe.id, following);
       if (!recipe) {
         return {
           notFound: true,

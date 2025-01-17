@@ -6,7 +6,7 @@ import moment from "moment";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import Rating from "@mui/material/Rating";
 import Stack from "@mui/material/Stack";
-import { findUserByUsername, getFollowing } from "../../src/data/users";
+import { findUserByUsername, getFollowingList } from "../../src/data/users";
 import { getSession } from "next-auth/react";
 import { GetServerSidePropsContext } from "next";
 import { DiaryEntries, Recipes, Users } from "@prisma/client";
@@ -97,8 +97,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     user = await findUserByUsername(username);
 
     if (user) {
-      const following = await getFollowing(user.id);
-      usernames = following.map((user) => user.followingUsername);
+      usernames = await getFollowingList(user.id);
       usernames.push(username);
     }
     diaryEntries = await getDiaryEntriesByUsernames(usernames);
