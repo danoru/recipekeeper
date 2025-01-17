@@ -48,7 +48,6 @@ function CreatorPage({ creator, recipes }: Props) {
           0
         ) / totalReviews;
 
-  console.log(diaryEntries);
   return (
     <Grid container>
       <Head>

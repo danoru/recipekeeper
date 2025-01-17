@@ -113,8 +113,6 @@ export async function getServerSideProps(context: {
   const { slug } = context.params;
   const session = await getSession({ req: context.req });
 
-  console.log(session);
-
   if (session) {
     const sessionUser = session.user;
     const [recipe, user] = await Promise.all([
