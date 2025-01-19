@@ -18,9 +18,6 @@ function CreatorTopRatedRecipes({ header, recipes }: Props) {
 
   return (
     <Grid container>
-      <Typography variant={typographyStyle} component="div">
-        {styledHeader}
-      </Typography>
       <Grid
         item
         style={{
@@ -34,8 +31,8 @@ function CreatorTopRatedRecipes({ header, recipes }: Props) {
           width: "75%",
         }}
       >
-        <Typography variant="overline" component="div">
-          TOP RATED RECIPES
+        <Typography variant={typographyStyle} component="div">
+          {styledHeader}
         </Typography>
       </Grid>
       <Grid
