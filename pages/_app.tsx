@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import superjson from "superjson";
 import theme from "../src/styles/theme";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { CacheProvider } from "@emotion/react";
+import { CacheProvider, EmotionCache } from "@emotion/react";
 import { Decimal } from "decimal.js";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { SessionProvider } from "next-auth/react";
@@ -17,14 +17,20 @@ import type { AppProps } from "next/app";
 
 const clientSideEmotionCache = createEmotionCache();
 
-export default function App(props: AppProps) {
-  const { Component, pageProps } = props;
-  const emotionCache = clientSideEmotionCache;
+interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
+}
 
+export default function App({
+  Component,
+  emotionCache = clientSideEmotionCache,
+  pageProps,
+}: MyAppProps) {
   return (
     <SessionProvider session={pageProps.session}>
       <CacheProvider value={emotionCache}>
         <ThemeProvider theme={theme}>
+          <CssBaseline />
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <Layout>
               <Head>
@@ -36,7 +42,6 @@ export default function App(props: AppProps) {
                 />
                 <link rel="shortcut icon" href="/favicon.ico" />
               </Head>
-              <CssBaseline />
               <Component {...pageProps} />
               <SpeedInsights />
             </Layout>
