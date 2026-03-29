@@ -434,8 +434,8 @@ export default function ImportRecipeModal({
                     color="text.disabled"
                     sx={{ display: "block", mb: 1.5, mt: -1 }}
                   >
-                    This creator isn't in your database yet — they'll be created
-                    on save.
+                    This creator isn&apos;t in your database yet — they&apos;ll
+                    be created on save.
                   </Typography>
                 )}
 

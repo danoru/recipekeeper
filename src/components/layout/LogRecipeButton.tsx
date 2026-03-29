@@ -16,6 +16,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Recipes } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
 
 interface Props {
   fullWidth?: boolean;
@@ -41,7 +42,7 @@ export default function LogRecipeButton({ fullWidth = false }: Props) {
   const [modalStep, setModalStep] = useState<1 | 2>(1);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipes | null>(null);
-  const [date, setDate] = useState<Date | null>(new Date());
+  const [date, setDate] = useState<Dayjs | null>(dayjs());
   const [hasCookedBefore, setHasCookedBefore] = useState(false);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState<number | null>(null);
@@ -61,7 +62,7 @@ export default function LogRecipeButton({ fullWidth = false }: Props) {
     setTimeout(() => {
       setModalStep(1);
       setSelectedRecipe(null);
-      setDate(new Date());
+      setDate(dayjs());
       setHasCookedBefore(false);
       setComment("");
       setRating(null);
@@ -114,7 +115,6 @@ export default function LogRecipeButton({ fullWidth = false }: Props) {
     fetchRecipes();
   }, []);
 
-  // Don't render if not logged in
   if (!session) return null;
 
   return (
@@ -310,12 +310,12 @@ function StepTwo({
   onSave,
 }: {
   selectedRecipe: Recipes;
-  date: Date | null;
+  date: Dayjs | null;
   comment: string;
   rating: number | null;
   hasCookedBefore: boolean;
   saving: boolean;
-  onDateChange: (d: Date | null) => void;
+  onDateChange: (d: Dayjs | null) => void;
   onCommentChange: (s: string) => void;
   onRatingChange: (n: number | null) => void;
   onHasCookedBeforeChange: (b: boolean) => void;

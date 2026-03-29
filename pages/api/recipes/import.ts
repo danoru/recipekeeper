@@ -169,7 +169,7 @@ function mapToSchema(
     creatorName: normalise(creatorName),
     creatorLink,
     creatorWebsite,
-    creatorImage: "", // can't reliably scrape; user can fill in
+    creatorImage: "",
     creatorInstagram: "",
     creatorYoutube: "",
   };
@@ -250,7 +250,7 @@ export async function POST(req: NextRequest) {
     // Upsert creator — if they exist, leave their data alone; if not, create with what we have
     await prisma.creators.upsert({
       where: { link: recipe.creatorLink },
-      update: {}, // don't overwrite existing creator data
+      update: {},
       create: {
         link: recipe.creatorLink,
         name: recipe.creatorName,
