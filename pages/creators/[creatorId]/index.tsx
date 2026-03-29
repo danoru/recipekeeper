@@ -1,167 +1,310 @@
 import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
+import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
-import Link from "@mui/material/Link";
-import LinkIcon from "@mui/icons-material/Link";
-import Rating from "@mui/material/Rating";
-import Typography from "@mui/material/Typography";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import YouTubeIcon from "@mui/icons-material/YouTube";
-import { Creators, DiaryEntries, Recipes } from "@prisma/client";
 import Head from "next/head";
-
+import IconButton from "@mui/material/IconButton";
+import Image from "next/image";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import LanguageIcon from "@mui/icons-material/Language";
+import MuiLink from "@mui/material/Link";
 import RecipeList from "../../../src/components/recipes/RecipeList";
+import StarRating from "../../../src/components/ui/StarRating";
+import Typography from "@mui/material/Typography";
+import YouTubeIcon from "@mui/icons-material/YouTube";
 import {
   getAllCreators,
   getCreatorByLink,
   getTopRatedRecipesByCreator,
 } from "../../../src/data/creators";
 import { getRecipesByCreator } from "../../../src/data/recipes";
-import CreatorTopRatedRecipes from "../../../src/components/creators/CreatorTopRatedRecipes";
+import { recipeHref, serializePrisma } from "../../../src/data/helpers";
+
+interface SerializedCreator {
+  name: string;
+  link: string;
+  image: string;
+  website: string | null;
+  instagram: string | null;
+  youtube: string | null;
+  [key: string]: any;
+}
+
+interface SerializedRecipe {
+  id: number;
+  name: string;
+  image: string;
+  [key: string]: any;
+}
+
+interface SerializedDiaryEntry {
+  rating: number;
+  [key: string]: any;
+}
+
+interface SerializedRecipeWithDiary extends SerializedRecipe {
+  diaryEntries: SerializedDiaryEntry[];
+}
 
 interface Props {
-  creator: Creators;
-  recipes: (Recipes & { diaryEntries: DiaryEntries[] })[];
-  topRatedRecipes: Recipes[];
+  creator: SerializedCreator;
+  recipes: SerializedRecipeWithDiary[];
+  topRatedRecipes: SerializedRecipe[] | null;
 }
 
-interface CardProps {
-  creator: Creators;
-  rating: number;
-  reviewCount: number;
-}
+export default function CreatorPage({
+  creator,
+  recipes,
+  topRatedRecipes,
+}: Props) {
+  const title = `${creator.name} • Savry`;
 
-interface Params {
-  params: {
-    creatorId: string;
-  };
-}
-
-function CreatorPage({ creator, recipes, topRatedRecipes }: Props) {
-  const title = creator.name + " • Savry";
-  const topRatedHeader = "Top Rated Recipes by " + creator.name;
-  const recipeListHeader = "All Recipes by " + creator.name;
-
-  const diaryEntries = recipes.flatMap((recipe) => recipe.diaryEntries);
-  const totalReviews = diaryEntries.length;
+  const allEntries = recipes.flatMap((r) => r.diaryEntries);
+  const totalReviews = allEntries.length;
   const averageRating =
     totalReviews === 0
       ? 0
-      : diaryEntries.reduce(
-          (sum, entry) => sum + entry?.rating?.toNumber(),
-          0
-        ) / totalReviews;
+      : allEntries.reduce((sum, e) => sum + e.rating, 0) / totalReviews;
 
   return (
-    <Grid container>
+    <>
       <Head>
         <title>{title}</title>
       </Head>
-      <Grid item xs={10}>
-        <CreatorTopRatedRecipes
-          recipes={topRatedRecipes}
-          header={topRatedHeader}
-        />
-      </Grid>
-      <Grid item xs={10}>
-        <RecipeList recipes={recipes} header={recipeListHeader} />
-      </Grid>
-      <Grid item xs={2}>
-        <CreatorCard
-          creator={creator}
-          rating={averageRating}
-          reviewCount={totalReviews}
-        />
-      </Grid>
-    </Grid>
-  );
-}
 
-function CreatorCard({ creator, rating, reviewCount }: CardProps) {
-  return (
-    <Card
-      sx={{
-        position: "relative",
-        overflow: "hidden",
-        borderRadius: "16px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        transition: "transform 0.3s",
-      }}
-    >
-      <CardMedia
-        component="img"
-        image={creator.image}
-        title={creator.name}
+      <Box
+        component="main"
         sx={{
-          height: 200,
-          filter: "brightness(0.8)",
-          transition: "filter 0.3s",
+          maxWidth: "1080px",
+          mx: "auto",
+          px: { xs: 2, sm: 3, md: 4 },
+          pt: { xs: 4, md: 6 },
+          pb: 10,
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "1fr 220px" },
+          gap: 5,
+          alignItems: "start",
         }}
-      />
-      <CardContent sx={{ textAlign: "center" }}>
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ fontWeight: "bold", marginBottom: "8px" }}
-        >
-          {creator.name}
-        </Typography>
-        <Rating value={rating} precision={0.5} readOnly />
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          sx={{ marginTop: "4px" }}
-        >
-          {reviewCount} reviews
-        </Typography>
-        <Box
-          sx={{ display: "flex", justifyContent: "center", marginTop: "8px" }}
-        >
-          <IconButton href={creator.website}>
-            <LinkIcon />
-          </IconButton>
-          <IconButton href={creator.instagram}>
-            <InstagramIcon />
-          </IconButton>
-          <IconButton href={creator.youtube}>
-            <YouTubeIcon />
-          </IconButton>
+      >
+        {/* ── Main content ── */}
+        <Box sx={{ minWidth: 0 }}>
+          {/* Top rated */}
+          {topRatedRecipes && topRatedRecipes.length > 0 && (
+            <Box sx={{ mb: 6 }}>
+              <Typography
+                sx={{
+                  fontSize: "0.625rem",
+                  fontWeight: 500,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "#4a4744",
+                  mb: 2,
+                  pb: 1.5,
+                  borderBottom: "1px solid rgba(255,255,255,0.07)",
+                }}
+              >
+                Top rated by {creator.name}
+              </Typography>
+              <Grid container spacing={1.5}>
+                {topRatedRecipes.slice(0, 5).map((recipe, i) => (
+                  <Grid item xs={6} sm={4} md={3} key={i}>
+                    <Box
+                      component={MuiLink}
+                      href={recipeHref(creator.name, recipe.name)}
+                      sx={{
+                        position: "relative",
+                        display: "block",
+                        borderRadius: "10px",
+                        overflow: "hidden",
+                        aspectRatio: "3/4",
+                        border: "1px solid rgba(200,169,110,0.2)",
+                        textDecoration: "none",
+                        bgcolor: "#161616",
+                        transition: "border-color 0.2s, transform 0.2s",
+                        "&:hover": {
+                          borderColor: "rgba(200,169,110,0.5)",
+                          transform: "translateY(-2px)",
+                        },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          inset: 0,
+                          backgroundImage: `url(${recipe.image})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          inset: 0,
+                          background:
+                            "linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 55%)",
+                          display: "flex",
+                          alignItems: "flex-end",
+                          p: 1.5,
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            fontFamily: "'Playfair Display', serif",
+                            fontSize: "0.875rem",
+                            color: "#fff",
+                            lineHeight: 1.3,
+                          }}
+                        >
+                          {recipe.name}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          )}
+
+          <Divider sx={{ mb: 5 }} />
+
+          {/* All recipes */}
+          <RecipeList
+            header={`All recipes by ${creator.name}`}
+            recipes={recipes}
+          />
         </Box>
-      </CardContent>
-    </Card>
+
+        {/* ── Sidebar: creator card ── */}
+        <Box
+          sx={{
+            position: { md: "sticky" },
+            top: { md: "72px" },
+            bgcolor: "#161616",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: "12px",
+            overflow: "hidden",
+          }}
+        >
+          {/* Creator image */}
+          <Box sx={{ position: "relative", aspectRatio: "1", width: "100%" }}>
+            <Image
+              src={creator.image}
+              alt={creator.name}
+              fill
+              style={{ objectFit: "cover", objectPosition: "top" }}
+              sizes="220px"
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)",
+              }}
+            />
+          </Box>
+
+          <Box sx={{ p: 2 }}>
+            <Typography
+              sx={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "1.125rem",
+                color: "text.primary",
+                mb: 0.75,
+              }}
+            >
+              {creator.name}
+            </Typography>
+
+            {totalReviews > 0 && (
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}
+              >
+                <StarRating rating={averageRating} size="sm" />
+                <Typography
+                  sx={{ fontSize: "0.75rem", color: "text.disabled" }}
+                >
+                  {totalReviews} {totalReviews === 1 ? "review" : "reviews"}
+                </Typography>
+              </Box>
+            )}
+
+            <Divider sx={{ my: 1.5 }} />
+
+            {/* Social links */}
+            <Box sx={{ display: "flex", gap: 0.5 }}>
+              {creator.website && (
+                <IconButton
+                  href={creator.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="small"
+                  sx={{
+                    color: "text.disabled",
+                    "&:hover": { color: "text.primary" },
+                  }}
+                >
+                  <LanguageIcon fontSize="small" />
+                </IconButton>
+              )}
+              {creator.instagram && (
+                <IconButton
+                  href={creator.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="small"
+                  sx={{
+                    color: "text.disabled",
+                    "&:hover": { color: "text.primary" },
+                  }}
+                >
+                  <InstagramIcon fontSize="small" />
+                </IconButton>
+              )}
+              {creator.youtube && (
+                <IconButton
+                  href={creator.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="small"
+                  sx={{
+                    color: "text.disabled",
+                    "&:hover": { color: "text.primary" },
+                  }}
+                >
+                  <YouTubeIcon fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    </>
   );
 }
 
 export async function getStaticPaths() {
   const creators = await getAllCreators();
-  const paths = creators.map((creator) => ({
-    params: { creatorId: creator.link },
-  }));
-
   return {
-    paths,
+    paths: creators.map((c) => ({ params: { creatorId: c.link } })),
     fallback: false,
   };
 }
 
-export async function getStaticProps({ params }: Params) {
+export async function getStaticProps({
+  params,
+}: {
+  params: { creatorId: string };
+}) {
   const [creator, recipes, topRatedRecipes] = await Promise.all([
     getCreatorByLink(params.creatorId),
     getRecipesByCreator(params.creatorId),
     getTopRatedRecipesByCreator(params.creatorId),
   ]);
 
+  if (!creator) return { notFound: true };
+
   return {
-    props: {
-      creator,
-      recipes,
-      topRatedRecipes,
-    },
+    props: serializePrisma({ creator, recipes, topRatedRecipes }),
     revalidate: 1800,
   };
 }
-
-export default CreatorPage;

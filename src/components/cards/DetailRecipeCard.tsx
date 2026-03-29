@@ -1,20 +1,19 @@
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Decimal from "decimal.js";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
-import Typography from "@mui/material/Typography";
-import CardContent from "@mui/material/CardContent";
-import moment from "moment";
 import Rating from "@mui/material/Rating";
+import Typography from "@mui/material/Typography";
+import dayjs from "dayjs";
 
 interface Props {
-  date: Date;
+  date: string;
   image: string;
   link: string;
   name: string;
-  rating: Decimal;
+  rating: number;
   username?: string;
 }
 
@@ -26,7 +25,6 @@ function DetailRecipeCard({
   rating,
   username,
 }: Props) {
-  const recipeRating = new Decimal(rating).toNumber();
   return (
     <Grid item>
       <Card
@@ -36,12 +34,8 @@ function DetailRecipeCard({
           width: "211.5px",
           overflow: "hidden",
           "&:hover": {
-            ".overlay": {
-              borderColor: "white",
-            },
-            ".image": {
-              filter: "brightness(0.8)",
-            },
+            ".overlay": { borderColor: "white" },
+            ".image": { filter: "brightness(0.8)" },
           },
         }}
       >
@@ -52,61 +46,42 @@ function DetailRecipeCard({
             title={name}
             sx={{
               position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
+              inset: 0,
               filter: "brightness(0.5)",
               transition: "filter 0.3s",
             }}
           />
           <Box
             className="overlay"
-            style={{
+            sx={{
               position: "absolute",
-              top: "5px",
-              right: "5px",
-              bottom: "5px",
-              left: "5px",
-              border: "2px solid rgba(255, 255, 255, 0.5)",
+              inset: "5px",
+              border: "2px solid rgba(255,255,255,0.5)",
               pointerEvents: "none",
               transition: "border-color 0.3s",
             }}
           />
-          <CardContent>
+          <CardContent sx={{ position: "relative" }}>
             <Typography
               variant="h6"
-              component="div"
-              sx={{
-                position: "relative",
-                color: "white",
-                textShadow: "0 0 5px rgba(0, 0, 0, 0.7)",
-              }}
+              sx={{ color: "white", textShadow: "0 0 5px rgba(0,0,0,0.7)" }}
             >
               {name}
             </Typography>
+            {username && (
+              <Typography
+                variant="body1"
+                sx={{ color: "white", textShadow: "0 0 5px rgba(0,0,0,0.7)" }}
+              >
+                {username}
+              </Typography>
+            )}
+            <Rating value={rating} size="small" readOnly />
             <Typography
               variant="body1"
-              component="div"
-              sx={{
-                position: "relative",
-                color: "white",
-                textShadow: "0 0 5px rgba(0, 0, 0, 0.7)",
-              }}
+              sx={{ color: "white", textShadow: "0 0 5px rgba(0,0,0,0.7)" }}
             >
-              {username}
-            </Typography>
-            <Rating value={recipeRating} size="small" readOnly />
-            <Typography
-              variant="body1"
-              component="div"
-              sx={{
-                position: "relative",
-                color: "white",
-                textShadow: "0 0 5px rgba(0, 0, 0, 0.7)",
-              }}
-            >
-              {moment(date).format("MMM DD")}
+              {dayjs(date).format("MMM DD")}
             </Typography>
           </CardContent>
         </Link>

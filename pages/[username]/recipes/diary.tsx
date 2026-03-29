@@ -1,126 +1,186 @@
+import Box from "@mui/material/Box";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import EditIcon from "@mui/icons-material/Edit";
-import Grid from "@mui/material/Grid";
 import Head from "next/head";
-import moment from "moment";
+import IconButton from "@mui/material/IconButton";
 import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
-import Rating from "@mui/material/Rating";
-import TableContainer from "@mui/material/TableContainer";
+import StarRating from "../../../src/components/ui/StarRating";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 import { findUserByUsername, getAllUsers } from "../../../src/data/users";
-import { DiaryEntries, Recipes, Users } from "@prisma/client";
 import { getUserDiaryEntries } from "../../../src/data/diary";
+import { serializePrisma } from "../../../src/data/helpers";
+import dayjs from "dayjs";
+import { SDiaryEntryWithRecipe } from "../../../src/types/serialized";
 
 interface Props {
-  user: Users;
-  diaryEntries: (DiaryEntries & { recipes: Recipes })[];
+  user: any;
+  diaryEntries: SDiaryEntryWithRecipe[];
 }
 
-interface Params {
-  params: {
-    username: string;
-  };
-}
+export default function RecipeDiary({ user, diaryEntries }: Props) {
+  const title = `${user.username}'s Diary • Savry`;
 
-function RecipeDiary({ user, diaryEntries }: Props) {
-  const title = `${user.username}'s Recipes • Savry`;
-
-  const entriesByMonth: {
-    [month: string]: (DiaryEntries & { recipes: Recipes })[];
-  } = {};
-  diaryEntries?.forEach((entry) => {
-    const date = moment(entry.date);
-    const month = date.format("MMM");
-    if (!entriesByMonth[month]) {
-      entriesByMonth[month] = [];
-    }
+  // Group entries by month label
+  const entriesByMonth: Record<string, SDiaryEntryWithRecipe[]> = {};
+  diaryEntries.forEach((entry) => {
+    const month = dayjs(entry.date).format("MMM");
+    if (!entriesByMonth[month]) entriesByMonth[month] = [];
     entriesByMonth[month].push(entry);
   });
 
+  const headerSx = {
+    fontSize: "0.625rem",
+    fontWeight: 500,
+    letterSpacing: "0.12em",
+    textTransform: "uppercase",
+    color: "#4a4744",
+    borderBottom: "1px solid rgba(255,255,255,0.07)",
+    py: 1.25,
+  };
+
+  const cellSx = {
+    fontSize: "0.8125rem",
+    color: "text.secondary",
+    borderBottom: "1px solid rgba(255,255,255,0.05)",
+    py: 1.25,
+  };
+
   return (
-    <div>
+    <>
       <Head>
         <title>{title}</title>
       </Head>
-      <Grid container>
+
+      <Box
+        component="main"
+        sx={{
+          maxWidth: "1080px",
+          mx: "auto",
+          px: { xs: 2, sm: 3, md: 4 },
+          pt: 4,
+          pb: 12,
+        }}
+      >
         <ProfileLinkBar username={user.username} />
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>MONTH</TableCell>
-                <TableCell>DAY</TableCell>
-                <TableCell>RECIPES</TableCell>
-                <TableCell>RATING</TableCell>
-                <TableCell>REMADE</TableCell>
-                <TableCell>REVIEW</TableCell>
-                <TableCell>EDIT</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {Object.entries(entriesByMonth).map(([month, entries]) =>
-                entries.slice(0, 10).map((entry, index) => (
-                  <TableRow key={`${month}-${index}`}>
-                    <TableCell>{month}</TableCell>
-                    <TableCell>{moment(entry.date).format("D")}</TableCell>
-                    <TableCell>{entry.recipes.name}</TableCell>
-                    <TableCell>
-                      <Rating
-                        value={entry.rating.toNumber()}
-                        precision={0.5}
-                        readOnly
-                      />
+
+        <Box sx={{ mt: 4 }}>
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  {[
+                    "Month",
+                    "Day",
+                    "Recipe",
+                    "Rating",
+                    "Remade",
+                    "Review",
+                    "",
+                  ].map((h) => (
+                    <TableCell key={h} sx={headerSx}>
+                      {h}
                     </TableCell>
-                    <TableCell>
-                      {entry.hasCookedBefore ? <ChangeCircleIcon /> : ""}
-                    </TableCell>
-                    <TableCell>{entry.comment || "N/A"}</TableCell>
-                    <TableCell>
-                      <EditIcon />
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
-    </div>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.entries(entriesByMonth).map(([month, entries]) =>
+                  entries.map((entry, idx) => (
+                    <TableRow
+                      key={`${month}-${idx}`}
+                      sx={{ "&:hover": { bgcolor: "#1a1a1a" } }}
+                    >
+                      <TableCell
+                        sx={{ ...cellSx, color: "text.disabled", width: 60 }}
+                      >
+                        {idx === 0 ? month : ""}
+                      </TableCell>
+                      <TableCell sx={{ ...cellSx, width: 40 }}>
+                        {dayjs(entry.date).format("d")}
+                      </TableCell>
+                      <TableCell sx={cellSx}>
+                        <Typography
+                          sx={{ fontSize: "0.875rem", color: "text.primary" }}
+                        >
+                          {entry.recipes.name}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={cellSx}>
+                        <StarRating rating={entry.rating} size="sm" />
+                      </TableCell>
+                      <TableCell sx={{ ...cellSx, textAlign: "center" }}>
+                        {entry.hasCookedBefore && (
+                          <Tooltip title="Remade">
+                            <ChangeCircleIcon
+                              sx={{
+                                fontSize: 16,
+                                color: "primary.main",
+                                opacity: 0.7,
+                              }}
+                            />
+                          </Tooltip>
+                        )}
+                      </TableCell>
+                      <TableCell sx={{ ...cellSx, maxWidth: 280 }}>
+                        {entry.comment ?? (
+                          <Typography
+                            sx={{ fontSize: "0.75rem", color: "text.disabled" }}
+                          >
+                            N/A
+                          </Typography>
+                        )}
+                      </TableCell>
+                      <TableCell sx={{ ...cellSx, width: 40 }}>
+                        <IconButton
+                          size="small"
+                          sx={{
+                            color: "text.disabled",
+                            "&:hover": { color: "text.primary" },
+                          }}
+                        >
+                          <EditIcon sx={{ fontSize: 16 }} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  )),
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      </Box>
+    </>
   );
 }
 
 export async function getStaticPaths() {
   const users = await getAllUsers();
-  const paths = users.map((user) => ({
-    params: { username: user.username },
-  }));
-
   return {
-    paths,
+    paths: users.map((u) => ({ params: { username: u.username } })),
     fallback: false,
   };
 }
 
-export async function getStaticProps({ params }: Params) {
+export async function getStaticProps({
+  params,
+}: {
+  params: { username: string };
+}) {
   const { username } = params;
   const user = await findUserByUsername(username);
-  let diaryEntries: DiaryEntries[] = [];
+  if (!user) return { notFound: true };
 
-  if (user) {
-    diaryEntries = await getUserDiaryEntries(user.id);
-  }
+  const diaryEntries = await getUserDiaryEntries(user.id);
 
   return {
-    props: {
-      diaryEntries,
-      user,
-    },
+    props: serializePrisma({ diaryEntries, user }),
     revalidate: 1800,
   };
 }
-
-export default RecipeDiary;

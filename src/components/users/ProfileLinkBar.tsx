@@ -1,41 +1,69 @@
-import Button from "@mui/material/Button";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import { usePathname } from "next/navigation";
 
 interface Props {
   username: string;
 }
 
+const NAV_LINKS = [
+  { label: "Profile", path: "" },
+  { label: "Activity", path: "/activity" },
+  { label: "Recipes", path: "/recipes" },
+  { label: "Diary", path: "/recipes/diary" },
+  { label: "Reviews", path: "/recipes/reviews" },
+  { label: "Cooklist", path: "/cooklist" },
+  { label: "Likes", path: "/likes" },
+  { label: "Network", path: "/following" },
+];
+
 function ProfileLinkBar({ username }: Props) {
+  const pathname = usePathname();
+
+  // Derive active tab from current URL
+  const base = `/${username}`;
+  const activePath = pathname?.replace(base, "") ?? "";
+  const activeIndex = NAV_LINKS.findIndex((l) => l.path === activePath);
+  const currentTab = activeIndex === -1 ? 0 : activeIndex;
+
   return (
-    <Grid
-      container
-      item
-      xs={12}
-      style={{ justifyContent: "center", margin: "10px 0" }}
+    <Box
+      sx={{
+        borderBottom: 1,
+        borderColor: "divider",
+        mb: 3,
+      }}
     >
-      <ButtonGroup
-        variant="outlined"
-        aria-label="Button Group"
-        sx={{ flexWrap: "wrap" }}
+      <Tabs
+        value={currentTab}
+        variant="scrollable"
+        scrollButtons="auto"
+        allowScrollButtonsMobile
+        sx={{
+          minHeight: 40,
+          "& .MuiTab-root": {
+            minHeight: 40,
+            fontSize: "0.75rem",
+            letterSpacing: "0.1em",
+            fontWeight: 500,
+            color: "text.disabled",
+            px: 2,
+          },
+          "& .Mui-selected": {
+            color: "text.primary !important",
+          },
+          "& .MuiTabs-indicator": {
+            backgroundColor: "primary.main",
+            height: 1.5,
+          },
+        }}
       >
-        <Button href={`/${username}`}>Profile</Button>
-        <Button href={`/${username}/activity`}>Activity</Button>
-        {/* <Button href={`/${username}/activity`}>Activity</Button> */}
-        <Button href={`/${username}/recipes`}>Recipes</Button>
-        <Button href={`/${username}/recipes/diary`}>Diary</Button>
-        <Button href={`/${username}/recipes/reviews`}>Reviews</Button>
-        <Button href={`/${username}/cooklist`}>Cooklist</Button>
-        {/* <Button disabled href={`/${username}/lists`}>
-          Lists
-        </Button> */}
-        <Button href={`/${username}/likes`}>Likes</Button>
-        {/* <Button disabled href={`/${username}/tags`}>
-          Tags
-        </Button> */}
-        <Button href={`/${username}/following`}>Network</Button>
-      </ButtonGroup>
-    </Grid>
+        {NAV_LINKS.map(({ label, path }) => (
+          <Tab key={path} label={label} href={`${base}${path}`} component="a" />
+        ))}
+      </Tabs>
+    </Box>
   );
 }
 

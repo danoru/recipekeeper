@@ -1,110 +1,185 @@
-import Grid from "@mui/material/Grid";
-import Head from "next/head";
-import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
-import { findUserByUsername, getAllUsers } from "../../../src/data/users";
-import { Recipes, Reviews, Users } from "@prisma/client";
-import { getUserReviews } from "../../../src/data/reviews";
-import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import Link from "@mui/material/Link";
-import Typography from "@mui/material/Typography";
-import Rating from "@mui/material/Rating";
+import Head from "next/head";
 import Image from "next/image";
-import moment from "moment";
+import MuiLink from "@mui/material/Link";
+import NextLink from "next/link";
+import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
+import StarRating from "../../../src/components/ui/StarRating";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { findUserByUsername, getAllUsers } from "../../../src/data/users";
+import { getUserReviews } from "../../../src/data/reviews";
+import { recipeHref, serializePrisma } from "../../../src/data/helpers";
+import dayjs from "dayjs";
 
-interface Props {
-  user: Users;
-  reviews: (Reviews & { recipes: Recipes })[];
-}
-
-interface Params {
-  params: {
-    username: string;
+interface SerializedReview {
+  id: number;
+  rating: number;
+  date: string;
+  comment: string | null;
+  recipes: {
+    name: string;
+    image: string;
+    creators: { name: string; [key: string]: any };
+    [key: string]: any;
   };
 }
 
-function UserRecipeReviews({ user, reviews }: Props) {
+interface Props {
+  user: any;
+  reviews: SerializedReview[];
+}
+
+export default function UserRecipeReviews({ user, reviews }: Props) {
   const title = `${user.username}'s Reviews • Savry`;
 
   return (
-    <div>
+    <>
       <Head>
         <title>{title}</title>
       </Head>
-      <Grid container>
+
+      <Box
+        component="main"
+        sx={{
+          maxWidth: "720px",
+          mx: "auto",
+          px: { xs: 2, sm: 3 },
+          pt: 4,
+          pb: 12,
+        }}
+      >
         <ProfileLinkBar username={user.username} />
-        <Grid item xs={8}>
-          <Stack
-            spacing={1}
-            divider={<Divider orientation="horizontal" flexItem />}
-          >
-            {reviews.map((review) => (
-              <Stack
-                key={review.id}
-                direction="row"
-                sx={{ alignItems: "center", paddingLeft: "10px" }}
-              >
-                <div style={{ width: "10%", textAlign: "right" }}>
-                  <Link href={`/recipes/${review.recipes.name}`}>
-                    <Image
-                      src={review.recipes.image}
-                      alt={review.recipes.name}
-                      width={100}
-                      height={100}
-                      style={{ borderRadius: "5%" }}
-                    />
-                  </Link>
-                </div>
-                <Stack style={{ width: "90%", paddingLeft: "10px" }}>
-                  <Link
-                    href={`/recipes/${review.recipes.name}`}
-                    underline="none"
+
+        <Box sx={{ mt: 4 }}>
+          {reviews.length === 0 ? (
+            <Typography sx={{ fontSize: "0.875rem", color: "text.disabled" }}>
+              No reviews yet.
+            </Typography>
+          ) : (
+            <Stack divider={<Divider />} spacing={0}>
+              {reviews.map((review) => {
+                const recipeName = review.recipes?.name ?? "";
+                const creatorName = review.recipes?.creators?.name ?? "";
+                const href = recipeHref(creatorName, recipeName);
+
+                return (
+                  <Box
+                    key={review.id}
+                    sx={{
+                      display: "flex",
+                      gap: 2,
+                      py: 2.5,
+                      transition: "background 0.15s",
+                      "&:hover": { bgcolor: "#1a1a1a" },
+                      borderRadius: "6px",
+                      px: 1,
+                    }}
                   >
-                    <Typography variant="h6">{review.recipes.name}</Typography>
-                  </Link>
-                  <Rating value={review.rating.toNumber()} readOnly />
-                  <Typography variant="body2">
-                    Cooked on {moment(review.date).format("ll")}
-                  </Typography>
-                  <Typography variant="body2">{review.comment}</Typography>
-                </Stack>
-              </Stack>
-            ))}
-          </Stack>
-        </Grid>
-      </Grid>
-    </div>
+                    {/* Recipe thumbnail */}
+                    <Box
+                      component={NextLink}
+                      href={href}
+                      sx={{
+                        flexShrink: 0,
+                        width: 72,
+                        height: 72,
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        border: "1px solid rgba(255,255,255,0.07)",
+                        bgcolor: "#1e1e1e",
+                        position: "relative",
+                        display: "block",
+                      }}
+                    >
+                      <Image
+                        src={review.recipes.image}
+                        alt={recipeName}
+                        fill
+                        style={{ objectFit: "cover" }}
+                        sizes="72px"
+                      />
+                    </Box>
+
+                    {/* Review content */}
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <MuiLink
+                        component={NextLink}
+                        href={href}
+                        underline="none"
+                        sx={{
+                          fontFamily: "'Playfair Display', serif",
+                          fontSize: "1rem",
+                          color: "text.primary",
+                          display: "block",
+                          mb: 0.5,
+                          "&:hover": { color: "primary.main" },
+                        }}
+                      >
+                        {recipeName}
+                      </MuiLink>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1.5,
+                          mb: 0.75,
+                        }}
+                      >
+                        <StarRating rating={review.rating} size="sm" />
+                        <Typography
+                          sx={{ fontSize: "0.75rem", color: "text.disabled" }}
+                        >
+                          {dayjs(review.date).format("MMM D, YYYY")}
+                        </Typography>
+                      </Box>
+
+                      {review.comment && (
+                        <Typography
+                          sx={{
+                            fontSize: "0.875rem",
+                            color: "text.secondary",
+                            lineHeight: 1.6,
+                          }}
+                        >
+                          {review.comment}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Stack>
+          )}
+        </Box>
+      </Box>
+    </>
   );
 }
 
 export async function getStaticPaths() {
   const users = await getAllUsers();
-  const paths = users.map((user) => ({
-    params: { username: user.username },
-  }));
-
   return {
-    paths,
+    paths: users.map((u) => ({ params: { username: u.username } })),
     fallback: false,
   };
 }
 
-export async function getStaticProps({ params }: Params) {
+export async function getStaticProps({
+  params,
+}: {
+  params: { username: string };
+}) {
   const { username } = params;
   const user = await findUserByUsername(username);
-  let reviews: Reviews[] = [];
+  if (!user) return { notFound: true };
 
-  if (user) {
-    reviews = await getUserReviews(user.id);
-  }
+  const reviews = await getUserReviews(user.id);
 
   return {
-    props: {
-      reviews,
-      user,
-    },
+    props: serializePrisma({ reviews, user }),
     revalidate: 1800,
   };
 }
-
-export default UserRecipeReviews;

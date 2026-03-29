@@ -2,86 +2,99 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
-import Image from "next/image";
 import Link from "@mui/material/Link";
 import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import Image from "next/image";
 import { Cooklist, Recipes } from "@prisma/client";
 
-interface CooklistProps {
+import { toSlug } from "../../data/helpers";
+
+interface Props {
   cooklist: (Cooklist & { recipes: Recipes })[];
 }
 
-interface RecipeCardProps {
+function UserCooklistPreview({ cooklist }: Props) {
+  return (
+    <Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          pb: 1,
+          mb: 2,
+        }}
+      >
+        <Typography
+          variant="overline"
+          sx={{
+            fontSize: "0.65rem",
+            letterSpacing: "0.14em",
+            color: "text.disabled",
+          }}
+        >
+          Cooklist
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {cooklist?.length ?? 0}
+        </Typography>
+      </Box>
+
+      {cooklist?.length === 0 ? (
+        <Typography variant="body2" color="text.disabled" sx={{ py: 2 }}>
+          Nothing on the cooklist yet.
+        </Typography>
+      ) : (
+        <Grid container spacing={0.5}>
+          {cooklist.map((item, i) => (
+            <TinyCard
+              key={`cooklist-${i}`}
+              image={item.recipes.image}
+              link={`/recipes/${toSlug(item.recipes.name)}`}
+              name={item.recipes.name}
+            />
+          ))}
+        </Grid>
+      )}
+    </Box>
+  );
+}
+
+interface TinyCardProps {
   image: string;
   link: string;
   name: string;
 }
 
-function UserCooklistPreview({ cooklist }: CooklistProps) {
+function TinyCard({ image, link, name }: TinyCardProps) {
   return (
-    <Grid item>
-      <Grid
-        container
-        sx={{
-          borderBottomWidth: "1px",
-          borderBottomStyle: "solid",
-          borderBottomColor: "theme.palette.secondary",
-          justifyContent: "space-between",
-          margin: "10px 0",
-          maxWidth: "50%",
-        }}
-      >
-        <Grid item>COOKLIST</Grid>
-        <Grid item>{cooklist?.length}</Grid>
-      </Grid>
-      <Grid container>
-        {cooklist.map((item, i: number) => (
-          <TinyCard
-            key={`card-${i}`}
-            image={item.recipes.image}
-            link={`/recipes/${item.recipes.name
-              .replace(/\s+/g, "-")
-              .toLowerCase()}`}
-            name={item.recipes.name}
-          />
-        ))}
-      </Grid>
-    </Grid>
-  );
-}
-
-function TinyCard({ image, link, name }: RecipeCardProps) {
-  return (
-    <Tooltip title={name}>
-      <Grid item sx={{ margin: "2px" }}>
-        <Link href={link}>
+    <Tooltip title={name} placement="top" arrow>
+      <Grid item sx={{ m: "2px" }}>
+        <Link href={link} underline="none">
           <Card
             sx={{
               position: "relative",
-              height: "105px",
-              width: "70px",
+              height: 105,
+              width: 70,
               cursor: "pointer",
               overflow: "hidden",
-              "&:hover": {
-                ".overlay": {
-                  borderColor: "white",
-                },
-                ".image": {
-                  filter: "brightness(0.8)",
-                },
+              borderRadius: 1,
+              "&:hover .overlay-border": {
+                borderColor: "rgba(255,255,255,0.85)",
               },
+              "&:hover .card-image": { filter: "brightness(0.65)" },
             }}
           >
             <CardMedia
-              className="image"
+              className="card-image"
               sx={{
                 position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                filter: "brightness(0.5)",
-                transition: "filter 0.3s",
+                inset: 0,
+                filter: "brightness(0.45)",
+                transition: "filter 0.25s ease",
               }}
             >
               <Image
@@ -92,16 +105,14 @@ function TinyCard({ image, link, name }: RecipeCardProps) {
               />
             </CardMedia>
             <Box
-              className="overlay"
-              style={{
+              className="overlay-border"
+              sx={{
                 position: "absolute",
-                top: "5px",
-                right: "5px",
-                bottom: "5px",
-                left: "5px",
-                border: "2px solid rgba(255, 255, 255, 0.5)",
+                inset: "5px",
+                border: "1.5px solid rgba(255,255,255,0.4)",
+                borderRadius: 0.5,
                 pointerEvents: "none",
-                transition: "border-color 0.3s",
+                transition: "border-color 0.25s ease",
               }}
             />
           </Card>

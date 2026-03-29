@@ -297,182 +297,160 @@ export const RECIPE_LIST = [
   },
 ];
 
+const WITH_CREATOR = {
+  creators: true,
+} as const;
+
+const WITH_CREATOR_AND_REVIEWS = {
+  creators: true,
+  reviews: true,
+} as const;
+
+// ── Slug helper ───────────────────────────────────────────────────────────────
+
+function toSlug(str: string): string {
+  return str
+    .toLowerCase()
+    .replace(/['']/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+// ── Queries ───────────────────────────────────────────────────────────────────
+
 export async function getAllRecipes() {
-  const recipes = await prisma.recipes.findMany({
-    orderBy: {
-      name: "asc",
-    },
+  return prisma.recipes.findMany({
+    include: WITH_CREATOR,
+    orderBy: { name: "asc" },
   });
-  return recipes;
 }
 
 export async function getRecipeByName(name: string) {
-  const recipe = await prisma.recipes.findFirst({
-    where: {
-      name: {
-        equals: name,
-        mode: "insensitive",
-      },
-    },
-    include: { creators: true, reviews: true },
+  return prisma.recipes.findFirst({
+    where: { name: { equals: name, mode: "insensitive" } },
+    include: WITH_CREATOR_AND_REVIEWS,
   });
-  return recipe;
 }
 
-export async function getRecipesByRating(sort: string) {
-  const orderBy = sort === "highest" ? "desc" : "asc";
-
+export async function getRecipeBySlug(creatorSlug: string, recipeSlug: string) {
   const recipes = await prisma.recipes.findMany({
-    include: {
-      reviews: true,
+    where: { creators: { link: creatorSlug } },
+    include: WITH_CREATOR_AND_REVIEWS,
+  });
+  return recipes.find((r) => toSlug(r.name) === recipeSlug) ?? null;
+}
+
+type RecipeFilterKey = "category" | "cuisine" | "course" | "method" | "diet";
+
+export async function getFilteredRecipes(
+  filterId: string,
+  subfilterId: string,
+) {
+  const key = filterId as RecipeFilterKey;
+
+  const normalized = subfilterId.replace(/-/g, " ");
+
+  return prisma.recipes.findMany({
+    where: {
+      [key]: { equals: normalized, mode: "insensitive" },
     },
+    include: WITH_CREATOR,
+    orderBy: { name: "asc" },
+  });
+}
+
+export async function getRecipesByRating(sort: "highest" | "lowest") {
+  const recipes = await prisma.recipes.findMany({
+    include: { ...WITH_CREATOR, reviews: true },
   });
 
-  const sortedRecipes = recipes
+  return recipes
     .map((recipe) => {
-      const totalRating = recipe.reviews.reduce((sum, review) => {
-        return sum + (review.rating.toNumber() || 0);
-      }, 0);
+      const total = recipe.reviews.reduce(
+        (sum, r) => sum + r.rating.toNumber(),
+        0,
+      );
       const averageRating = recipe.reviews.length
-        ? totalRating / recipe.reviews.length
+        ? total / recipe.reviews.length
         : 0;
       return { ...recipe, averageRating };
     })
     .sort((a, b) =>
-      orderBy === "desc"
+      sort === "highest"
         ? b.averageRating - a.averageRating
-        : a.averageRating - b.averageRating
+        : a.averageRating - b.averageRating,
     );
-
-  return sortedRecipes;
 }
 
-export async function getFavoriteRecipes(userId: number) {
-  const favoriteRecipes = await prisma.favoritesRecipes.findMany({
-    where: { userId },
-    include: { recipes: true },
+export async function getRecipesByCreator(creatorId: string) {
+  return prisma.recipes.findMany({
+    where: { creators: { link: creatorId } },
+    include: { ...WITH_CREATOR, diaryEntries: true },
+    orderBy: { name: "asc" },
   });
-  return favoriteRecipes;
 }
 
 export async function getFeaturedRecipes() {
   const recipes = await prisma.recipes.findMany({
-    include: {
-      reviews: true,
-    },
-    orderBy: {
-      name: "asc",
-    },
+    include: { ...WITH_CREATOR, reviews: true },
+    orderBy: { name: "asc" },
   });
 
-  const featuredRecipes = recipes.filter((recipe) => {
-    const totalRating = recipe.reviews.reduce((sum, review) => {
-      return sum + (review.rating.toNumber() || 0);
-    }, 0);
-    const averageRating = recipe.reviews.length
-      ? totalRating / recipe.reviews.length
-      : 0;
-    return averageRating === 5;
+  return recipes.filter((recipe) => {
+    const total = recipe.reviews.reduce(
+      (sum, r) => sum + r.rating.toNumber(),
+      0,
+    );
+    const avg = recipe.reviews.length ? total / recipe.reviews.length : 0;
+    return avg === 5;
   });
-
-  return featuredRecipes;
 }
 
-type RecipeKey = "category" | "cuisine" | "course" | "method" | "diet";
-
-export async function getFilteredRecipes(
-  filterId: string,
-  subfilterId: string
-) {
-  const recipeFilterId = filterId as RecipeKey;
-
-  const recipes = await prisma.recipes.findMany({
-    where: {
-      [recipeFilterId]: subfilterId
-        .replace(/-/g, " ")
-        .replace(/\b\w/g, (match: string) => match.toUpperCase()),
-    },
-    orderBy: {
-      name: "asc",
-    },
+export async function getFavoriteRecipes(userId: number) {
+  return prisma.favoritesRecipes.findMany({
+    where: { userId },
+    include: { recipes: { include: WITH_CREATOR } },
   });
-  return recipes;
-}
-
-export async function getRecipesByCreator(creatorId: string) {
-  const recipes = await prisma.recipes.findMany({
-    where: {
-      creators: {
-        link: creatorId,
-      },
-    },
-    include: {
-      diaryEntries: true,
-    },
-    orderBy: {
-      name: "asc",
-    },
-  });
-  return recipes;
 }
 
 export async function getLikedRecipes(userId: number) {
-  const likedRecipes = await prisma.likedRecipes.findMany({
+  return prisma.likedRecipes.findMany({
     where: { userId },
-    include: { recipes: true },
-    orderBy: {
-      recipes: { name: "asc" },
-    },
+    include: { recipes: { include: WITH_CREATOR } },
+    orderBy: { recipes: { name: "asc" } },
   });
-
-  return likedRecipes;
 }
 
 export async function getTopLikedRecipes(userId: number) {
   const followingUsernames = await getFollowingList(userId);
 
   const likedRecipes = await prisma.likedRecipes.findMany({
-    where: {
-      users: {
-        username: {
-          in: followingUsernames,
-        },
-      },
-    },
-    select: {
-      recipeId: true,
-    },
+    where: { users: { username: { in: followingUsernames } } },
+    select: { recipeId: true },
   });
 
-  const recipeCount = likedRecipes.reduce((acc, { recipeId }) => {
-    acc[recipeId] = (acc[recipeId] || 0) + 1;
-    return acc;
-  }, {} as { [key: number]: number });
+  const recipeCount = likedRecipes.reduce(
+    (acc, { recipeId }) => {
+      acc[recipeId] = (acc[recipeId] || 0) + 1;
+      return acc;
+    },
+    {} as Record<number, number>,
+  );
 
   const topRecipeIds = Object.entries(recipeCount)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 5)
-    .map(([recipeId]) => Number(recipeId));
+    .map(([id]) => Number(id));
 
-  const topRecipesDetails = await prisma.recipes.findMany({
-    where: {
-      id: {
-        in: topRecipeIds,
-      },
-    },
+  return prisma.recipes.findMany({
+    where: { id: { in: topRecipeIds } },
+    include: WITH_CREATOR,
   });
-
-  return topRecipesDetails;
 }
 
 export async function getCooklist(userId: number) {
-  const cooklist = await prisma.cooklist.findMany({
-    where: {
-      userId,
-    },
-    include: {
-      recipes: true,
-    },
+  return prisma.cooklist.findMany({
+    where: { userId },
+    include: { recipes: { include: WITH_CREATOR } },
   });
-  return cooklist;
 }

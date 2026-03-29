@@ -48,7 +48,7 @@ function UserRatings({ reviews }: Props) {
 }
 
 function generateRatingDataset(
-  reviews: (Reviews & { users: Users })[]
+  reviews: (Reviews & { users: Users })[],
 ): { rating: number; count: number }[] {
   const ratingCounts: { [rating: number]: number } = {};
 

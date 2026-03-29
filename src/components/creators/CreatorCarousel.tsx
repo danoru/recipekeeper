@@ -79,7 +79,7 @@ function CreatorCarousel({ creators }: Props) {
               {creators
                 .slice(
                   currentPage * cardsPerPage,
-                  (currentPage + 1) * cardsPerPage
+                  (currentPage + 1) * cardsPerPage,
                 )
                 .map((creator: any, i: number) => (
                   <CreatorCard
@@ -87,9 +87,6 @@ function CreatorCarousel({ creators }: Props) {
                     name={creator.name}
                     link={`creators/${creator.link}`}
                     image={creator.image}
-                    sx={{
-                      display: currentPage === i ? "block" : "none",
-                    }}
                   />
                 ))}
             </Stack>

@@ -1,119 +1,132 @@
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Divider from "@mui/material/Divider";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import Grid from "@mui/material/Grid";
 import Head from "next/head";
-import Link from "@mui/material/Link";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
-import OutdoorGrillIcon from "@mui/icons-material/OutdoorGrill";
+import MuiLink from "@mui/material/Link";
+import NextLink from "next/link";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
-import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import UserAvatar from "../../src/components/users/UserAvatar";
 import {
   findUserByUsername,
   getAllUsers,
   getFollowing,
 } from "../../src/data/users";
-import { Users, Following } from "@prisma/client";
+import { serializePrisma } from "../../src/data/helpers";
 
 interface Props {
-  user: Users;
-  following: (Following & { users: Users })[];
+  user: any;
+  following: any[];
 }
 
-interface Params {
-  params: {
-    username: string;
-  };
-}
-
-function UserFollowing({ user, following }: Props) {
+export default function UserFollowing({ user, following }: Props) {
   const title = `${user.username}'s Friends • Savry`;
 
   return (
-    <div>
+    <>
       <Head>
         <title>{title}</title>
       </Head>
-      <Grid container>
-        <Grid item xs={12}>
-          <ProfileLinkBar username={user.username} />
-        </Grid>
-        <Grid item xs={12}>
-          <ButtonGroup
-            variant="outlined"
-            aria-label="Button Group"
-            sx={{ flexWrap: "wrap" }}
-          >
-            <Button href="following">Following</Button>
-            <Button href="followers">Followers</Button>
+
+      <Box
+        component="main"
+        sx={{
+          maxWidth: "720px",
+          mx: "auto",
+          px: { xs: 2, sm: 3 },
+          pt: 4,
+          pb: 12,
+        }}
+      >
+        <ProfileLinkBar username={user.username} />
+
+        <Box sx={{ mt: 3, mb: 3 }}>
+          <ButtonGroup variant="outlined" size="small">
+            <Button component={NextLink} href={`/${user.username}/following`}>
+              Following
+            </Button>
+            <Button component={NextLink} href={`/${user.username}/followers`}>
+              Followers
+            </Button>
           </ButtonGroup>
-        </Grid>
-        <Grid item xs={12}>
-          <Stack
-            spacing={1}
-            divider={<Divider orientation="horizontal" flexItem />}
-          >
-            {following?.map((following) => (
-              <Stack
-                key={following.followingUsername}
-                direction="row"
-                sx={{ alignItems: "center", paddingLeft: "10px" }}
-              >
-                <div style={{ width: "25%" }}>
-                  <Link
-                    href={`/${following.followingUsername}`}
-                    underline="none"
+        </Box>
+
+        <Box
+          sx={{
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: "12px",
+            overflow: "hidden",
+          }}
+        >
+          {following.length === 0 ? (
+            <Typography
+              sx={{ fontSize: "0.875rem", color: "text.disabled", p: 3 }}
+            >
+              Not following anyone yet.
+            </Typography>
+          ) : (
+            following.map((f: any, i: number) => {
+              const username = f.followingUsername ?? f.users?.username;
+              return (
+                <Box key={username}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                      px: 2,
+                      py: 1.5,
+                      transition: "background 0.15s",
+                      "&:hover": { bgcolor: "#1a1a1a" },
+                    }}
                   >
-                    {following.followingUsername}
-                  </Link>
-                </div>
-                <div style={{ width: "25%" }}>
-                  <OutdoorGrillIcon />
-                </div>
-                <div style={{ width: "25%" }}>
-                  <MenuBookIcon />
-                </div>
-                <div style={{ width: "25%" }}>
-                  <FavoriteIcon />
-                </div>
-              </Stack>
-            ))}
-          </Stack>
-        </Grid>
-      </Grid>
-    </div>
+                    <MuiLink
+                      component={NextLink}
+                      href={`/${username}`}
+                      underline="none"
+                      sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                    >
+                      <UserAvatar avatarSize="36px" name={username} />
+                      <Typography
+                        sx={{ fontSize: "0.9375rem", color: "text.primary" }}
+                      >
+                        {username}
+                      </Typography>
+                    </MuiLink>
+                  </Box>
+                  {i < following.length - 1 && <Divider />}
+                </Box>
+              );
+            })
+          )}
+        </Box>
+      </Box>
+    </>
   );
 }
 
 export async function getStaticPaths() {
   const users = await getAllUsers();
-  const paths = users.map((user) => ({
-    params: { username: user.username },
-  }));
-
   return {
-    paths,
+    paths: users.map((u) => ({ params: { username: u.username } })),
     fallback: false,
   };
 }
 
-export async function getStaticProps({ params }: Params) {
+export async function getStaticProps({
+  params,
+}: {
+  params: { username: string };
+}) {
   const { username } = params;
   const user = await findUserByUsername(username);
-  let following;
+  if (!user) return { notFound: true };
 
-  if (user) {
-    following = await getFollowing(user.id);
-  }
+  const following = user ? await getFollowing(user.id) : [];
 
   return {
-    props: {
-      user,
-      following,
-    },
+    props: serializePrisma({ user, following }),
     revalidate: 1800,
   };
 }
-
-export default UserFollowing;

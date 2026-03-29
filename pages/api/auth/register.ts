@@ -1,6 +1,6 @@
 import prisma from "../../../src/data/db";
 import { NextApiRequest, NextApiResponse } from "next";
-import { hash } from "bcrypt";
+import { hash } from "bcryptjs";
 import * as yup from "yup";
 
 const schema = yup.object().shape({

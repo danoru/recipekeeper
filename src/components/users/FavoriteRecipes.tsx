@@ -1,53 +1,56 @@
+import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import RecipeCard from "../cards/RecipeCard";
+import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
+import RecipeCard from "../cards/RecipeCard";
+import SectionWrapper from "./SectionWrapper";
 import { Recipes } from "@prisma/client";
+
+import { toSlug } from "../../data/helpers";
 
 interface Props {
   recipes: Recipes[];
 }
 
-function FavoriteRecipes({ recipes }: Props) {
+export default function FavoriteRecipes({ recipes }: Props) {
   return (
-    <Grid item>
-      <Grid
-        item
-        style={{
-          borderBottomWidth: "1px",
-          borderBottomStyle: "solid",
-          borderBottomColor: "theme.palette.secondary",
-          display: "flex",
-          justifyContent: "space-between",
-          lineHeight: "0",
-          margin: "0 auto",
-          width: "75%",
-        }}
-      >
-        <Typography variant="h6" component="div">
-          FAVORITE RECIPES
-        </Typography>
-      </Grid>
-      <Grid
-        container
-        item
-        rowSpacing={1}
-        columnSpacing={2}
-        sx={{
-          margin: "10px auto",
-          maxWidth: "75%",
-        }}
-      >
-        {recipes.map((recipe: any, i: number) => (
-          <RecipeCard
-            key={`card-${i}`}
-            name={recipe.name}
-            link={`/recipes/${recipe.name.replace(/\s+/g, "-").toLowerCase()}`}
-            image={recipe.image}
-          />
+    <SectionWrapper
+      title="Favorite Recipes"
+      empty={recipes.length === 0}
+      emptyText={<EmptyPrompt label="Browse recipes" href="/recipes" />}
+    >
+      <Grid container spacing={1.5}>
+        {recipes.map((recipe, i) => (
+          <Grid key={`recipe-${i}`} item xs={6} sm={4} md={3}>
+            <RecipeCard
+              name={recipe.name}
+              link={`/recipes/${toSlug(recipe.name)}`}
+              image={recipe.image}
+            />
+          </Grid>
         ))}
       </Grid>
-    </Grid>
+    </SectionWrapper>
   );
 }
 
-export default FavoriteRecipes;
+function EmptyPrompt({ label, href }: { label: string; href: string }) {
+  return (
+    <Box sx={{ py: 3, display: "flex", alignItems: "center", gap: 1 }}>
+      <Typography variant="body2" color="text.disabled">
+        Nothing here yet.
+      </Typography>
+      <MuiLink
+        href={href}
+        underline="hover"
+        sx={{
+          fontSize: "0.875rem",
+          color: "primary.main",
+          "&:hover": { color: "primary.light" },
+        }}
+      >
+        {label} →
+      </MuiLink>
+    </Box>
+  );
+}

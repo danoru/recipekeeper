@@ -191,112 +191,81 @@ export const CREATOR_LIST = [
 ];
 
 export async function getAllCreators() {
-  const creators = await prisma.creators.findMany({
-    orderBy: {
-      name: "asc",
-    },
+  return prisma.creators.findMany({
+    orderBy: { name: "asc" },
   });
-
-  return creators;
 }
 
 export async function getFeaturedCreators() {
-  const featuredCreators = await prisma.creators.findMany({
-    orderBy: {
-      name: "asc",
-    },
+  return prisma.creators.findMany({
+    orderBy: { name: "asc" },
   });
-
-  return featuredCreators;
 }
 
 export async function getCreatorByLink(creatorLink: string) {
-  return await prisma.creators.findUnique({
-    where: {
-      link: creatorLink,
-    },
+  return prisma.creators.findUnique({
+    where: { link: creatorLink },
   });
 }
 
 export async function getFavoriteCreators(userId: number) {
-  const favoriteCreators = await prisma.favoritesCreators.findMany({
+  return prisma.favoritesCreators.findMany({
     where: { userId },
     include: { creators: true },
   });
-  return favoriteCreators;
 }
 
 export async function getTopLikedCreators(userId: number) {
-  const followingList = (await getFollowingList(userId)) || [];
+  const followingList = (await getFollowingList(userId)) ?? [];
 
   const likedCreators = await prisma.likedCreators.findMany({
-    where: {
-      users: {
-        username: {
-          in: followingList,
-        },
-      },
-    },
-    select: {
-      creatorId: true,
-    },
+    where: { users: { username: { in: followingList } } },
+    select: { creatorId: true },
   });
 
-  const creatorCount = likedCreators.reduce((acc, { creatorId }) => {
-    acc[creatorId] = (acc[creatorId] || 0) + 1;
-    return acc;
-  }, {} as { [key: string]: number });
+  const creatorCount = likedCreators.reduce(
+    (acc, { creatorId }) => {
+      acc[creatorId] = (acc[creatorId] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const topCreatorIds = Object.entries(creatorCount)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 5)
-    .map(([creatorId]) => creatorId);
+    .map(([id]) => id);
 
-  const topCreatorsDetails = await prisma.creators.findMany({
-    where: {
-      link: {
-        in: topCreatorIds,
-      },
-    },
+  return prisma.creators.findMany({
+    where: { link: { in: topCreatorIds } },
   });
-
-  return topCreatorsDetails;
 }
 
 export async function getTopRatedRecipesByCreator(creatorId: string) {
   const recipes = await prisma.recipes.findMany({
     where: {
-      creatorId: creatorId,
-      diaryEntries: {
-        some: {
-          rating: {
-            gte: 3,
-          },
-        },
-      },
+      creatorId,
+      diaryEntries: { some: { rating: { gte: 3 } } },
     },
     include: {
+      creators: true,
       diaryEntries: true,
     },
   });
 
-  const filteredRecipes = recipes
+  const scored = recipes
     .map((recipe) => {
-      const totalRating = recipe.diaryEntries.reduce(
-        (sum, entry) => sum + (entry.rating.toNumber() || 0),
-        0
+      const total = recipe.diaryEntries.reduce(
+        (sum, e) => sum + e.rating.toNumber(),
+        0,
       );
       const averageRating = recipe.diaryEntries.length
-        ? totalRating / recipe.diaryEntries.length
+        ? total / recipe.diaryEntries.length
         : 0;
       return { ...recipe, averageRating };
     })
-    .filter((recipe) => recipe.averageRating >= 3)
+    .filter((r) => r.averageRating >= 3)
     .sort((a, b) => b.averageRating - a.averageRating);
 
-  if (filteredRecipes.length === 0) {
-    return null;
-  }
-
-  return filteredRecipes;
+  return scored.length > 0 ? scored : null;
 }

@@ -1,67 +1,69 @@
-import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
-import Rating from "@mui/material/Rating";
-import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import MuiLink from "@mui/material/Link";
+import NextLink from "next/link";
 import Typography from "@mui/material/Typography";
-import { Reviews, Users } from "@prisma/client";
 import UserAvatar from "../users/UserAvatar";
+import StarRating from "../ui/StarRating";
+import type { SReviewWithUser } from "../../types/serialized";
 
 interface Props {
-  reviews: (Reviews & { users: Users })[];
+  reviews: SReviewWithUser[];
 }
 
-function RecipeFriendRatings({ reviews }: Props) {
+export default function RecipeFriendRatings({ reviews }: Props) {
+  if (!reviews?.length) return null;
+
   return (
-    <Grid container>
-      <Grid
-        item
-        style={{
-          borderBottomWidth: "1px",
-          borderBottomStyle: "solid",
-          borderBottomColor: "theme.palette.secondary",
-          display: "flex",
-          justifyContent: "space-between",
-          lineHeight: "0",
-          marginTop: "2%",
-          width: "100%",
-        }}
-      >
-        <Typography variant="overline" component="div">
-          ACTIVITY FROM FRIENDS
-        </Typography>
-      </Grid>
-      <Grid
-        container
-        item
-        rowSpacing={1}
-        columnSpacing={2}
+    <Box>
+      <Typography
         sx={{
-          margin: "10px 0",
+          fontSize: "0.625rem",
+          fontWeight: 500,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase",
+          color: "#4a4744",
+          mb: 1.5,
+          pb: 1,
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
         }}
       >
-        {reviews?.map((entry: Reviews & { users: Users }, i: number) => {
-          return (
-            <ReviewCard
-              key={i}
-              username={entry.users.username}
-              rating={entry.rating}
-            />
-          );
-        })}
-      </Grid>
-    </Grid>
+        Activity from friends
+      </Typography>
+      <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+        {reviews.map((review, i) => (
+          <Box
+            key={i}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 0.5,
+            }}
+          >
+            <MuiLink
+              component={NextLink}
+              href={`/${review.users.username}`}
+              underline="none"
+            >
+              <UserAvatar avatarSize="32px" name={review.users.username} />
+            </MuiLink>
+            <StarRating rating={review.rating} size="sm" />
+            {review.comment && (
+              <Typography
+                sx={{
+                  fontSize: "0.6875rem",
+                  color: "text.secondary",
+                  maxWidth: "120px",
+                  textAlign: "center",
+                  lineHeight: 1.4,
+                }}
+              >
+                {review.comment}
+              </Typography>
+            )}
+          </Box>
+        ))}
+      </Box>
+    </Box>
   );
 }
-
-function ReviewCard(props: any) {
-  return (
-    <Stack direction="column" alignItems="center">
-      <Link href={`/${props.username}`} underline="none">
-        <UserAvatar avatarSize="32px" name={props.username} />
-      </Link>
-      <Rating value={props.rating} size="small" readOnly />
-    </Stack>
-  );
-}
-
-export default RecipeFriendRatings;

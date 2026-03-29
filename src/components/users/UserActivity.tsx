@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
-import moment from "moment";
+import dayjs from "dayjs";
 import Rating from "@mui/material/Rating";
 import Stack from "@mui/material/Stack";
 import { DiaryEntries, Recipes, Users } from "@prisma/client";
@@ -43,7 +43,7 @@ function UserActivity({ diaryEntries }: Props) {
                 {diaryEntry.recipes.name}
               </Link>
               {" on "}
-              {moment(diaryEntry.date).format("dddd, MMMM Do YYYY")}
+              {dayjs(diaryEntry.date).format("dddd, MMMM Do YYYY")}
               {" and rated it "}
               <Rating
                 value={diaryEntry.rating.toNumber()}
@@ -52,7 +52,7 @@ function UserActivity({ diaryEntries }: Props) {
                 readOnly
               />
               {"."}
-              {/* {moment(diaryEntry.date).fromNow()} */}
+              {/* {dayjs(diaryEntry.date).fromNow()} */}
             </div>
           </Stack>
         ))}

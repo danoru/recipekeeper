@@ -2,7 +2,7 @@ import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
 import Link from "@mui/material/Link";
-import moment from "moment";
+import dayjs from "dayjs";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import Rating from "@mui/material/Rating";
 import Stack from "@mui/material/Stack";
@@ -39,7 +39,7 @@ function Activity({ diaryEntries, user }: Props) {
           {diaryEntries?.map(
             (
               entry: DiaryEntries & { recipes: Recipes; users: Users },
-              i: number
+              i: number,
             ) => {
               return (
                 <Stack key={i} direction="row">
@@ -62,7 +62,7 @@ function Activity({ diaryEntries, user }: Props) {
                     </Link>
                     <span style={{ margin: "0 2px" }}>on</span>
                     <span style={{ margin: "0 2px" }}>
-                      {moment(entry.date).format("dddd, MMMM Do YYYY")}
+                      {dayjs(entry.date).format("dddd, MMMM Do YYYY")}
                     </span>
                     <span style={{ margin: "0 2px" }}>and rated it</span>
                     {entry.rating !== undefined && (
@@ -78,7 +78,7 @@ function Activity({ diaryEntries, user }: Props) {
                   </div>
                 </Stack>
               );
-            }
+            },
           )}
         </Stack>
       </Grid>

@@ -1,36 +1,91 @@
 import { createTheme } from "@mui/material/styles";
 
-export const theme = createTheme({
+export const savryTheme = createTheme({
   palette: {
     mode: "dark",
-    // primary: {
-    //   main: "#66fcf1",
-    //   light: "rgb(132, 252, 243",
-    //   dark: "rgb(71, 176, 168",
-    //   contrastText: "rgba(0,0,0,0.87)",
-    // },
+    background: {
+      default: "#0e0e0e",
+      paper: "#161616",
+    },
     primary: {
-      main: "#ffffff",
-      light: "rgb(255,255,255)",
-      dark: "rgb(178,178,178)",
-      contrastText: "rgba(0, 0, 0, 0.87)",
+      main: "#c8a96e",
+      light: "#d9bc89",
+      dark: "#a88848",
+      contrastText: "#0e0e0e",
     },
     secondary: {
-      main: "#45a29e",
-      light: "rgb(106,180,177",
-      dark: "rgb(48,113,110)",
-      contrastText: "#fff",
+      main: "#888580",
+      light: "#b0ada8",
+      dark: "#4a4744",
     },
-    background: {
-      default: "#0b0c10",
-      paper: "#1f2833",
-    },
+    divider: "rgba(255,255,255,0.07)",
     text: {
-      primary: "#c5c6c7",
-      secondary: "rgba(255,255,255,0.7)",
-      disabled: "rgba(255, 255, 255, 0.5)",
+      primary: "#f0ede6",
+      secondary: "#888580",
+      disabled: "#4a4744",
+    },
+  },
+  typography: {
+    fontFamily: "'DM Sans', sans-serif",
+    h1: { fontFamily: "'Playfair Display', serif" },
+    h2: { fontFamily: "'Playfair Display', serif" },
+    h3: { fontFamily: "'Playfair Display', serif" },
+    h4: { fontFamily: "'Playfair Display', serif" },
+    overline: {
+      fontSize: "0.625rem",
+      letterSpacing: "0.14em",
+      fontWeight: 500,
+      color: "#4a4744",
+    },
+  },
+  shape: { borderRadius: 8 },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+        *, *::before, *::after { box-sizing: border-box; }
+        body { background: #0e0e0e; -webkit-font-smoothing: antialiased; }
+      `,
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: "none",
+          border: "1px solid rgba(255,255,255,0.07)",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: { textTransform: "none", fontWeight: 500, letterSpacing: "0.04em" },
+        contained: {
+          background: "#c8a96e",
+          color: "#0e0e0e",
+          "&:hover": { background: "#d9bc89" },
+        },
+        outlined: {
+          borderColor: "rgba(200,169,110,0.3)",
+          color: "#c8a96e",
+          "&:hover": {
+            borderColor: "#c8a96e",
+            background: "rgba(200,169,110,0.08)",
+          },
+        },
+      },
+    },
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          color: "#f0ede6",
+          textDecorationColor: "rgba(240,237,230,0.3)",
+          "&:hover": { color: "#c8a96e" },
+        },
+      },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: { borderColor: "rgba(255,255,255,0.07)" },
+      },
     },
   },
 });
-
-export default theme;

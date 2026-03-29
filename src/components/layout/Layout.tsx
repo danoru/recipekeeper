@@ -1,13 +1,15 @@
 import { Fragment } from "react";
 import Navbar from "./Navbar";
 
-function Layout(props: any) {
+interface Props {
+  children: React.ReactNode;
+}
+
+export default function Layout({ children }: Props) {
   return (
     <Fragment>
       <Navbar />
-      <main>{props.children}</main>
+      <main>{children}</main>
     </Fragment>
   );
 }
-
-export default Layout;

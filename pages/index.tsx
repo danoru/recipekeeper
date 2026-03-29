@@ -1,36 +1,26 @@
 import Head from "next/head";
 import LoggedInHomePage from "../src/components/home/LoggedInHomePage";
 import LoggedOutHomePage from "../src/components/home/LoggedOutHomePage";
-import superjson from "superjson";
+import { serializePrisma } from "../src/data/helpers";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import { getTopLikedRecipes } from "../src/data/recipes";
 import { getTopLikedCreators } from "../src/data/creators";
 import { getFollowingList } from "../src/data/users";
 import { getDiaryEntriesByUsernames } from "../src/data/diary";
-import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
 
-interface Props {
-  recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
-  session: any;
-  topLikedCreators: Creators[];
-  topLikedRecipes: Recipes[];
-}
-
-function Home({
+export default function Home({
   recentEntries,
   session,
   topLikedCreators,
   topLikedRecipes,
-}: Props) {
+}: any) {
   const username = session?.user?.username;
-
   return (
-    <div>
+    <>
       <Head>
         <title>Savry</title>
-        <meta name="description" content="Created with NextJS" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="description" content="Track recipes you've made." />
       </Head>
       {session ? (
         <LoggedInHomePage
@@ -42,7 +32,7 @@ function Home({
       ) : (
         <LoggedOutHomePage />
       )}
-    </div>
+    </>
   );
 }
 
@@ -52,6 +42,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (session) {
     const sessionUserId = parseInt(session.user.id);
     const following = await getFollowingList(sessionUserId);
+
     const [recentEntries, topLikedCreators, topLikedRecipes] =
       await Promise.all([
         getDiaryEntriesByUsernames(following),
@@ -60,17 +51,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       ]);
 
     return {
-      props: superjson.serialize({
+      props: serializePrisma({
         recentEntries,
         session,
         topLikedCreators,
         topLikedRecipes,
-      }).json,
+      }),
     };
   }
-  return {
-    props: { session },
-  };
-}
 
-export default Home;
+  return { props: { session } };
+}

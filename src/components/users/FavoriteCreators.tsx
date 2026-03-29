@@ -1,53 +1,54 @@
-import CreatorCard from "../cards/CreatorCard";
+import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
+import CreatorCard from "../cards/CreatorCard";
+import SectionWrapper from "./SectionWrapper";
 import { Creators } from "@prisma/client";
 
 interface Props {
   creators: Creators[];
 }
 
-function FavoriteCreators({ creators }: Props) {
+export default function FavoriteCreators({ creators }: Props) {
   return (
-    <Grid item>
-      <Grid
-        item
-        style={{
-          borderBottomWidth: "1px",
-          borderBottomStyle: "solid",
-          borderBottomColor: "theme.palette.secondary",
-          display: "flex",
-          justifyContent: "space-between",
-          lineHeight: "0",
-          margin: "0 auto",
-          width: "75%",
-        }}
-      >
-        <Typography variant="h6" component="div">
-          FAVORITE CREATORS
-        </Typography>
-      </Grid>
-      <Grid
-        container
-        item
-        rowSpacing={1}
-        columnSpacing={2}
-        sx={{
-          margin: "10px auto",
-          maxWidth: "75%",
-        }}
-      >
-        {creators.map((creator: Creators, i: number) => (
-          <CreatorCard
-            key={`card-${i}`}
-            name={creator.name}
-            link={`creators/${creator.link}`}
-            image={creator.image}
-          />
+    <SectionWrapper
+      title="Favorite Creators"
+      empty={creators.length === 0}
+      emptyText={<EmptyPrompt label="Discover a creator" href="/creators" />}
+    >
+      <Grid container spacing={1.5}>
+        {creators.map((creator, i) => (
+          <Grid key={`creator-${i}`} item xs={6} sm={4} md={3}>
+            <CreatorCard
+              name={creator.name}
+              link={`/creators/${creator.link}`}
+              image={creator.image}
+            />
+          </Grid>
         ))}
       </Grid>
-    </Grid>
+    </SectionWrapper>
   );
 }
 
-export default FavoriteCreators;
+function EmptyPrompt({ label, href }: { label: string; href: string }) {
+  return (
+    <Box sx={{ py: 3, display: "flex", alignItems: "center", gap: 1 }}>
+      <Typography variant="body2" color="text.disabled">
+        Nothing here yet.
+      </Typography>
+      <MuiLink
+        href={href}
+        underline="hover"
+        sx={{
+          fontSize: "0.875rem",
+          color: "primary.main",
+          "&:hover": { color: "primary.light" },
+        }}
+      >
+        {label} →
+      </MuiLink>
+    </Box>
+  );
+}

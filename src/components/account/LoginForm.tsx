@@ -1,33 +1,40 @@
-import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
+import MuiLink from "@mui/material/Link";
+import NextLink from "next/link";
 import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-function LoginForm() {
+const validationSchema = Yup.object({
+  username: Yup.string().required("Username is required."),
+  password: Yup.string().required("Password is required."),
+});
+
+const fieldSx = {
+  "& .MuiOutlinedInput-root": { borderRadius: "8px", fontSize: "0.875rem" },
+  "& .MuiInputLabel-root": { fontSize: "0.8125rem" },
+};
+
+export default function LoginForm() {
   const router = useRouter();
-  const initialValues = { username: "", password: "", rememberMe: false };
-  const validationSchema = Yup.object({
-    username: Yup.string().required("Username is required."),
-    password: Yup.string().required("Password is required."),
-  });
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "success"
-  );
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({ open: false, message: "", severity: "success" });
 
   async function handleSubmit(
-    values: { username: string; password: string; rememberMe: Boolean },
-    { setSubmitting, setErrors }: any
+    values: { username: string; password: string; rememberMe: boolean },
+    { setSubmitting }: any,
   ) {
     const response = await signIn("credentials", {
       username: values.username,
@@ -37,14 +44,17 @@ function LoginForm() {
     });
 
     if (response?.error) {
-      setErrors({ submit: response.error });
-      setSnackbarMessage("Login failed. Your credentials do not match.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      setSnackbar({
+        open: true,
+        message: "Login failed. Your credentials do not match.",
+        severity: "error",
+      });
     } else {
-      setSnackbarMessage("Login successful. You are being redirected.");
-      setSnackbarOpen(true);
-      setSnackbarSeverity("success");
+      setSnackbar({
+        open: true,
+        message: "Login successful. Redirecting…",
+        severity: "success",
+      });
       router.push("/");
       router.refresh();
     }
@@ -53,18 +63,35 @@ function LoginForm() {
   }
 
   return (
-    <Grid container justifyContent="center" sx={{ margin: "auto", p: 4 }}>
-      <Grid item xs={3} sm={8} md={5}>
-        {/* <Stack direction="column">
-          <Avatar>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-        </Stack> */}
+    <Box
+      sx={{
+        minHeight: "calc(100vh - 52px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        px: 2,
+      }}
+    >
+      <Box sx={{ width: "100%", maxWidth: 360 }}>
+        <Typography
+          sx={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "1.75rem",
+            fontWeight: 400,
+            color: "text.primary",
+            mb: 0.75,
+          }}
+        >
+          Sign in
+        </Typography>
+        <Typography
+          sx={{ fontSize: "0.8125rem", color: "text.disabled", mb: 4 }}
+        >
+          Welcome back to Savry.
+        </Typography>
+
         <Formik
-          initialValues={initialValues}
+          initialValues={{ username: "", password: "", rememberMe: false }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
@@ -79,8 +106,6 @@ function LoginForm() {
             <Form>
               <TextField
                 variant="outlined"
-                margin="normal"
-                required
                 fullWidth
                 id="username"
                 label="Username"
@@ -91,11 +116,10 @@ function LoginForm() {
                 value={values.username}
                 error={touched.username && !!errors.username}
                 helperText={touched.username && errors.username}
+                sx={{ ...fieldSx, mb: 1.5 }}
               />
               <TextField
                 variant="outlined"
-                margin="normal"
-                required
                 fullWidth
                 name="password"
                 label="Password"
@@ -107,6 +131,7 @@ function LoginForm() {
                 value={values.password}
                 error={touched.password && !!errors.password}
                 helperText={touched.password && errors.password}
+                sx={{ ...fieldSx, mb: 1 }}
               />
               <FormControlLabel
                 control={
@@ -114,45 +139,68 @@ function LoginForm() {
                     checked={values.rememberMe}
                     onChange={handleChange}
                     name="rememberMe"
-                    color="primary"
+                    size="small"
+                    sx={{
+                      color: "rgba(255,255,255,0.2)",
+                      "&.Mui-checked": { color: "primary.main" },
+                    }}
                   />
                 }
-                label="Remember Me"
+                label={
+                  <Typography
+                    sx={{ fontSize: "0.8125rem", color: "text.secondary" }}
+                  >
+                    Remember me
+                  </Typography>
+                }
+                sx={{ mb: 2.5 }}
               />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                color="primary"
                 disabled={isSubmitting}
+                sx={{ borderRadius: "8px", py: 1, mb: 2 }}
               >
-                Login
+                {isSubmitting ? "Signing in…" : "Sign in"}
               </Button>
-              <Grid container>
-                <Grid item>
-                  <Link href="/register" variant="body2">
-                    {"Don't have an account? Register"}
-                  </Link>
-                </Grid>
-              </Grid>
+              <Typography
+                sx={{
+                  fontSize: "0.8125rem",
+                  color: "text.disabled",
+                  textAlign: "center",
+                }}
+              >
+                No account?{" "}
+                <MuiLink
+                  component={NextLink}
+                  href="/register"
+                  underline="hover"
+                  sx={{ color: "primary.main" }}
+                >
+                  Register here
+                </MuiLink>
+              </Typography>
             </Form>
           )}
         </Formik>
-      </Grid>
+      </Box>
+
       <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
+        open={snackbar.open}
+        autoHideDuration={5000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity={snackbarSeverity}
+          severity={snackbar.severity}
+          variant="filled"
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          sx={{ borderRadius: "8px" }}
         >
-          {snackbarMessage}
+          {snackbar.message}
         </Alert>
       </Snackbar>
-    </Grid>
+    </Box>
   );
 }
-
-export default LoginForm;

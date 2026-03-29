@@ -1,79 +1,95 @@
-import CreatorList from "../../src/components/creators/CreatorList";
-import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import Head from "next/head";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import RecipeList from "../../src/components/recipes/RecipeList";
-import { getAllCreators } from "../../src/data/creators";
-import { getAllRecipes } from "../../src/data/recipes";
+import SectionHeader from "../../src/components/ui/SectionHeader";
+import Grid from "@mui/material/Grid";
+import CreatorCard from "../../src/components/cards/CreatorCard";
 import { getAllUsers, getUserLikes } from "../../src/data/users";
-import {
-  Creators,
-  LikedCreators,
-  LikedRecipes,
-  Recipes,
-  Users,
-} from "@prisma/client";
+import { creatorHref, serializePrisma } from "../../src/data/helpers";
 
 interface Props {
-  user: Users & {
-    likedCreators: (LikedCreators & {
-      creators: Creators;
-    })[];
-    likedRecipes: (LikedRecipes & {
-      recipes: Recipes;
-    })[];
-  };
+  user: any;
 }
 
-interface Params {
-  params: {
-    username: string;
-  };
-}
-
-function UserLikes({ user }: Props) {
+export default function UserLikes({ user }: Props) {
   const title = `${user.username}'s Likes • Savry`;
-  const creatorHeader = `${user.username}'S LIKED CREATORS`;
-  const creators = user.likedCreators.map((user) => user.creators);
-  const recipeHeader = `${user.username}'S LIKED RECIPES`;
-  const recipes = user.likedRecipes.map((user) => user.recipes);
-  const style = "overline";
+  const creators = user.likedCreators.map((lc: any) => lc.creators);
+  const recipes = user.likedRecipes.map((lr: any) => lr.recipes);
 
   return (
-    <div>
+    <>
       <Head>
         <title>{title}</title>
       </Head>
-      <Grid container>
+
+      <Box
+        component="main"
+        sx={{
+          maxWidth: "1080px",
+          mx: "auto",
+          px: { xs: 2, sm: 3, md: 4 },
+          pt: 4,
+          pb: 12,
+        }}
+      >
         <ProfileLinkBar username={user.username} />
-        <RecipeList recipes={recipes} header={recipeHeader} style={style} />
-        <CreatorList creators={creators} header={creatorHeader} style={style} />
-      </Grid>
-    </div>
+
+        <Box sx={{ mt: 4, display: "flex", flexDirection: "column", gap: 6 }}>
+          {recipes.length > 0 && (
+            <RecipeList
+              header={`${user.username}'s liked recipes`}
+              recipes={recipes}
+            />
+          )}
+
+          {creators.length > 0 && (
+            <Box>
+              <SectionHeader label={`${user.username}'s liked creators`} />
+              <Grid container spacing={1.5}>
+                {creators.map((creator: any, i: number) => (
+                  <Grid item xs={6} sm={4} md={3} key={i}>
+                    <CreatorCard
+                      name={creator.name}
+                      image={creator.image}
+                      link={creatorHref(creator.link ?? creator.name)}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          )}
+
+          {recipes.length === 0 && creators.length === 0 && (
+            <Box sx={{ pt: 4, color: "text.disabled", fontSize: "0.875rem" }}>
+              No likes yet.
+            </Box>
+          )}
+        </Box>
+      </Box>
+    </>
   );
 }
 
 export async function getStaticPaths() {
   const users = await getAllUsers();
-  const paths = users.map((user) => ({
-    params: { username: user.username },
-  }));
-
   return {
-    paths,
+    paths: users.map((u) => ({ params: { username: u.username } })),
     fallback: false,
   };
 }
 
-export async function getStaticProps({ params }: Params) {
+export async function getStaticProps({
+  params,
+}: {
+  params: { username: string };
+}) {
   const { username } = params;
   const user = await getUserLikes(username);
+  if (!user) return { notFound: true };
+
   return {
-    props: {
-      user,
-    },
+    props: serializePrisma({ user }),
     revalidate: 1800,
   };
 }
-
-export default UserLikes;

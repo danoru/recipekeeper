@@ -1,66 +1,23 @@
-import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import { getSession } from "next-auth/react";
-import {
-  Cooklist,
-  Creators,
-  DiaryEntries,
-  FavoritesCreators,
-  FavoritesRecipes,
-  Following,
-  Recipes,
-  Reviews,
-  Users,
-} from "@prisma/client";
-
 import { getFollowers, getUserProfile } from "../../src/data/users";
+import { serializePrisma } from "../../src/data/helpers";
 import { GetServerSidePropsContext } from "next";
+import ProfileStatBar from "../../src/components/users/ProfileStatBar";
+import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
+import FavoriteCreators from "../../src/components/users/FavoriteCreators";
+import FavoriteRecipes from "../../src/components/users/FavoriteRecipes";
+import {
+  UserFollowing,
+  UserRatings,
+  UserRecentRecipes,
+  UserRecipeDiary,
+} from "../../src/components/users/UserProfileWidgets";
+import UserCooklistPreview from "../../src/components/users/UserCooklistPreview";
 
-const FavoriteCreators = dynamic(
-  () => import("../../src/components/users/FavoriteCreators")
-);
-const FavoriteRecipes = dynamic(
-  () => import("../../src/components/users/FavoriteRecipes")
-);
-const ProfileLinkBar = dynamic(
-  () => import("../../src/components/users/ProfileLinkBar")
-);
-const ProfileStatBar = dynamic(
-  () => import("../../src/components/users/ProfileStatBar")
-);
-const UserActivity = dynamic(
-  () => import("../../src/components/users/UserActivity")
-);
-const UserCooklistPreview = dynamic(
-  () => import("../../src/components/users/UserCooklistPreview")
-);
-const UserRecipeDiary = dynamic(
-  () => import("../../src/components/users/UserRecipeDiary")
-);
-const UserFollowing = dynamic(
-  () => import("../../src/components/users/UserFollowing")
-);
-const UserRatings = dynamic(
-  () => import("../../src/components/users/UserRatings")
-);
-const UserRecentRecipes = dynamic(
-  () => import("../../src/components/users/UserRecentRecipes")
-);
-
-interface Props {
-  user: Users;
-  cooklist: (Cooklist & { recipes: Recipes })[];
-  diaryEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
-  favoritesCreators: (FavoritesCreators & { creators: Creators })[];
-  favoritesRecipes: (FavoritesRecipes & { recipes: Recipes })[];
-  followers: Following[];
-  following: Following[];
-  reviews: (Reviews & { users: Users })[];
-  sessionUser: any;
-}
-
-function UserPage({
+export default function UserPage({
   user,
   cooklist,
   diaryEntries,
@@ -70,21 +27,28 @@ function UserPage({
   following,
   reviews,
   sessionUser,
-}: Props) {
+}: any) {
   const title = `${user.username}'s Profile • Savry`;
-  const avatarSize = "56px";
-
-  const creators = favoritesCreators.map((fav) => fav.creators);
-  const recipes = favoritesRecipes.map((fav) => fav.recipes);
+  const creators = favoritesCreators.map((f: any) => f.creators);
+  const recipes = favoritesRecipes.map((f: any) => f.recipes);
 
   return (
-    <div>
+    <>
       <Head>
         <title>{title}</title>
       </Head>
-      <Grid container spacing={2}>
+      <Box
+        component="main"
+        sx={{
+          maxWidth: "1080px",
+          mx: "auto",
+          px: { xs: 2, sm: 3, md: 4 },
+          pt: 4,
+          pb: 12,
+        }}
+      >
         <ProfileStatBar
-          avatarSize={avatarSize}
+          avatarSize="56px"
           diaryEntries={diaryEntries}
           following={following}
           followers={followers}
@@ -92,35 +56,49 @@ function UserPage({
           user={user}
         />
         <ProfileLinkBar username={user.username} />
-        <Grid item xs={8}>
-          <FavoriteCreators creators={creators} />
-          <FavoriteRecipes recipes={recipes} />
-          <UserRecentRecipes diaryEntries={diaryEntries} />
-          <UserFollowing following={following} />
-        </Grid>
-        <Grid item xs={4}>
-          <UserCooklistPreview cooklist={cooklist} />
-          <UserRecipeDiary diaryEntries={diaryEntries} />
-          <UserRatings reviews={reviews} />
-          <UserActivity diaryEntries={diaryEntries} />
-        </Grid>
-      </Grid>
-    </div>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "1fr 320px" },
+            gap: 4,
+            mt: 4,
+            alignItems: "start",
+          }}
+        >
+          {/* Main column */}
+          <Box
+            sx={{
+              minWidth: 0,
+              display: "flex",
+              flexDirection: "column",
+              gap: 5,
+            }}
+          >
+            <FavoriteCreators creators={creators} />
+            <FavoriteRecipes recipes={recipes} />
+            <UserRecentRecipes diaryEntries={diaryEntries} />
+            <UserFollowing following={following} />
+          </Box>
+
+          {/* Sidebar */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <UserCooklistPreview cooklist={cooklist} />
+            <UserRecipeDiary diaryEntries={diaryEntries} />
+            <UserRatings reviews={reviews} />
+          </Box>
+        </Box>
+      </Box>
+    </>
   );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { username } = context.params as { username: string };
   const session = await getSession(context);
-  const sessionUser = session?.user || null;
+  const sessionUser = session?.user ?? null;
 
   const user = await getUserProfile(username);
-
-  if (!user) {
-    return {
-      notFound: true,
-    };
-  }
+  if (!user) return { notFound: true };
 
   const followers = await getFollowers(username);
   const {
@@ -133,7 +111,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   } = user;
 
   return {
-    props: {
+    props: serializePrisma({
       user,
       cooklist,
       diaryEntries,
@@ -143,8 +121,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       followers,
       reviews,
       sessionUser,
-    },
+    }),
   };
 }
-
-export default UserPage;

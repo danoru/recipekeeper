@@ -1,81 +1,135 @@
 import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
+import NextLink from "next/link";
+import Decimal from "decimal.js";
+import StarRating from "../ui/StarRating";
+import dayjs from "dayjs";
 
 interface Props {
   image: string;
   link: string;
   name: string;
+  // Optional — shown when card is used in diary/activity context
+  date?: Date | string;
+  rating?: number | Decimal;
+  username?: string;
 }
 
-function RecipeCard({ image, link, name }: Props) {
+export default function RecipeCard({
+  image,
+  link,
+  name,
+  date,
+  rating,
+  username,
+}: Props) {
+  const numericRating =
+    rating instanceof Decimal ? rating.toNumber() : (rating ?? null);
+
+  const formattedDate = date ? dayjs(date).format("MMM D") : null;
+
   return (
-    <Grid item>
-      <Card
+    <Box
+      component={NextLink}
+      href={link}
+      sx={{
+        position: "relative",
+        display: "block",
+        borderRadius: "10px",
+        overflow: "hidden",
+        aspectRatio: "3/4",
+        border: "1px solid rgba(255,255,255,0.07)",
+        textDecoration: "none",
+        bgcolor: "#161616",
+        transition: "border-color 0.2s, transform 0.2s",
+        "&:hover": {
+          borderColor: "rgba(255,255,255,0.16)",
+          transform: "translateY(-2px)",
+          "& .recipe-image": { transform: "scale(1.04)" },
+        },
+      }}
+    >
+      {/* Image */}
+      <Box
+        className="recipe-image"
         sx={{
-          position: "relative",
-          height: "270px",
-          width: "211.5px",
-          overflow: "hidden",
-          "&:hover": {
-            ".overlay": {
-              borderColor: "white",
-            },
-            ".image": {
-              filter: "brightness(0.8)",
-            },
-          },
+          position: "absolute",
+          inset: 0,
+          backgroundImage: `url(${image})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          transition: "transform 0.4s ease",
+        }}
+      />
+
+      {/* Gradient overlay */}
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.2) 55%, transparent 100%)",
+        }}
+      />
+
+      {/* Content */}
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          p: 1.5,
+          display: "flex",
+          flexDirection: "column",
+          gap: 0.5,
         }}
       >
-        <Link href={link} underline="none">
-          <CardMedia
-            className="image"
-            image={image}
-            title={name}
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              filter: "brightness(0.5)",
-              transition: "filter 0.3s",
-            }}
-          />
+        {numericRating !== null && (
+          <StarRating rating={numericRating} size="sm" />
+        )}
+
+        <Typography
+          sx={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "0.875rem",
+            lineHeight: 1.3,
+            color: "#fff",
+          }}
+        >
+          {name}
+        </Typography>
+
+        {(username || formattedDate) && (
           <Box
-            className="overlay"
-            style={{
-              position: "absolute",
-              top: "5px",
-              right: "5px",
-              bottom: "5px",
-              left: "5px",
-              border: "2px solid rgba(255, 255, 255, 0.5)",
-              pointerEvents: "none",
-              transition: "border-color 0.3s",
-            }}
-          />
-          <Typography
-            gutterBottom
-            variant="subtitle1"
-            color="secondary"
             sx={{
-              position: "absolute",
-              bottom: "10px",
-              left: "10px",
-              color: "white",
-              textShadow: "0 0 5px rgba(0, 0, 0, 0.7)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            {name}
-          </Typography>
-        </Link>
-      </Card>
-    </Grid>
+            {username && (
+              <Typography
+                sx={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.5)" }}
+              >
+                {username}
+              </Typography>
+            )}
+            {formattedDate && (
+              <Typography
+                sx={{
+                  fontSize: "0.625rem",
+                  color: "rgba(255,255,255,0.35)",
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                }}
+              >
+                {formattedDate}
+              </Typography>
+            )}
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 }
-
-export default RecipeCard;

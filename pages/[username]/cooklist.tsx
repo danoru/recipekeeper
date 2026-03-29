@@ -1,69 +1,77 @@
-import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import Head from "next/head";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import RecipeList from "../../src/components/recipes/RecipeList";
+import Typography from "@mui/material/Typography";
 import { findUserByUsername, getAllUsers } from "../../src/data/users";
 import { getCooklist } from "../../src/data/recipes";
-import { Cooklist, Recipes, Users } from "@prisma/client";
+import { serializePrisma } from "../../src/data/helpers";
 
 interface Props {
-  user: Users;
-  cooklist: (Cooklist & { recipes: Recipes })[];
+  user: any;
+  cooklist: any[];
 }
 
-interface Params {
-  params: {
-    username: string;
-  };
-}
-
-function UserCooklist({ cooklist, user }: Props) {
+export default function UserCooklist({ cooklist, user }: Props) {
   const title = `${user.username}'s Cooklist • Savry`;
-  const header = `${user.username} WANTS TO COOK ${cooklist.length} RECIPES`;
-  const style = "overline";
-  const recipes = cooklist.map((item) => item.recipes);
+  const recipes = cooklist.map((item: any) => item.recipes);
 
   return (
-    <div>
+    <>
       <Head>
         <title>{title}</title>
       </Head>
-      <Grid container>
+
+      <Box
+        component="main"
+        sx={{
+          maxWidth: "1080px",
+          mx: "auto",
+          px: { xs: 2, sm: 3, md: 4 },
+          pt: 4,
+          pb: 12,
+        }}
+      >
         <ProfileLinkBar username={user.username} />
-        <RecipeList recipes={recipes} header={header} style={style} />
-      </Grid>
-    </div>
+
+        <Box sx={{ mt: 4 }}>
+          <Typography
+            sx={{ fontSize: "0.8125rem", color: "text.disabled", mb: 3 }}
+          >
+            {cooklist.length} {cooklist.length === 1 ? "recipe" : "recipes"}{" "}
+            saved
+          </Typography>
+          <RecipeList
+            header={`${user.username}'s cooklist`}
+            recipes={recipes}
+          />
+        </Box>
+      </Box>
+    </>
   );
 }
 
 export async function getStaticPaths() {
   const users = await getAllUsers();
-  const paths = users.map((user) => ({
-    params: { username: user.username },
-  }));
-
   return {
-    paths,
+    paths: users.map((u) => ({ params: { username: u.username } })),
     fallback: false,
   };
 }
 
-export async function getStaticProps({ params }: Params) {
+export async function getStaticProps({
+  params,
+}: {
+  params: { username: string };
+}) {
   const { username } = params;
   const user = await findUserByUsername(username);
-  let cooklist: Cooklist[] = [];
+  if (!user) return { notFound: true };
 
-  if (user) {
-    cooklist = await getCooklist(user.id);
-  }
+  const cooklist = await getCooklist(user.id);
 
   return {
-    props: {
-      cooklist,
-      user,
-    },
+    props: serializePrisma({ cooklist, user }),
     revalidate: 1800,
   };
 }
-
-export default UserCooklist;

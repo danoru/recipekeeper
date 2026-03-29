@@ -1,7 +1,9 @@
+import { memo } from "react";
+import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import RecipeCard from "../cards/RecipeCard";
-import Typography from "@mui/material/Typography";
 import { Recipes } from "@prisma/client";
+import PopularRecipeCard from "../cards/PopularRecipeCard";
+import SectionHeader from "../ui/SectionHeader";
 
 interface Props {
   recipes: Recipes[];
@@ -9,49 +11,21 @@ interface Props {
 
 function PopularRecipeActivity({ recipes }: Props) {
   return (
-    <Grid container>
-      <Grid
-        item
-        style={{
-          borderBottomWidth: "1px",
-          borderBottomStyle: "solid",
-          borderBottomColor: "theme.palette.secondary",
-          display: "flex",
-          justifyContent: "space-between",
-          lineHeight: "0",
-          margin: "0 auto",
-          width: "75%",
-        }}
-      >
-        <Typography variant="overline" component="div">
-          RECIPES POPULAR WITH FRIENDS
-        </Typography>
-      </Grid>
-      <Grid
-        container
-        item
-        rowSpacing={1}
-        columnSpacing={2}
-        sx={{
-          margin: "10px auto",
-          maxWidth: "75%",
-        }}
-      >
-        {recipes.slice(0, 5).map((recipe, i) => {
-          return (
-            <RecipeCard
-              key={`card-${i}`}
+    <Box sx={{ mb: 5 }}>
+      <SectionHeader label="Recipes popular with friends" href="/recipes/popular/week" />
+      <Grid container spacing={1.25}>
+        {recipes.slice(0, 8).map((recipe, i) => (
+          <Grid item xs={6} sm={3} key={`pop-recipe-${i}`}>
+            <PopularRecipeCard
               name={recipe.name}
               image={recipe.image}
-              link={`/recipes/${recipe.name
-                .replace(/\s+/g, "-")
-                .toLowerCase()}`}
+              link={`/recipes/${recipe.name.replace(/\s+/g, "-").toLowerCase()}`}
             />
-          );
-        })}
+          </Grid>
+        ))}
       </Grid>
-    </Grid>
+    </Box>
   );
 }
 
-export default PopularRecipeActivity;
+export default memo(PopularRecipeActivity);

@@ -1,7 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import prisma from "../../../src/data/db";
-import { compare } from "bcrypt";
+import { compare } from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
 
           const passwordCorrect = await compare(
             credentials?.password || "",
-            user.password || ""
+            user.password || "",
           );
 
           if (passwordCorrect) {

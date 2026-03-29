@@ -5,47 +5,44 @@ interface Props {
   name: string;
 }
 
+function stringToColor(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  let color = "#";
+  for (let i = 0; i < 3; i++) {
+    color += `00${((hash >> (i * 8)) & 0xff).toString(16)}`.slice(-2);
+  }
+  return color;
+}
+
+function getInitials(name: string): string {
+  const parts = name.trim().toUpperCase().split(/\s+/);
+  if (parts.length === 0 || !parts[0]) return "?";
+  return parts.length === 1
+    ? parts[0][0]
+    : `${parts[0][0]}${parts[parts.length - 1][0]}`;
+}
+
 function UserAvatar({ avatarSize, name }: Props) {
-  function stringToColor(string: string) {
-    let hash = 0;
-    let i;
-
-    /* eslint-disable no-bitwise */
-    for (i = 0; i < string.length; i += 1) {
-      hash = string.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    let color = "#";
-
-    for (i = 0; i < 3; i += 1) {
-      const value = (hash >> (i * 8)) & 0xff;
-      color += `00${value.toString(16)}`.slice(-2);
-    }
-    /* eslint-enable no-bitwise */
-
-    return color;
-  }
-
-  function stringAvatar(name: string) {
-    const nameUppercase = name.toUpperCase();
-    const nameSplit = nameUppercase.split(" ");
-    const nameInitials =
-      nameSplit[0][0] + (nameSplit.length > 1 ? nameSplit[1][0] : "");
-    return {
-      sx: {
-        bgcolor: stringToColor(nameUppercase),
-      },
-      children: nameInitials,
-    };
-  }
+  const safeName = name?.trim() || "User";
+  const bgcolor = stringToColor(safeName.toUpperCase());
+  const initials = getInitials(safeName);
 
   return (
     <Avatar
-      alt={name}
-      title={name}
-      {...stringAvatar(name)}
-      sx={{ ...stringAvatar(name).sx, height: avatarSize, width: avatarSize }}
-    />
+      alt={safeName}
+      title={safeName}
+      sx={{
+        bgcolor,
+        height: avatarSize,
+        width: avatarSize,
+        fontSize: `calc(${avatarSize} * 0.4)`,
+      }}
+    >
+      {initials}
+    </Avatar>
   );
 }
 
