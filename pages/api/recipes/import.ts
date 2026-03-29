@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../src/data/db";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -57,11 +57,10 @@ function extractImage(img: JsonLdRecipe["image"]): string {
   return "";
 }
 
-/** Derive a slug-style key from a URL, used as Creators.link */
 function creatorSlugFromUrl(url: string): string {
   try {
     const { hostname } = new URL(url);
-    return hostname.replace(/^www\./, "").replace(/\.[^.]+$/, ""); // e.g. "budgetbytes"
+    return hostname.replace(/^www\./, "").replace(/\.[^.]+$/, "");
   } catch {
     return url
       .toLowerCase()
@@ -74,22 +73,16 @@ function normalise(value: string): string {
   return value.trim() || "Unknown";
 }
 
-// ─── JSON-LD Extraction ───────────────────────────────────────────────────────
-
 function extractJsonLd(html: string): JsonLdRecipe | null {
   const scriptRegex =
     /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
   let match: RegExpExecArray | null;
-
   while ((match = scriptRegex.exec(html)) !== null) {
     try {
       const raw = JSON.parse(match[1]);
-
-      // Handle @graph arrays (e.g. Yoast SEO)
       const candidates: JsonLdRecipe[] = Array.isArray(raw["@graph"])
         ? raw["@graph"]
         : [raw];
-
       for (const node of candidates) {
         const type = node["@type"];
         const types = Array.isArray(type) ? type : [type];
@@ -102,16 +95,12 @@ function extractJsonLd(html: string): JsonLdRecipe | null {
   return null;
 }
 
-// ─── Open Graph fallback image ────────────────────────────────────────────────
-
 function extractOgImage(html: string): string {
   const match = html.match(
     /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
   );
   return match?.[1] ?? "";
 }
-
-// ─── Main mapper ─────────────────────────────────────────────────────────────
 
 function mapToSchema(
   recipe: JsonLdRecipe,
@@ -130,7 +119,6 @@ function mapToSchema(
       ? (authorRaw.url ?? "")
       : "";
 
-  // Derive creator website — prefer explicit author URL, else page origin
   let creatorWebsite = authorUrl;
   if (!creatorWebsite) {
     try {
@@ -141,18 +129,12 @@ function mapToSchema(
   }
 
   const creatorLink = creatorSlugFromUrl(creatorWebsite || pageUrl);
-
-  // Try to get the site name from og:site_name for a nicer creator name
   const ogSiteName =
     html.match(
       /<meta[^>]+property=["']og:site_name["'][^>]+content=["']([^"']+)["']/i,
     )?.[1] ?? "";
-
   const creatorName = authorName || ogSiteName || creatorLink;
-
   const image = extractImage(recipe.image) || extractOgImage(html);
-
-  // Diet: strip Schema.org prefix if present
   const rawDiet = firstString(recipe.suitableForDiet);
   const diet = rawDiet.replace(/https?:\/\/schema\.org\//i, "") || "None";
 
@@ -162,7 +144,7 @@ function mapToSchema(
     image,
     category: normalise(firstString(recipe.recipeCategory)),
     cuisine: normalise(firstString(recipe.recipeCuisine)),
-    course: normalise(firstString(recipe.recipeYield) ? "Main" : "Unknown"), // yield ≠ course; default sensibly
+    course: normalise(firstString(recipe.recipeYield) ? "Main" : "Unknown"),
     method: normalise(firstString(recipe.cookingMethod)),
     diet: normalise(diet),
     link: pageUrl,
@@ -175,125 +157,107 @@ function mapToSchema(
   };
 }
 
-// ─── Route handlers ───────────────────────────────────────────────────────────
+// ─── Handler ──────────────────────────────────────────────────────────────────
 
-/** GET /api/import-recipe?url=... — preview without saving */
-export async function GET(req: NextRequest) {
-  const url = req.nextUrl.searchParams.get("url");
-  if (!url) {
-    return NextResponse.json(
-      { error: "url parameter required" },
-      { status: 400 },
-    );
-  }
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  // GET — preview without saving
+  if (req.method === "GET") {
+    const url = req.query.url as string | undefined;
+    if (!url) return res.status(400).json({ error: "url parameter required" });
 
-  try {
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (compatible; RecipeImporter/1.0; +https://savry.app)",
-      },
-      next: { revalidate: 0 },
-    });
+    try {
+      const fetchRes = await fetch(url, {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (compatible; RecipeImporter/1.0; +https://savry.app)",
+        },
+      });
+      if (!fetchRes.ok)
+        return res
+          .status(422)
+          .json({ error: `Could not fetch page (${fetchRes.status})` });
 
-    if (!res.ok) {
-      return NextResponse.json(
-        { error: `Could not fetch page (${res.status})` },
-        { status: 422 },
-      );
-    }
+      const html = await fetchRes.text();
+      const jsonLd = extractJsonLd(html);
 
-    const html = await res.text();
-    const jsonLd = extractJsonLd(html);
-
-    if (!jsonLd) {
-      return NextResponse.json(
-        {
+      if (!jsonLd)
+        return res.status(422).json({
           error:
             "No structured recipe data found on this page. The site may not support Schema.org markup.",
+        });
+
+      const parsed = mapToSchema(jsonLd, url, html);
+      const existingCreator = await prisma.creators.findUnique({
+        where: { link: parsed.creatorLink },
+      });
+
+      return res.status(200).json({
+        recipe: parsed,
+        creatorExists: !!existingCreator,
+        existingCreator: existingCreator ?? null,
+      });
+    } catch (err) {
+      console.error("[import-recipe GET]", err);
+      return res
+        .status(500)
+        .json({ error: "Failed to fetch or parse the URL." });
+    }
+  }
+
+  // POST — save after user confirms
+  if (req.method === "POST") {
+    const { recipe }: { recipe: ParsedRecipe } = req.body;
+    if (!recipe?.name || !recipe?.link)
+      return res.status(400).json({ error: "Invalid recipe data" });
+
+    try {
+      await prisma.creators.upsert({
+        where: { link: recipe.creatorLink },
+        update: {},
+        create: {
+          link: recipe.creatorLink,
+          name: recipe.creatorName,
+          image: recipe.creatorImage || "",
+          website: recipe.creatorWebsite || "",
+          instagram: recipe.creatorInstagram || "",
+          youtube: recipe.creatorYoutube || "",
         },
-        { status: 422 },
-      );
+      });
+
+      const existingRecipe = await prisma.recipes.findFirst({
+        where: { link: recipe.link },
+      });
+      if (existingRecipe)
+        return res.status(409).json({
+          error: "A recipe with this URL already exists in your database.",
+        });
+
+      const created = await prisma.recipes.create({
+        data: {
+          name: recipe.name,
+          creatorId: recipe.creatorLink,
+          link: recipe.link,
+          image: recipe.image || "",
+          description: recipe.description,
+          category: recipe.category,
+          cuisine: recipe.cuisine,
+          course: recipe.course,
+          method: recipe.method,
+          diet: recipe.diet,
+        },
+      });
+
+      return res.status(200).json({ success: true, recipe: created });
+    } catch (err) {
+      console.error("[import-recipe POST]", err);
+      return res
+        .status(500)
+        .json({ error: "Database error while saving recipe." });
     }
-
-    const parsed = mapToSchema(jsonLd, url, html);
-
-    // Check if creator already exists
-    const existingCreator = await prisma.creators.findUnique({
-      where: { link: parsed.creatorLink },
-    });
-
-    return NextResponse.json({
-      recipe: parsed,
-      creatorExists: !!existingCreator,
-      existingCreator: existingCreator ?? null,
-    });
-  } catch (err) {
-    console.error("[import-recipe GET]", err);
-    return NextResponse.json(
-      { error: "Failed to fetch or parse the URL." },
-      { status: 500 },
-    );
-  }
-}
-
-/** POST /api/import-recipe — save after user confirms */
-export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { recipe }: { recipe: ParsedRecipe } = body;
-
-  if (!recipe?.name || !recipe?.link) {
-    return NextResponse.json({ error: "Invalid recipe data" }, { status: 400 });
   }
 
-  try {
-    // Upsert creator — if they exist, leave their data alone; if not, create with what we have
-    await prisma.creators.upsert({
-      where: { link: recipe.creatorLink },
-      update: {},
-      create: {
-        link: recipe.creatorLink,
-        name: recipe.creatorName,
-        image: recipe.creatorImage || "",
-        website: recipe.creatorWebsite || "",
-        instagram: recipe.creatorInstagram || "",
-        youtube: recipe.creatorYoutube || "",
-      },
-    });
-
-    // Check if recipe with this link already exists
-    const existingRecipe = await prisma.recipes.findFirst({
-      where: { link: recipe.link },
-    });
-
-    if (existingRecipe) {
-      return NextResponse.json(
-        { error: "A recipe with this URL already exists in your database." },
-        { status: 409 },
-      );
-    }
-
-    const created = await prisma.recipes.create({
-      data: {
-        name: recipe.name,
-        creatorId: recipe.creatorLink,
-        link: recipe.link,
-        image: recipe.image || "",
-        description: recipe.description,
-        category: recipe.category,
-        cuisine: recipe.cuisine,
-        course: recipe.course,
-        method: recipe.method,
-        diet: recipe.diet,
-      },
-    });
-
-    return NextResponse.json({ success: true, recipe: created });
-  } catch (err) {
-    console.error("[recipe-import POST]", err);
-    return NextResponse.json(
-      { error: "Database error while saving recipe." },
-      { status: 500 },
-    );
-  }
+  return res.status(405).json({ error: "Method not allowed" });
 }
