@@ -3,14 +3,14 @@ import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 import Decimal from "decimal.js";
 import StarRating from "../ui/StarRating";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 interface Props {
   image: string;
   link: string;
   name: string;
-  // Optional — shown when card is used in diary/activity context
-  date?: Date | string;
+
+  date?: Dayjs | string;
   rating?: number | Decimal;
   username?: string;
 }

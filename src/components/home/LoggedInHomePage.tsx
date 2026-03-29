@@ -7,6 +7,7 @@ import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
 import FriendRecipeActivity from "./FriendRecipeActivity";
 import PopularCreatorActivity from "./PopularCreatorActivity";
 import PopularRecipeActivity from "./PopularRecipeActivity";
+import dayjs from "dayjs";
 
 interface Props {
   creators: Creators[];
@@ -15,7 +16,12 @@ interface Props {
   username: string;
 }
 
-function LoggedInHomePage({ creators, recentEntries, recipes, username }: Props) {
+function LoggedInHomePage({
+  creators,
+  recentEntries,
+  recipes,
+  username,
+}: Props) {
   return (
     <Box
       component="main"
@@ -149,11 +155,10 @@ function LoggedInHomePage({ creators, recentEntries, recipes, username }: Props)
           <SidebarBlock title="Recent diary">
             <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
               {recentEntries.slice(0, 4).map((entry, i) => {
-                const slug = entry.recipes.name.replace(/\s+/g, "-").toLowerCase();
-                const date = new Date(entry.date).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                });
+                const slug = entry.recipes.name
+                  .replace(/\s+/g, "-")
+                  .toLowerCase();
+                const date = dayjs(entry.date).format("MMM D");
                 return (
                   <Box
                     key={i}

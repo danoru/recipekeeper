@@ -2,9 +2,10 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 import StarRating from "../ui/StarRating";
+import dayjs, { Dayjs } from "dayjs";
 
 interface Props {
-  date: Date | string;
+  date: Dayjs | string;
   image: string;
   link: string;
   name: string;
@@ -20,10 +21,7 @@ export default function FriendRecipeCard({
   rating,
   username,
 }: Props) {
-  const formatted = new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
+  const formattedDate = date ? dayjs(date).format("MMM D") : null;
 
   return (
     <Box
@@ -95,11 +93,24 @@ export default function FriendRecipeCard({
             alignItems: "center",
           }}
         >
-          <Typography sx={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.5)", letterSpacing: "0.04em" }}>
+          <Typography
+            sx={{
+              fontSize: "0.6875rem",
+              color: "rgba(255,255,255,0.5)",
+              letterSpacing: "0.04em",
+            }}
+          >
             {username}
           </Typography>
-          <Typography sx={{ fontSize: "0.625rem", color: "rgba(255,255,255,0.3)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-            {formatted}
+          <Typography
+            sx={{
+              fontSize: "0.625rem",
+              color: "rgba(255,255,255,0.3)",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+            }}
+          >
+            {formattedDate}
           </Typography>
         </Box>
       </Box>
