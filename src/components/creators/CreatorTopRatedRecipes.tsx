@@ -20,7 +20,6 @@ function CreatorTopRatedRecipes({ header, recipes }: Props) {
   return (
     <Grid container>
       <Grid
-        item
         style={{
           borderBottomWidth: "1px",
           borderBottomStyle: "solid",
@@ -38,7 +37,6 @@ function CreatorTopRatedRecipes({ header, recipes }: Props) {
       </Grid>
       <Grid
         container
-        item
         columnSpacing={2}
         rowSpacing={1}
         sx={{

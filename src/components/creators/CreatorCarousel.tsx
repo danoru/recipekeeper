@@ -33,7 +33,7 @@ function CreatorCarousel({ creators }: Props) {
   const containerWidth = cardsPerPage * 250; // 250px per card
 
   return (
-    <Grid container item xs={12}>
+    <Grid container size={{ xs: 12 }}>
       <Grid
         style={{
           borderBottomWidth: "1px",
@@ -51,7 +51,6 @@ function CreatorCarousel({ creators }: Props) {
         </Typography>
       </Grid>
       <Grid
-        item
         style={{
           display: "flex",
           justifyContent: "center",
