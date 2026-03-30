@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { DiaryEntries, Recipes, Users } from "@prisma/client";
+import dayjs from "dayjs";
 import { memo } from "react";
 
 import FriendRecipeCard from "../cards/FriendRecipeCard";
@@ -22,11 +23,11 @@ function FriendRecipeActivity({ recentEntries }: Props) {
           return (
             <Grid key={`friend-${i}`} size={{ sm: 4, xs: 6 }}>
               <FriendRecipeCard
-                date={entry.date}
+                date={dayjs(entry.date)}
                 image={entry.recipes.image}
                 link={`/recipes/${slug}`}
                 name={entry.recipes.name}
-                rating={entry.rating}
+                rating={Number(entry.rating)}
                 username={entry.users.username}
               />
             </Grid>
