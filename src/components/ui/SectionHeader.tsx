@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import MuiLink from "@mui/material/Link";
+import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 
 interface Props {
@@ -21,8 +21,8 @@ export default function SectionHeader({ label, href }: Props) {
       }}
     >
       <Typography
-        variant="overline"
         sx={{ fontSize: "0.625rem", letterSpacing: "0.14em", color: "#4a4744" }}
+        variant="overline"
       >
         {label}
       </Typography>
@@ -30,7 +30,6 @@ export default function SectionHeader({ label, href }: Props) {
         <MuiLink
           component={NextLink}
           href={href}
-          underline="none"
           sx={{
             fontSize: "0.6875rem",
             color: "rgba(200,169,110,0.7)",
@@ -38,6 +37,7 @@ export default function SectionHeader({ label, href }: Props) {
             transition: "color 0.15s",
             "&:hover": { color: "#c8a96e" },
           }}
+          underline="none"
         >
           See all →
         </MuiLink>

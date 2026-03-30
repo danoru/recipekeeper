@@ -1,18 +1,18 @@
+import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import MuiLink from "@mui/material/Link";
-import NextLink from "next/link";
 import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import * as Yup from "yup";
 import { Formik, Form } from "formik";
-import { signIn } from "next-auth/react";
+import NextLink from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
+import * as Yup from "yup";
 
 const validationSchema = Yup.object({
   username: Yup.string().required("Username is required."),
@@ -34,7 +34,7 @@ export default function LoginForm() {
 
   async function handleSubmit(
     values: { username: string; password: string; rememberMe: boolean },
-    { setSubmitting }: any,
+    { setSubmitting }: any
   ) {
     const response = await signIn("credentials", {
       username: values.username,
@@ -84,9 +84,7 @@ export default function LoginForm() {
         >
           Sign in
         </Typography>
-        <Typography
-          sx={{ fontSize: "0.8125rem", color: "text.disabled", mb: 4 }}
-        >
+        <Typography sx={{ fontSize: "0.8125rem", color: "text.disabled", mb: 4 }}>
           Welcome back to Savry.
         </Typography>
 
@@ -95,72 +93,63 @@ export default function LoginForm() {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({
-            isSubmitting,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            values,
-          }) => (
+          {({ isSubmitting, errors, touched, handleChange, handleBlur, values }) => (
             <Form>
               <TextField
-                variant="outlined"
+                autoFocus
                 fullWidth
+                error={touched.username && !!errors.username}
+                helperText={touched.username && errors.username}
                 id="username"
                 label="Username"
                 name="username"
-                autoFocus
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.username}
-                error={touched.username && !!errors.username}
-                helperText={touched.username && errors.username}
                 sx={{ ...fieldSx, mb: 1.5 }}
+                value={values.username}
+                variant="outlined"
+                onBlur={handleBlur}
+                onChange={handleChange}
               />
               <TextField
-                variant="outlined"
                 fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
                 autoComplete="current-password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
                 error={touched.password && !!errors.password}
                 helperText={touched.password && errors.password}
+                id="password"
+                label="Password"
+                name="password"
                 sx={{ ...fieldSx, mb: 1 }}
+                type="password"
+                value={values.password}
+                variant="outlined"
+                onBlur={handleBlur}
+                onChange={handleChange}
               />
               <FormControlLabel
                 control={
                   <Checkbox
                     checked={values.rememberMe}
-                    onChange={handleChange}
                     name="rememberMe"
                     size="small"
                     sx={{
                       color: "rgba(255,255,255,0.2)",
                       "&.Mui-checked": { color: "primary.main" },
                     }}
+                    onChange={handleChange}
                   />
                 }
                 label={
-                  <Typography
-                    sx={{ fontSize: "0.8125rem", color: "text.secondary" }}
-                  >
+                  <Typography sx={{ fontSize: "0.8125rem", color: "text.secondary" }}>
                     Remember me
                   </Typography>
                 }
                 sx={{ mb: 2.5 }}
               />
               <Button
-                type="submit"
                 fullWidth
-                variant="contained"
                 disabled={isSubmitting}
                 sx={{ borderRadius: "8px", py: 1, mb: 2 }}
+                type="submit"
+                variant="contained"
               >
                 {isSubmitting ? "Signing in…" : "Sign in"}
               </Button>
@@ -175,8 +164,8 @@ export default function LoginForm() {
                 <MuiLink
                   component={NextLink}
                   href="/register"
-                  underline="hover"
                   sx={{ color: "primary.main" }}
+                  underline="hover"
                 >
                   Register here
                 </MuiLink>
@@ -187,16 +176,16 @@ export default function LoginForm() {
       </Box>
 
       <Snackbar
-        open={snackbar.open}
-        autoHideDuration={5000}
-        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        autoHideDuration={5000}
+        open={snackbar.open}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
       >
         <Alert
           severity={snackbar.severity}
+          sx={{ borderRadius: "8px" }}
           variant="filled"
           onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
-          sx={{ borderRadius: "8px" }}
         >
           {snackbar.message}
         </Alert>

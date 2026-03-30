@@ -1,10 +1,7 @@
-import Box from "@mui/material/Box";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import EditIcon from "@mui/icons-material/Edit";
-import Head from "next/head";
+import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
-import StarRating from "../../../src/components/ui/StarRating";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -13,22 +10,25 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { findUserByUsername, getAllUsers } from "../../../src/data/users";
-import { getUserDiaryEntries } from "../../../src/data/diary";
-import { serializePrisma } from "../../../src/data/helpers";
+import { DiaryEntries, Recipes } from "@prisma/client";
 import dayjs from "dayjs";
-import { SDiaryEntryWithRecipe } from "../../../src/types/serialized";
+import Head from "next/head";
+
+import StarRating from "../../../src/components/ui/StarRating";
+import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
+import { getUserDiaryEntries } from "../../../src/data/diary";
+import { findUserByUsername, getAllUsers } from "../../../src/data/users";
 
 interface Props {
   user: any;
-  diaryEntries: SDiaryEntryWithRecipe[];
+  diaryEntries: (DiaryEntries & { recipes: Recipes })[];
 }
 
 export default function RecipeDiary({ user, diaryEntries }: Props) {
   const title = `${user.username}'s Diary • Savry`;
 
   // Group entries by month label
-  const entriesByMonth: Record<string, SDiaryEntryWithRecipe[]> = {};
+  const entriesByMonth: Record<string, (DiaryEntries & { recipes: Recipes })[]> = {};
   diaryEntries.forEach((entry) => {
     const month = dayjs(entry.date).format("MMM");
     if (!entriesByMonth[month]) entriesByMonth[month] = [];
@@ -75,15 +75,7 @@ export default function RecipeDiary({ user, diaryEntries }: Props) {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  {[
-                    "Month",
-                    "Day",
-                    "Recipe",
-                    "Rating",
-                    "Remade",
-                    "Review",
-                    "",
-                  ].map((h) => (
+                  {["Month", "Day", "Recipe", "Rating", "Remade", "Review", ""].map((h) => (
                     <TableCell key={h} sx={headerSx}>
                       {h}
                     </TableCell>
@@ -93,27 +85,20 @@ export default function RecipeDiary({ user, diaryEntries }: Props) {
               <TableBody>
                 {Object.entries(entriesByMonth).map(([month, entries]) =>
                   entries.map((entry, idx) => (
-                    <TableRow
-                      key={`${month}-${idx}`}
-                      sx={{ "&:hover": { bgcolor: "#1a1a1a" } }}
-                    >
-                      <TableCell
-                        sx={{ ...cellSx, color: "text.disabled", width: 60 }}
-                      >
+                    <TableRow key={`${month}-${idx}`} sx={{ "&:hover": { bgcolor: "#1a1a1a" } }}>
+                      <TableCell sx={{ ...cellSx, color: "text.disabled", width: 60 }}>
                         {idx === 0 ? month : ""}
                       </TableCell>
                       <TableCell sx={{ ...cellSx, width: 40 }}>
                         {dayjs(entry.date).format("d")}
                       </TableCell>
                       <TableCell sx={cellSx}>
-                        <Typography
-                          sx={{ fontSize: "0.875rem", color: "text.primary" }}
-                        >
+                        <Typography sx={{ fontSize: "0.875rem", color: "text.primary" }}>
                           {entry.recipes.name}
                         </Typography>
                       </TableCell>
                       <TableCell sx={cellSx}>
-                        <StarRating rating={entry.rating} size="sm" />
+                        <StarRating rating={Number(entry.rating)} size="sm" />
                       </TableCell>
                       <TableCell sx={{ ...cellSx, textAlign: "center" }}>
                         {entry.hasCookedBefore && (
@@ -130,9 +115,7 @@ export default function RecipeDiary({ user, diaryEntries }: Props) {
                       </TableCell>
                       <TableCell sx={{ ...cellSx, maxWidth: 280 }}>
                         {entry.comment ?? (
-                          <Typography
-                            sx={{ fontSize: "0.75rem", color: "text.disabled" }}
-                          >
+                          <Typography sx={{ fontSize: "0.75rem", color: "text.disabled" }}>
                             N/A
                           </Typography>
                         )}
@@ -149,7 +132,7 @@ export default function RecipeDiary({ user, diaryEntries }: Props) {
                         </IconButton>
                       </TableCell>
                     </TableRow>
-                  )),
+                  ))
                 )}
               </TableBody>
             </Table>
@@ -168,11 +151,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({
-  params,
-}: {
-  params: { username: string };
-}) {
+export async function getStaticProps({ params }: { params: { username: string } }) {
   const { username } = params;
   const user = await findUserByUsername(username);
   if (!user) return { notFound: true };
@@ -180,7 +159,7 @@ export async function getStaticProps({
   const diaryEntries = await getUserDiaryEntries(user.id);
 
   return {
-    props: serializePrisma({ diaryEntries, user }),
+    props: { diaryEntries, user },
     revalidate: 1800,
   };
 }

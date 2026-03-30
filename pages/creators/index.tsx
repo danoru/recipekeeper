@@ -1,25 +1,15 @@
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import { Box, Grid, Typography } from "@mui/material";
+import { Creators } from "@prisma/client";
 import Head from "next/head";
 import Link from "next/link";
-import Typography from "@mui/material/Typography";
-import SectionHeader from "../../src/components/ui/SectionHeader";
-import { getAllCreators, getFeaturedCreators } from "../../src/data/creators";
-import { creatorHref, serializePrisma } from "../../src/data/helpers";
 
-interface SerializedCreator {
-  name: string;
-  link: string;
-  image: string;
-  website: string | null;
-  instagram: string | null;
-  youtube: string | null;
-  [key: string]: any;
-}
+import SectionHeader from "@/components/ui/SectionHeader";
+import { getAllCreators, getFeaturedCreators } from "@/data/creators";
+import { creatorHref } from "@/data/helpers";
 
 interface Props {
-  creators: SerializedCreator[];
-  featured: SerializedCreator[];
+  creators: Creators[];
+  featured: Creators[];
 }
 
 export default function CreatorsPage({ creators, featured }: Props) {
@@ -45,8 +35,8 @@ export default function CreatorsPage({ creators, featured }: Props) {
             <SectionHeader label="Featured creators" />
             <Grid container spacing={1.5}>
               {featured.slice(0, 4).map((creator) => (
-                <Grid item xs={6} sm={3} key={creator.link}>
-                  <CreatorCard creator={creator} featured />
+                <Grid key={creator.link} size={{ xs: 6, sm: 3 }}>
+                  <CreatorCard featured creator={creator} />
                 </Grid>
               ))}
             </Grid>
@@ -57,7 +47,7 @@ export default function CreatorsPage({ creators, featured }: Props) {
         <SectionHeader label="All creators" />
         <Grid container spacing={1.5}>
           {creators.map((creator) => (
-            <Grid item xs={6} sm={4} md={3} key={creator.link}>
+            <Grid key={creator.link} size={{ xs: 6, sm: 4, md: 3 }}>
               <CreatorCard creator={creator} />
             </Grid>
           ))}
@@ -67,13 +57,7 @@ export default function CreatorsPage({ creators, featured }: Props) {
   );
 }
 
-function CreatorCard({
-  creator,
-  featured = false,
-}: {
-  creator: SerializedCreator;
-  featured?: boolean;
-}) {
+function CreatorCard({ creator, featured = false }: { creator: Creators; featured?: boolean }) {
   return (
     <Box
       component={Link}
@@ -84,16 +68,12 @@ function CreatorCard({
         borderRadius: "10px",
         overflow: "hidden",
         aspectRatio: "3/4",
-        border: featured
-          ? "1px solid rgba(200,169,110,0.3)"
-          : "1px solid rgba(255,255,255,0.07)",
+        border: featured ? "1px solid rgba(200,169,110,0.3)" : "1px solid rgba(255,255,255,0.07)",
         textDecoration: "none",
         bgcolor: "#161616",
         transition: "border-color 0.2s, transform 0.2s",
         "&:hover": {
-          borderColor: featured
-            ? "rgba(200,169,110,0.6)"
-            : "rgba(255,255,255,0.16)",
+          borderColor: featured ? "rgba(200,169,110,0.6)" : "rgba(255,255,255,0.16)",
           transform: "translateY(-2px)",
           "& .creator-img": { transform: "scale(1.04)" },
         },
@@ -115,8 +95,7 @@ function CreatorCard({
         sx={{
           position: "absolute",
           inset: 0,
-          background:
-            "linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 55%)",
+          background: "linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 55%)",
         }}
       />
       <Box sx={{ position: "absolute", bottom: 0, left: 0, right: 0, p: 1.5 }}>
@@ -155,9 +134,9 @@ export async function getServerSideProps() {
   ]);
 
   return {
-    props: serializePrisma({
+    props: {
       creators: allCreators,
       featured: featuredCreators,
-    }),
+    },
   };
 }

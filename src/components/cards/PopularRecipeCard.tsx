@@ -32,9 +32,9 @@ export default function PopularRecipeCard({ image, link, name }: Props) {
       }}
     >
       <Box
+        alt={name}
         component="img"
         src={image}
-        alt={name}
         sx={{
           width: "100%",
           height: "100%",
@@ -47,8 +47,7 @@ export default function PopularRecipeCard({ image, link, name }: Props) {
         sx={{
           position: "absolute",
           inset: 0,
-          background:
-            "linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 60%)",
+          background: "linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 60%)",
           display: "flex",
           alignItems: "flex-end",
           p: 1.25,

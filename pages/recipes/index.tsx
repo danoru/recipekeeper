@@ -1,44 +1,33 @@
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
-import Head from "next/head";
+import MuiLink from "@mui/material/Link";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
-import RecipeCard from "../../src/components/cards/RecipeCard";
-import SectionHeader from "../../src/components/ui/SectionHeader";
-import {
-  getAllRecipes,
-  getFilteredRecipes,
-  getRecipesByRating,
-} from "../../src/data/recipes";
-import { getAllCreators } from "../../src/data/creators";
-import { recipeHref, creatorHref } from "../../src/data/helpers";
-import { serializePrisma } from "../../src/data/helpers";
-import { useRouter } from "next/router";
 import { Recipes, Creators } from "@prisma/client";
 import type { GetServerSidePropsContext } from "next";
-import NextLink from "next/link";
-import MuiLink from "@mui/material/Link";
+import Head from "next/head";
 import Image from "next/image";
-import ImportRecipeModal from "../../src/components/modals/ImportRecipeModal";
-import { Button } from "@mui/material";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
+import superjson from "superjson";
+
+import RecipeCard from "@/components/cards/RecipeCard";
+import ImportRecipeModal from "@/components/modals/ImportRecipeModal";
+import SectionHeader from "@/components/ui/SectionHeader";
+import { getAllCreators } from "@/data/creators";
+import { recipeHref, creatorHref } from "@/data/helpers";
+import { getAllRecipes, getFilteredRecipes, getRecipesByRating } from "@/data/recipes";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type RecipeWithCreator = Recipes & { creators: Creators };
-
 type View = "all" | "by-creator" | "popular" | "highest" | "lowest";
 
-const FILTER_KEYS = [
-  "cuisine",
-  "category",
-  "course",
-  "method",
-  "diet",
-] as const;
+const FILTER_KEYS = ["cuisine", "category", "course", "method", "diet"] as const;
 type FilterKey = (typeof FILTER_KEYS)[number];
 
 const FILTER_LABELS: Record<FilterKey, string> = {
@@ -58,9 +47,8 @@ const VIEW_LABELS: Record<View, string> = {
 };
 
 interface Props {
-  recipes: RecipeWithCreator[];
+  recipes: (Recipes & { creators: Creators })[];
   creators: Creators[];
-  // Unique values for each filter dimension, derived server-side
   filterOptions: Record<FilterKey, string[]>;
   activeFilters: Partial<Record<FilterKey, string>>;
   activeView: View;
@@ -71,7 +59,7 @@ interface Props {
 
 function buildHref(
   base: Partial<Record<FilterKey, string>> & { view?: View },
-  overrides: Partial<Record<FilterKey, string>> & { view?: View },
+  overrides: Partial<Record<FilterKey, string>> & { view?: View }
 ): string {
   const merged = { ...base, ...overrides };
   const params = new URLSearchParams();
@@ -84,11 +72,11 @@ function buildHref(
 }
 
 function groupByCreator(
-  recipes: RecipeWithCreator[],
-): Map<string, { creator: Creators; recipes: RecipeWithCreator[] }> {
+  recipes: (Recipes & { creators: Creators })[]
+): Map<string, { creator: Creators; recipes: (Recipes & { creators: Creators })[] }> {
   const map = new Map<
     string,
-    { creator: Creators; recipes: RecipeWithCreator[] }
+    { creator: Creators; recipes: (Recipes & { creators: Creators })[] }
   >();
   for (const recipe of recipes) {
     const key = recipe.creators.link ?? String(recipe.creatorId);
@@ -158,20 +146,16 @@ export default function RecipesPage({
             </Typography>
             <Typography sx={{ fontSize: "0.8125rem", color: "text.disabled" }}>
               {totalCount.toLocaleString()} recipes
-              {hasActiveFilters && (
-                <> · filtered by {Object.values(activeFilters).join(", ")}</>
-              )}
+              {hasActiveFilters && <> · filtered by {Object.values(activeFilters).join(", ")}</>}
             </Typography>
           </Box>
 
           <Button
-            variant="outlined"
             size="small"
-            startIcon={
-              <FileDownloadOutlinedIcon sx={{ fontSize: "15px !important" }} />
-            }
-            onClick={() => setImportOpen(true)}
+            startIcon={<FileDownloadOutlinedIcon sx={{ fontSize: "15px !important" }} />}
             sx={{ mb: 1 }}
+            variant="outlined"
+            onClick={() => setImportOpen(true)}
           >
             Import Recipe
           </Button>
@@ -202,9 +186,7 @@ export default function RecipesPage({
                   textDecoration: "none",
                   px: 1.5,
                   py: 1.25,
-                  borderBottom: active
-                    ? "2px solid #c8a96e"
-                    : "2px solid transparent",
+                  borderBottom: active ? "2px solid #c8a96e" : "2px solid transparent",
                   mb: "-1px",
                   transition: "color 0.15s",
                   whiteSpace: "nowrap",
@@ -221,8 +203,8 @@ export default function RecipesPage({
         {creators.length > 0 && activeView !== "by-creator" && (
           <Box sx={{ mb: 5 }}>
             <SectionHeader
-              label="Browse by creator"
               href={buildHref(activeFilters, { view: "by-creator" })}
+              label="Browse by creator"
             />
             <Box
               sx={{
@@ -266,11 +248,11 @@ export default function RecipesPage({
                   >
                     {creator.image && (
                       <Image
-                        src={creator.image}
-                        alt={creator.name}
                         fill
-                        style={{ objectFit: "cover", objectPosition: "top" }}
+                        alt={creator.name}
                         sizes="44px"
+                        src={creator.image}
+                        style={{ objectFit: "cover", objectPosition: "top" }}
                       />
                     )}
                   </Box>
@@ -299,8 +281,32 @@ export default function RecipesPage({
             return (
               <Select
                 key={key}
-                size="small"
                 displayEmpty
+                renderValue={(val) =>
+                  val ? (
+                    <Box component="span" sx={{ color: "#c8a96e", fontSize: "0.75rem" }}>
+                      {FILTER_LABELS[key]}: {val}
+                    </Box>
+                  ) : (
+                    <Box component="span" sx={{ color: "text.disabled", fontSize: "0.75rem" }}>
+                      {FILTER_LABELS[key]}
+                    </Box>
+                  )
+                }
+                size="small"
+                sx={{
+                  height: 30,
+                  fontSize: "0.75rem",
+                  borderRadius: "99px",
+                  bgcolor: activeValue ? "rgba(200,169,110,0.1)" : "transparent",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: activeValue ? "rgba(200,169,110,0.35)" : "rgba(255,255,255,0.1)",
+                    borderRadius: "99px",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: activeValue ? "rgba(200,169,110,0.6)" : "rgba(255,255,255,0.2)",
+                  },
+                }}
                 value={activeValue ?? ""}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -309,54 +315,12 @@ export default function RecipesPage({
                   else delete next[key];
                   router.push(buildHref(next, { view: activeView }));
                 }}
-                renderValue={(val) =>
-                  val ? (
-                    <Box
-                      component="span"
-                      sx={{ color: "#c8a96e", fontSize: "0.75rem" }}
-                    >
-                      {FILTER_LABELS[key]}: {val}
-                    </Box>
-                  ) : (
-                    <Box
-                      component="span"
-                      sx={{ color: "text.disabled", fontSize: "0.75rem" }}
-                    >
-                      {FILTER_LABELS[key]}
-                    </Box>
-                  )
-                }
-                sx={{
-                  height: 30,
-                  fontSize: "0.75rem",
-                  borderRadius: "99px",
-                  bgcolor: activeValue
-                    ? "rgba(200,169,110,0.1)"
-                    : "transparent",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: activeValue
-                      ? "rgba(200,169,110,0.35)"
-                      : "rgba(255,255,255,0.1)",
-                    borderRadius: "99px",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: activeValue
-                      ? "rgba(200,169,110,0.6)"
-                      : "rgba(255,255,255,0.2)",
-                  },
-                }}
               >
                 <MenuItem value="">
-                  <em style={{ fontSize: "0.8125rem" }}>
-                    All {FILTER_LABELS[key].toLowerCase()}s
-                  </em>
+                  <em style={{ fontSize: "0.8125rem" }}>All {FILTER_LABELS[key].toLowerCase()}s</em>
                 </MenuItem>
                 {options.map((opt) => (
-                  <MenuItem
-                    key={opt}
-                    value={opt}
-                    sx={{ fontSize: "0.8125rem" }}
-                  >
+                  <MenuItem key={opt} sx={{ fontSize: "0.8125rem" }} value={opt}>
                     {opt.charAt(0).toUpperCase() + opt.slice(1)}
                   </MenuItem>
                 ))}
@@ -368,7 +332,6 @@ export default function RecipesPage({
             <Chip
               label="Clear filters"
               size="small"
-              onClick={() => router.push(buildHref({}, { view: activeView }))}
               sx={{
                 height: 30,
                 fontSize: "0.6875rem",
@@ -382,6 +345,7 @@ export default function RecipesPage({
                   color: "text.secondary",
                 },
               }}
+              onClick={() => router.push(buildHref({}, { view: activeView }))}
             />
           )}
         </Box>
@@ -391,19 +355,17 @@ export default function RecipesPage({
           <>
             <SectionHeader label={VIEW_LABELS[activeView]} />
             {recipes.length === 0 ? (
-              <Typography
-                sx={{ color: "text.disabled", fontSize: "0.875rem", mt: 4 }}
-              >
+              <Typography sx={{ color: "text.disabled", fontSize: "0.875rem", mt: 4 }}>
                 No recipes found for these filters.
               </Typography>
             ) : (
               <Grid container spacing={1.5}>
                 {recipes.map((recipe, i) => (
-                  <Grid item xs={6} sm={4} md={3} key={`r-${i}`}>
+                  <Grid key={`r-${i}`} size={{ xs: 6, sm: 4, md: 3 }}>
                     <RecipeCard
-                      name={recipe.name}
                       image={recipe.image}
                       link={recipeHref(recipe.creators.name, recipe.name)}
+                      name={recipe.name}
                     />
                   </Grid>
                 ))}
@@ -415,108 +377,101 @@ export default function RecipesPage({
         {/* ── By-creator view ── */}
         {activeView === "by-creator" && grouped && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            {Array.from(grouped.entries()).map(
-              ([key, { creator, recipes: creatorRecipes }]) => (
-                <Box key={key}>
-                  {/* Creator header */}
+            {Array.from(grouped.entries()).map(([key, { creator, recipes: creatorRecipes }]) => (
+              <Box key={key}>
+                {/* Creator header */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    mb: 2,
+                    pb: 1.5,
+                    borderBottom: "1px solid rgba(255,255,255,0.07)",
+                  }}
+                >
                   <Box
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1.5,
-                      mb: 2,
-                      pb: 1.5,
-                      borderBottom: "1px solid rgba(255,255,255,0.07)",
+                      width: 36,
+                      height: 36,
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      bgcolor: "#1e1e1e",
+                      flexShrink: 0,
+                      position: "relative",
                     }}
                   >
-                    <Box
+                    {creator.image && (
+                      <Image
+                        fill
+                        alt={creator.name}
+                        sizes="36px"
+                        src={creator.image}
+                        style={{ objectFit: "cover", objectPosition: "top" }}
+                      />
+                    )}
+                  </Box>
+                  <Box>
+                    <MuiLink
+                      component={NextLink}
+                      href={creatorHref(creator.link ?? creator.name)}
                       sx={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: "50%",
-                        overflow: "hidden",
-                        border: "1px solid rgba(255,255,255,0.07)",
-                        bgcolor: "#1e1e1e",
-                        flexShrink: 0,
-                        position: "relative",
+                        fontSize: "0.9375rem",
+                        fontWeight: 500,
+                        color: "text.primary",
+                        "&:hover": { color: "primary.main" },
+                        transition: "color 0.15s",
                       }}
+                      underline="none"
                     >
-                      {creator.image && (
-                        <Image
-                          src={creator.image}
-                          alt={creator.name}
-                          fill
-                          style={{ objectFit: "cover", objectPosition: "top" }}
-                          sizes="36px"
-                        />
-                      )}
-                    </Box>
-                    <Box>
-                      <MuiLink
+                      {creator.name}
+                    </MuiLink>
+                    <Typography sx={{ fontSize: "0.75rem", color: "text.disabled" }}>
+                      {creatorRecipes.length} {creatorRecipes.length === 1 ? "recipe" : "recipes"}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {/* Recipe row — 5 visible + overflow */}
+                <Grid container spacing={1.5}>
+                  {creatorRecipes.slice(0, 5).map((recipe, i) => (
+                    <Grid key={`cr-${i}`} size={{ xs: 6, sm: 4, md: 2.4 }}>
+                      <RecipeCard
+                        image={recipe.image}
+                        link={recipeHref(recipe.creators.name, recipe.name)}
+                        name={recipe.name}
+                      />
+                    </Grid>
+                  ))}
+                  {creatorRecipes.length > 5 && (
+                    <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
+                      <Box
                         component={NextLink}
                         href={creatorHref(creator.link ?? creator.name)}
-                        underline="none"
                         sx={{
-                          fontSize: "0.9375rem",
-                          fontWeight: 500,
-                          color: "text.primary",
-                          "&:hover": { color: "primary.main" },
-                          transition: "color 0.15s",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          aspectRatio: "3/4",
+                          borderRadius: "10px",
+                          border: "1px dashed rgba(255,255,255,0.12)",
+                          textDecoration: "none",
+                          transition: "border-color 0.15s",
+                          "&:hover": {
+                            borderColor: "rgba(255,255,255,0.22)",
+                          },
                         }}
                       >
-                        {creator.name}
-                      </MuiLink>
-                      <Typography
-                        sx={{ fontSize: "0.75rem", color: "text.disabled" }}
-                      >
-                        {creatorRecipes.length}{" "}
-                        {creatorRecipes.length === 1 ? "recipe" : "recipes"}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  {/* Recipe row — 5 visible + overflow */}
-                  <Grid container spacing={1.5}>
-                    {creatorRecipes.slice(0, 5).map((recipe, i) => (
-                      <Grid item xs={6} sm={4} md={2.4} key={`cr-${i}`}>
-                        <RecipeCard
-                          name={recipe.name}
-                          image={recipe.image}
-                          link={recipeHref(recipe.creators.name, recipe.name)}
-                        />
-                      </Grid>
-                    ))}
-                    {creatorRecipes.length > 5 && (
-                      <Grid item xs={6} sm={4} md={2.4}>
-                        <Box
-                          component={NextLink}
-                          href={creatorHref(creator.link ?? creator.name)}
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            aspectRatio: "3/4",
-                            borderRadius: "10px",
-                            border: "1px dashed rgba(255,255,255,0.12)",
-                            textDecoration: "none",
-                            transition: "border-color 0.15s",
-                            "&:hover": {
-                              borderColor: "rgba(255,255,255,0.22)",
-                            },
-                          }}
-                        >
-                          <Typography
-                            sx={{ fontSize: "0.75rem", color: "text.disabled" }}
-                          >
-                            +{creatorRecipes.length - 5} more
-                          </Typography>
-                        </Box>
-                      </Grid>
-                    )}
-                  </Grid>
-                </Box>
-              ),
-            )}
+                        <Typography sx={{ fontSize: "0.75rem", color: "text.disabled" }}>
+                          +{creatorRecipes.length - 5} more
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  )}
+                </Grid>
+              </Box>
+            ))}
           </Box>
         )}
       </Box>
@@ -536,9 +491,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { query } = context;
 
   const activeView = (
-    ["all", "by-creator", "popular", "highest", "lowest"].includes(
-      query.view as string,
-    )
+    ["all", "by-creator", "popular", "highest", "lowest"].includes(query.view as string)
       ? query.view
       : "all"
   ) as View;
@@ -554,18 +507,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const hasFilters = Object.keys(activeFilters).length > 0;
 
   // Fetch recipes based on view + filters
-  let recipes: RecipeWithCreator[] = [];
+  let recipes: (Recipes & { creators: Creators })[] = [];
 
   if (hasFilters) {
     // Apply first active filter via existing getFilteredRecipes,
     // then filter remaining keys in JS (avoids needing a new DB function)
     const [firstKey, firstVal] = Object.entries(activeFilters)[0];
     const base = await getFilteredRecipes(firstKey, firstVal as string);
-    recipes = (base as RecipeWithCreator[]).filter((r) =>
+    recipes = (base as (Recipes & { creators: Creators })[]).filter((r) =>
       Object.entries(activeFilters).every(([k, v]) => {
         const recipeVal = r[k as keyof Recipes];
         return recipeVal?.toString().toLowerCase() === v?.toLowerCase();
-      }),
+      })
     );
   } else if (activeView === "highest") {
     recipes = await getRecipesByRating("highest");
@@ -577,30 +530,26 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   // Build filter option lists from full recipe set for the dropdowns
-  const allRecipes: RecipeWithCreator[] = await getAllRecipes();
+  const allRecipes: (Recipes & { creators: Creators })[] = await getAllRecipes();
   const filterOptions = Object.fromEntries(
     FILTER_KEYS.map((key) => [
       key,
       [
-        ...new Set(
-          allRecipes
-            .map((r) => r[key as keyof Recipes]?.toString())
-            .filter(Boolean),
-        ),
+        ...new Set(allRecipes.map((r) => r[key as keyof Recipes]?.toString()).filter(Boolean)),
       ].sort(),
-    ]),
+    ])
   ) as Record<FilterKey, string[]>;
 
   const creators = await getAllCreators();
 
   return {
-    props: serializePrisma({
+    props: superjson.serialize({
       recipes,
       creators,
       filterOptions,
       activeFilters,
       activeView,
       totalCount: allRecipes.length,
-    }),
+    }).json,
   };
 }

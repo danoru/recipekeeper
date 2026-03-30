@@ -1,7 +1,8 @@
 import Grid from "@mui/material/Grid";
-import RecipeCard from "../cards/RecipeCard";
 import Typography from "@mui/material/Typography";
 import { Recipes } from "@prisma/client";
+
+import RecipeCard from "../cards/RecipeCard";
 
 interface Props {
   header: string;
@@ -31,15 +32,15 @@ function CreatorTopRatedRecipes({ header, recipes }: Props) {
           width: "75%",
         }}
       >
-        <Typography variant={typographyStyle} component="div">
+        <Typography component="div" variant={typographyStyle}>
           {styledHeader}
         </Typography>
       </Grid>
       <Grid
         container
         item
-        rowSpacing={1}
         columnSpacing={2}
+        rowSpacing={1}
         sx={{
           margin: "10px auto",
           maxWidth: "75%",
@@ -49,11 +50,9 @@ function CreatorTopRatedRecipes({ header, recipes }: Props) {
           return (
             <RecipeCard
               key={`card-${i}`}
-              name={recipe.name}
               image={recipe.image}
-              link={`/recipes/${recipe.name
-                .replace(/\s+/g, "-")
-                .toLowerCase()}`}
+              link={`/recipes/${recipe.name.replace(/\s+/g, "-").toLowerCase()}`}
+              name={recipe.name}
             />
           );
         })}

@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import LinkIcon from "@mui/icons-material/Link";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
@@ -10,13 +12,14 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
-import LinkIcon from "@mui/icons-material/Link";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import UserAvatar from "./UserAvatar";
 import { DiaryEntries, Following, Users } from "@prisma/client";
-import { followUser, unfollowUser } from "../../data/users";
 import dayjs from "dayjs";
+import React, { useState } from "react";
+
+import { followUser, unfollowUser } from "../../data/users";
+
+import UserAvatar from "./UserAvatar";
+
 
 interface Props {
   avatarSize: string;
@@ -35,8 +38,7 @@ function ProfileStatBar({
   sessionUser,
   user,
 }: Props) {
-  const fullName =
-    [user.firstName, user.lastName].filter(Boolean).join(" ") || user.username;
+  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.username;
 
   // ── Menu ────────────────────────────────────────────────────────────────
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -61,8 +63,7 @@ function ProfileStatBar({
   // ── Follow state ─────────────────────────────────────────────────────────
   const isSessionUser = sessionUser?.username === user.username;
   const initiallyFollowing = followers.some(
-    (f) =>
-      f.userId === sessionUser?.id && f.followingUsername === user.username,
+    (f) => f.userId === sessionUser?.id && f.followingUsername === user.username
   );
   const [isFollowing, setIsFollowing] = useState(initiallyFollowing);
   const [hoveringFollow, setHoveringFollow] = useState(false);
@@ -80,9 +81,7 @@ function ProfileStatBar({
 
   // ── Stats ────────────────────────────────────────────────────────────────
   const currentYear = dayjs().year();
-  const recipesThisYear = diaryEntries.filter(
-    (e) => dayjs(e.date).year() === currentYear,
-  ).length;
+  const recipesThisYear = diaryEntries.filter((e) => dayjs(e.date).year() === currentYear).length;
 
   const stats = [
     {
@@ -124,17 +123,17 @@ function ProfileStatBar({
 
         <Box>
           <Typography
-            variant="h6"
             sx={{
               fontFamily: "'Playfair Display', serif",
               fontWeight: 400,
               lineHeight: 1.2,
             }}
+            variant="h6"
           >
             {user.username}
           </Typography>
           {fullName !== user.username && (
-            <Typography variant="caption" color="text.secondary">
+            <Typography color="text.secondary" variant="caption">
               {fullName}
             </Typography>
           )}
@@ -143,52 +142,43 @@ function ProfileStatBar({
         {/* Action button */}
         {sessionUser &&
           (isSessionUser ? (
-            <Button variant="outlined" size="small" href="/settings">
+            <Button href="/settings" size="small" variant="outlined">
               Edit Profile
             </Button>
           ) : (
             <Button
-              variant="outlined"
+              color={isFollowing && hoveringFollow ? "error" : "primary"}
               size="small"
+              variant="outlined"
               onClick={handleFollow}
               onMouseEnter={() => setHoveringFollow(true)}
               onMouseLeave={() => setHoveringFollow(false)}
-              color={isFollowing && hoveringFollow ? "error" : "primary"}
             >
-              {isFollowing
-                ? hoveringFollow
-                  ? "Unfollow"
-                  : "Following"
-                : "Follow"}
+              {isFollowing ? (hoveringFollow ? "Unfollow" : "Following") : "Follow"}
             </Button>
           ))}
 
         {/* ⋯ menu */}
         <IconButton
-          size="small"
-          onClick={handleMenuOpen}
           aria-controls={menuOpen ? "profile-menu" : undefined}
-          aria-haspopup="true"
           aria-expanded={menuOpen ? "true" : undefined}
+          aria-haspopup="true"
+          size="small"
           sx={{ color: "text.disabled" }}
+          onClick={handleMenuOpen}
         >
           <MoreHorizIcon fontSize="small" />
         </IconButton>
         <Menu
-          id="profile-menu"
           anchorEl={anchorEl}
+          id="profile-menu"
           open={menuOpen}
-          onClose={handleMenuClose}
           slotProps={{ paper: { sx: { minWidth: 160 } } }}
+          onClose={handleMenuClose}
         >
           {/* Only show Settings to the session user */}
           {isSessionUser && (
-            <MenuItem
-              component={Link}
-              href="/settings"
-              onClick={handleMenuClose}
-              underline="none"
-            >
+            <MenuItem component={Link} href="/settings" underline="none" onClick={handleMenuClose}>
               <ListItemIcon>
                 <SettingsOutlinedIcon fontSize="small" />
               </ListItemIcon>
@@ -212,7 +202,6 @@ function ProfileStatBar({
             key={label}
             component={Link}
             href={href}
-            underline="none"
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -220,6 +209,7 @@ function ProfileStatBar({
               color: "text.primary",
               "&:hover .stat-value": { color: "primary.main" },
             }}
+            underline="none"
           >
             <Typography
               className="stat-value"
@@ -232,11 +222,7 @@ function ProfileStatBar({
             >
               {value}
             </Typography>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ letterSpacing: "0.06em" }}
-            >
+            <Typography color="text.secondary" sx={{ letterSpacing: "0.06em" }} variant="caption">
               {label}
             </Typography>
           </Box>

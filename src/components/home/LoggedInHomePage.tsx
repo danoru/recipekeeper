@@ -1,28 +1,22 @@
-import { memo } from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import { Box, Typography } from "@mui/material";
 import MuiLink from "@mui/material/Link";
+import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
+import dayjs from "dayjs";
 import NextLink from "next/link";
-import { Creators, Recipes, Users } from "@prisma/client";
-import type { SDiaryEntry } from "../../types/serialized";
+import { memo } from "react";
+
 import FriendRecipeActivity from "./FriendRecipeActivity";
 import PopularCreatorActivity from "./PopularCreatorActivity";
 import PopularRecipeActivity from "./PopularRecipeActivity";
-import dayjs from "dayjs";
 
 interface Props {
   creators: Creators[];
-  recentEntries: (SDiaryEntry & { users: Users; recipes: Recipes })[];
+  recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
   recipes: Recipes[];
   username: string;
 }
 
-function LoggedInHomePage({
-  creators,
-  recentEntries,
-  recipes,
-  username,
-}: Props) {
+function LoggedInHomePage({ creators, recentEntries, recipes, username }: Props) {
   return (
     <Box
       component="main"
@@ -38,9 +32,7 @@ function LoggedInHomePage({
         alignItems: "start",
       }}
     >
-      {/* ── MAIN FEED ── */}
       <Box sx={{ minWidth: 0 }}>
-        {/* Welcome */}
         <Typography
           sx={{
             fontSize: "0.9375rem",
@@ -53,13 +45,13 @@ function LoggedInHomePage({
           <MuiLink
             component={NextLink}
             href={`/${username}`}
-            underline="none"
             sx={{
               fontFamily: "'Playfair Display', serif",
               fontStyle: "italic",
               color: "text.primary",
               "&:hover": { color: "primary.main" },
             }}
+            underline="none"
           >
             {username}
           </MuiLink>
@@ -74,7 +66,6 @@ function LoggedInHomePage({
         <PopularCreatorActivity creators={creators} />
       </Box>
 
-      {/* ── SIDEBAR ── */}
       <Box
         component="aside"
         sx={{
@@ -85,7 +76,6 @@ function LoggedInHomePage({
           top: "72px",
         }}
       >
-        {/* Your year */}
         <SidebarBlock title="Your year">
           <Box
             sx={{
@@ -136,7 +126,6 @@ function LoggedInHomePage({
           <MuiLink
             component={NextLink}
             href={`/${username}`}
-            underline="none"
             sx={{
               display: "block",
               textAlign: "center",
@@ -146,19 +135,17 @@ function LoggedInHomePage({
               transition: "color 0.15s",
               "&:hover": { color: "primary.main" },
             }}
+            underline="none"
           >
             View full profile →
           </MuiLink>
         </SidebarBlock>
 
-        {/* Recent diary */}
         {recentEntries.length > 0 && (
           <SidebarBlock title="Recent diary">
             <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
               {recentEntries.slice(0, 4).map((entry, i) => {
-                const slug = entry.recipes.name
-                  .replace(/\s+/g, "-")
-                  .toLowerCase();
+                const slug = entry.recipes.name.replace(/\s+/g, "-").toLowerCase();
                 const date = dayjs(entry.date).format("MMM D");
                 return (
                   <Box
@@ -177,9 +164,9 @@ function LoggedInHomePage({
                     }}
                   >
                     <Box
+                      alt={entry.recipes.name}
                       component="img"
                       src={entry.recipes.image}
-                      alt={entry.recipes.name}
                       sx={{
                         width: 36,
                         height: 36,
@@ -224,14 +211,7 @@ function LoggedInHomePage({
   );
 }
 
-/* ── Small helper: sidebar card wrapper ── */
-function SidebarBlock({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function SidebarBlock({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <Box
       sx={{

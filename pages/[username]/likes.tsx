@@ -1,12 +1,13 @@
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import Head from "next/head";
-import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
+
+import CreatorCard from "../../src/components/cards/CreatorCard";
 import RecipeList from "../../src/components/recipes/RecipeList";
 import SectionHeader from "../../src/components/ui/SectionHeader";
-import Grid from "@mui/material/Grid";
-import CreatorCard from "../../src/components/cards/CreatorCard";
+import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
+import { creatorHref } from "../../src/data/helpers";
 import { getAllUsers, getUserLikes } from "../../src/data/users";
-import { creatorHref, serializePrisma } from "../../src/data/helpers";
 
 interface Props {
   user: any;
@@ -37,10 +38,7 @@ export default function UserLikes({ user }: Props) {
 
         <Box sx={{ mt: 4, display: "flex", flexDirection: "column", gap: 6 }}>
           {recipes.length > 0 && (
-            <RecipeList
-              header={`${user.username}'s liked recipes`}
-              recipes={recipes}
-            />
+            <RecipeList header={`${user.username}'s liked recipes`} recipes={recipes} />
           )}
 
           {creators.length > 0 && (
@@ -48,11 +46,11 @@ export default function UserLikes({ user }: Props) {
               <SectionHeader label={`${user.username}'s liked creators`} />
               <Grid container spacing={1.5}>
                 {creators.map((creator: any, i: number) => (
-                  <Grid item xs={6} sm={4} md={3} key={i}>
+                  <Grid key={i} size={{ md: 3, sm: 4, xs: 6 }}>
                     <CreatorCard
-                      name={creator.name}
                       image={creator.image}
                       link={creatorHref(creator.link ?? creator.name)}
+                      name={creator.name}
                     />
                   </Grid>
                 ))}
@@ -61,9 +59,7 @@ export default function UserLikes({ user }: Props) {
           )}
 
           {recipes.length === 0 && creators.length === 0 && (
-            <Box sx={{ pt: 4, color: "text.disabled", fontSize: "0.875rem" }}>
-              No likes yet.
-            </Box>
+            <Box sx={{ pt: 4, color: "text.disabled", fontSize: "0.875rem" }}>No likes yet.</Box>
           )}
         </Box>
       </Box>
@@ -79,17 +75,13 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({
-  params,
-}: {
-  params: { username: string };
-}) {
+export async function getStaticProps({ params }: { params: { username: string } }) {
   const { username } = params;
   const user = await getUserLikes(username);
   if (!user) return { notFound: true };
 
   return {
-    props: serializePrisma({ user }),
+    props: { user },
     revalidate: 1800,
   };
 }

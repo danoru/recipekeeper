@@ -32,8 +32,7 @@ export const CREATOR_LIST = [
   {
     name: "Korean Bapsang",
     link: "koreanbapsang",
-    image:
-      "https://www.koreanbapsang.com/wp-content/uploads/2023/11/Author-KB-New.png",
+    image: "https://www.koreanbapsang.com/wp-content/uploads/2023/11/Author-KB-New.png",
     website: "https://www.koreanbapsang.com/",
     instagram: "https://www.instagram.com/koreanbapsang/",
     youtube: "https://www.youtube.com/channel/UCMfhrjXVlCliSyj45ztHByA",
@@ -50,8 +49,7 @@ export const CREATOR_LIST = [
   {
     name: "Isabel Eats",
     link: "isabeleats",
-    image:
-      "https://www.isabeleats.com/wp-content/uploads/2023/02/isabel-orozco-moore-headshot.jpg",
+    image: "https://www.isabeleats.com/wp-content/uploads/2023/02/isabel-orozco-moore-headshot.jpg",
     website: "https://www.isabeleats.com/",
     instagram: "https://www.instagram.com/isabeleats",
     youtube: "https://www.youtube.com/@isabeleatsrecipes",
@@ -68,8 +66,7 @@ export const CREATOR_LIST = [
   {
     name: "Just One Cookbook",
     link: "justonecookbook",
-    image:
-      "https://www.justonecookbook.com/wp-content/uploads/2020/11/Nami-7893.jpg",
+    image: "https://www.justonecookbook.com/wp-content/uploads/2020/11/Nami-7893.jpg",
     website: "http://justonecookbook.com",
     instagram: "https://www.instagram.com/justonecookbook/",
     youtube: "https://www.youtube.com/@justonecookbook",
@@ -77,8 +74,7 @@ export const CREATOR_LIST = [
   {
     name: "Pinch of Yum",
     link: "pinchofyum",
-    image:
-      "https://pinchofyum.com/wp-content/assets/images/sidebar/sidebar-lindsay.jpg",
+    image: "https://pinchofyum.com/wp-content/assets/images/sidebar/sidebar-lindsay.jpg",
     website: "https://pinchofyum.com/",
     instagram: "https://www.instagram.com/pinchofyum",
     youtube: "https://www.youtube.com/@pinchofyum",
@@ -94,8 +90,7 @@ export const CREATOR_LIST = [
   {
     name: "Sip and Feast",
     link: "sipandfeast",
-    image:
-      "https://www.sipandfeast.com/wp-content/uploads/2023/10/family-10-30-23.jpg",
+    image: "https://www.sipandfeast.com/wp-content/uploads/2023/10/family-10-30-23.jpg",
     website: "https://sipandfeast.com/",
     instagram: "https:www.instagram.com/sipandfeast/",
     youtube: "https:www.youtube.com/sipandfeast",
@@ -121,8 +116,7 @@ export const CREATOR_LIST = [
   {
     name: "Trader Joe's Five Items or Less",
     link: "traderjoesfiveitemsorless",
-    image:
-      "https://traderjoes5itemsorless.com/wp-content/uploads/2022/07/sidebar-image.jpg",
+    image: "https://traderjoes5itemsorless.com/wp-content/uploads/2022/07/sidebar-image.jpg",
     website: "https://traderjoes5itemsorless.com/",
     instagram: "https://www.instagram.com/traderjoes5itemsorless/",
     youtube: "https://www.youtube.com/@thegoodbite9270",
@@ -173,8 +167,7 @@ export const CREATOR_LIST = [
   {
     name: "Smelly Lunchbox",
     link: "smellylunchbox",
-    image:
-      "https://smellylunchbox.com/wp-content/uploads/2023/07/prof-pic-300x300.webp",
+    image: "https://smellylunchbox.com/wp-content/uploads/2023/07/prof-pic-300x300.webp",
     website: "https://smellylunchbox.com/",
     instagram: "https://www.instagram.com/smelly.lunchbox/",
     youtube: "https://www.youtube.com/@smelly.lunchbox",
@@ -228,7 +221,7 @@ export async function getTopLikedCreators(userId: number) {
       acc[creatorId] = (acc[creatorId] || 0) + 1;
       return acc;
     },
-    {} as Record<string, number>,
+    {} as Record<string, number>
   );
 
   const topCreatorIds = Object.entries(creatorCount)
@@ -255,13 +248,8 @@ export async function getTopRatedRecipesByCreator(creatorId: string) {
 
   const scored = recipes
     .map((recipe) => {
-      const total = recipe.diaryEntries.reduce(
-        (sum, e) => sum + e.rating.toNumber(),
-        0,
-      );
-      const averageRating = recipe.diaryEntries.length
-        ? total / recipe.diaryEntries.length
-        : 0;
+      const total = recipe.diaryEntries.reduce((sum, e) => sum + e.rating.toNumber(), 0);
+      const averageRating = recipe.diaryEntries.length ? total / recipe.diaryEntries.length : 0;
       return { ...recipe, averageRating };
     })
     .filter((r) => r.averageRating >= 3)

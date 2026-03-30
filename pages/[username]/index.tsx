@@ -1,21 +1,19 @@
 import Box from "@mui/material/Box";
-import Head from "next/head";
-import dynamic from "next/dynamic";
-import { getSession } from "next-auth/react";
-import { getFollowers, getUserProfile } from "../../src/data/users";
-import { serializePrisma } from "../../src/data/helpers";
 import { GetServerSidePropsContext } from "next";
-import ProfileStatBar from "../../src/components/users/ProfileStatBar";
-import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
-import FavoriteCreators from "../../src/components/users/FavoriteCreators";
-import FavoriteRecipes from "../../src/components/users/FavoriteRecipes";
-import {
-  UserFollowing,
-  UserRatings,
-  UserRecentRecipes,
-  UserRecipeDiary,
-} from "../../src/components/users/UserProfileWidgets";
-import UserCooklistPreview from "../../src/components/users/UserCooklistPreview";
+import Head from "next/head";
+import { getSession } from "next-auth/react";
+import superjson from "superjson";
+
+import FavoriteCreators from "@/components/users/FavoriteCreators";
+import FavoriteRecipes from "@/components/users/FavoriteRecipes";
+import ProfileLinkBar from "@/components/users/ProfileLinkBar";
+import ProfileStatBar from "@/components/users/ProfileStatBar";
+import UserCooklistPreview from "@/components/users/UserCooklistPreview";
+import UserFollowing from "@/components/users/UserFollowing";
+import UserRatings from "@/components/users/UserRatings";
+import UserRecentRecipes from "@/components/users/UserRecentRecipes";
+import UserRecipeDiary from "@/components/users/UserRecipeDiary";
+import { getFollowers, getUserProfile } from "@/data/users";
 
 export default function UserPage({
   user,
@@ -50,8 +48,8 @@ export default function UserPage({
         <ProfileStatBar
           avatarSize="56px"
           diaryEntries={diaryEntries}
-          following={following}
           followers={followers}
+          following={following}
           sessionUser={sessionUser}
           user={user}
         />
@@ -101,17 +99,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (!user) return { notFound: true };
 
   const followers = await getFollowers(username);
-  const {
-    cooklist,
-    diaryEntries,
-    favoritesCreators,
-    favoritesRecipes,
-    following,
-    reviews,
-  } = user;
+  const { cooklist, diaryEntries, favoritesCreators, favoritesRecipes, following, reviews } = user;
 
   return {
-    props: serializePrisma({
+    props: superjson.serialize({
       user,
       cooklist,
       diaryEntries,
@@ -121,6 +112,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       followers,
       reviews,
       sessionUser,
-    }),
+    }).json,
   };
 }

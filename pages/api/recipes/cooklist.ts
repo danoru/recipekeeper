@@ -1,10 +1,8 @@
-import prisma from "../../../src/data/db";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+import prisma from "../../../src/data/db";
+
+export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { method, recipeId, userId } = req.body;
 
   if (method === "POST") {

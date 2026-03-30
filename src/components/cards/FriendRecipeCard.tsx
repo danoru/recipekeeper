@@ -1,8 +1,9 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import NextLink from "next/link";
-import StarRating from "../ui/StarRating";
 import dayjs, { Dayjs } from "dayjs";
+import NextLink from "next/link";
+
+import StarRating from "../ui/StarRating";
 
 interface Props {
   date: Dayjs | string;
@@ -13,14 +14,7 @@ interface Props {
   username: string;
 }
 
-export default function FriendRecipeCard({
-  date,
-  image,
-  link,
-  name,
-  rating,
-  username,
-}: Props) {
+export default function FriendRecipeCard({ date, image, link, name, rating, username }: Props) {
   const formattedDate = date ? dayjs(date).format("MMM D") : null;
 
   return (
@@ -47,9 +41,9 @@ export default function FriendRecipeCard({
     >
       {/* Image */}
       <Box
+        alt={name}
         component="img"
         src={image}
-        alt={name}
         sx={{
           width: "100%",
           height: "100%",

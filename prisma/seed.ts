@@ -1,6 +1,6 @@
+import { CREATOR_LIST } from "../src/data/creators";
 import prisma from "../src/data/db";
 import { RECIPE_LIST } from "../src/data/recipes";
-import { CREATOR_LIST } from "../src/data/creators";
 
 async function main() {
   await prisma.creators.createMany({

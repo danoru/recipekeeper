@@ -1,23 +1,22 @@
-import React, { useState } from "react";
-import Box from "@mui/material/Box";
-import CreatorCard from "../cards/CreatorCard";
-import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
 import Slide from "@mui/material/Slide";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Creators } from "@prisma/client";
+import React, { useState } from "react";
+
+import CreatorCard from "../cards/CreatorCard";
 
 interface Props {
   creators: Creators[];
 }
 function CreatorCarousel({ creators }: Props) {
   const [currentPage, setCurrentPage] = useState(0);
-  const [slideDirection, setSlideDirection] = useState<
-    "right" | "left" | undefined
-  >("left");
+  const [slideDirection, setSlideDirection] = useState<"right" | "left" | undefined>("left");
 
   const cardsPerPage = 4;
 
@@ -47,7 +46,7 @@ function CreatorCarousel({ creators }: Props) {
           width: "75%",
         }}
       >
-        <Typography variant="h6" component="div">
+        <Typography component="div" variant="h6">
           FEATURED CREATORS
         </Typography>
       </Grid>
@@ -60,46 +59,37 @@ function CreatorCarousel({ creators }: Props) {
           margin: "10px auto",
         }}
       >
-        <IconButton
-          onClick={handlePrevPage}
-          sx={{ margin: 5 }}
-          disabled={currentPage === 0}
-        >
+        <IconButton disabled={currentPage === 0} sx={{ margin: 5 }} onClick={handlePrevPage}>
           <NavigateBeforeIcon />
         </IconButton>
         <Box sx={{ width: `${containerWidth}px`, height: "100%" }}>
           <Slide direction={slideDirection} in={true}>
             <Stack
-              spacing={2}
-              direction="row"
               alignContent="center"
+              direction="row"
               justifyContent="center"
+              spacing={2}
               sx={{ width: "100%", height: "100%" }}
             >
               {creators
-                .slice(
-                  currentPage * cardsPerPage,
-                  (currentPage + 1) * cardsPerPage,
-                )
+                .slice(currentPage * cardsPerPage, (currentPage + 1) * cardsPerPage)
                 .map((creator: any, i: number) => (
                   <CreatorCard
                     key={`card-${i}`}
-                    name={creator.name}
-                    link={`creators/${creator.link}`}
                     image={creator.image}
+                    link={`creators/${creator.link}`}
+                    name={creator.name}
                   />
                 ))}
             </Stack>
           </Slide>
         </Box>
         <IconButton
-          onClick={handleNextPage}
+          disabled={currentPage >= Math.ceil((creators.length || 0) / cardsPerPage) - 1}
           sx={{
             margin: 5,
           }}
-          disabled={
-            currentPage >= Math.ceil((creators.length || 0) / cardsPerPage) - 1
-          }
+          onClick={handleNextPage}
         >
           <NavigateNextIcon />
         </IconButton>

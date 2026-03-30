@@ -36,10 +36,8 @@ function ProfileLinkBar({ username }: Props) {
       }}
     >
       <Tabs
-        value={currentTab}
-        variant="scrollable"
-        scrollButtons="auto"
         allowScrollButtonsMobile
+        scrollButtons="auto"
         sx={{
           minHeight: 40,
           "& .MuiTab-root": {
@@ -58,9 +56,11 @@ function ProfileLinkBar({ username }: Props) {
             height: 1.5,
           },
         }}
+        value={currentTab}
+        variant="scrollable"
       >
         {NAV_LINKS.map(({ label, path }) => (
-          <Tab key={path} label={label} href={`${base}${path}`} component="a" />
+          <Tab key={path} component="a" href={`${base}${path}`} label={label} />
         ))}
       </Tabs>
     </Box>

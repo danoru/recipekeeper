@@ -20,7 +20,7 @@ export async function getDiaryEntriesByUsernames(usernames: string[]) {
       },
     },
     include: {
-      recipes: true,
+      recipes: { include: { creators: true } },
       users: true,
     },
     orderBy: { date: "desc" },

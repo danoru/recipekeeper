@@ -2,18 +2,14 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Divider from "@mui/material/Divider";
-import Head from "next/head";
 import MuiLink from "@mui/material/Link";
-import NextLink from "next/link";
-import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import Typography from "@mui/material/Typography";
+import Head from "next/head";
+import NextLink from "next/link";
+
+import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import UserAvatar from "../../src/components/users/UserAvatar";
-import {
-  findUserByUsername,
-  getAllUsers,
-  getFollowing,
-} from "../../src/data/users";
-import { serializePrisma } from "../../src/data/helpers";
+import { findUserByUsername, getAllUsers, getFollowing } from "../../src/data/users";
 
 interface Props {
   user: any;
@@ -42,7 +38,7 @@ export default function UserFollowing({ user, following }: Props) {
         <ProfileLinkBar username={user.username} />
 
         <Box sx={{ mt: 3, mb: 3 }}>
-          <ButtonGroup variant="outlined" size="small">
+          <ButtonGroup size="small" variant="outlined">
             <Button component={NextLink} href={`/${user.username}/following`}>
               Following
             </Button>
@@ -60,9 +56,7 @@ export default function UserFollowing({ user, following }: Props) {
           }}
         >
           {following.length === 0 ? (
-            <Typography
-              sx={{ fontSize: "0.875rem", color: "text.disabled", p: 3 }}
-            >
+            <Typography sx={{ fontSize: "0.875rem", color: "text.disabled", p: 3 }}>
               Not following anyone yet.
             </Typography>
           ) : (
@@ -84,13 +78,11 @@ export default function UserFollowing({ user, following }: Props) {
                     <MuiLink
                       component={NextLink}
                       href={`/${username}`}
-                      underline="none"
                       sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                      underline="none"
                     >
                       <UserAvatar avatarSize="36px" name={username} />
-                      <Typography
-                        sx={{ fontSize: "0.9375rem", color: "text.primary" }}
-                      >
+                      <Typography sx={{ fontSize: "0.9375rem", color: "text.primary" }}>
                         {username}
                       </Typography>
                     </MuiLink>
@@ -114,11 +106,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({
-  params,
-}: {
-  params: { username: string };
-}) {
+export async function getStaticProps({ params }: { params: { username: string } }) {
   const { username } = params;
   const user = await findUserByUsername(username);
   if (!user) return { notFound: true };
@@ -126,7 +114,7 @@ export async function getStaticProps({
   const following = user ? await getFollowing(user.id) : [];
 
   return {
-    props: serializePrisma({ user, following }),
+    props: { user, following },
     revalidate: 1800,
   };
 }

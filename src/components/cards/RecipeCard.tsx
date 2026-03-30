@@ -1,9 +1,11 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import NextLink from "next/link";
-import Decimal from "decimal.js";
-import StarRating from "../ui/StarRating";
 import dayjs, { Dayjs } from "dayjs";
+import Decimal from "decimal.js";
+import NextLink from "next/link";
+
+import StarRating from "../ui/StarRating";
+
 
 interface Props {
   image: string;
@@ -15,16 +17,8 @@ interface Props {
   username?: string;
 }
 
-export default function RecipeCard({
-  image,
-  link,
-  name,
-  date,
-  rating,
-  username,
-}: Props) {
-  const numericRating =
-    rating instanceof Decimal ? rating.toNumber() : (rating ?? null);
+export default function RecipeCard({ image, link, name, date, rating, username }: Props) {
+  const numericRating = rating instanceof Decimal ? rating.toNumber() : (rating ?? null);
 
   const formattedDate = date ? dayjs(date).format("MMM D") : null;
 
@@ -85,9 +79,7 @@ export default function RecipeCard({
           gap: 0.5,
         }}
       >
-        {numericRating !== null && (
-          <StarRating rating={numericRating} size="sm" />
-        )}
+        {numericRating !== null && <StarRating rating={numericRating} size="sm" />}
 
         <Typography
           sx={{
@@ -109,9 +101,7 @@ export default function RecipeCard({
             }}
           >
             {username && (
-              <Typography
-                sx={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.5)" }}
-              >
+              <Typography sx={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.5)" }}>
                 {username}
               </Typography>
             )}

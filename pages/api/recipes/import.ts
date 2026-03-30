@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+
 import prisma from "../../../src/data/db";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -74,15 +75,12 @@ function normalise(value: string): string {
 }
 
 function extractJsonLd(html: string): JsonLdRecipe | null {
-  const scriptRegex =
-    /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  const scriptRegex = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
   let match: RegExpExecArray | null;
   while ((match = scriptRegex.exec(html)) !== null) {
     try {
       const raw = JSON.parse(match[1]);
-      const candidates: JsonLdRecipe[] = Array.isArray(raw["@graph"])
-        ? raw["@graph"]
-        : [raw];
+      const candidates: JsonLdRecipe[] = Array.isArray(raw["@graph"]) ? raw["@graph"] : [raw];
       for (const node of candidates) {
         const type = node["@type"];
         const types = Array.isArray(type) ? type : [type];
@@ -96,17 +94,11 @@ function extractJsonLd(html: string): JsonLdRecipe | null {
 }
 
 function extractOgImage(html: string): string {
-  const match = html.match(
-    /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
-  );
+  const match = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i);
   return match?.[1] ?? "";
 }
 
-function mapToSchema(
-  recipe: JsonLdRecipe,
-  pageUrl: string,
-  html: string,
-): ParsedRecipe {
+function mapToSchema(recipe: JsonLdRecipe, pageUrl: string, html: string): ParsedRecipe {
   const authorRaw = recipe.author;
   const authorName =
     typeof authorRaw === "object" && authorRaw !== null
@@ -115,9 +107,7 @@ function mapToSchema(
         ? authorRaw
         : "";
   const authorUrl =
-    typeof authorRaw === "object" && authorRaw !== null
-      ? (authorRaw.url ?? "")
-      : "";
+    typeof authorRaw === "object" && authorRaw !== null ? (authorRaw.url ?? "") : "";
 
   let creatorWebsite = authorUrl;
   if (!creatorWebsite) {
@@ -130,9 +120,7 @@ function mapToSchema(
 
   const creatorLink = creatorSlugFromUrl(creatorWebsite || pageUrl);
   const ogSiteName =
-    html.match(
-      /<meta[^>]+property=["']og:site_name["'][^>]+content=["']([^"']+)["']/i,
-    )?.[1] ?? "";
+    html.match(/<meta[^>]+property=["']og:site_name["'][^>]+content=["']([^"']+)["']/i)?.[1] ?? "";
   const creatorName = authorName || ogSiteName || creatorLink;
   const image = extractImage(recipe.image) || extractOgImage(html);
   const rawDiet = firstString(recipe.suitableForDiet);
@@ -159,10 +147,7 @@ function mapToSchema(
 
 // ─── Handler ──────────────────────────────────────────────────────────────────
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // GET — preview without saving
   if (req.method === "GET") {
     const url = req.query.url as string | undefined;
@@ -171,14 +156,11 @@ export default async function handler(
     try {
       const fetchRes = await fetch(url, {
         headers: {
-          "User-Agent":
-            "Mozilla/5.0 (compatible; RecipeImporter/1.0; +https://savry.app)",
+          "User-Agent": "Mozilla/5.0 (compatible; RecipeImporter/1.0; +https://savry.app)",
         },
       });
       if (!fetchRes.ok)
-        return res
-          .status(422)
-          .json({ error: `Could not fetch page (${fetchRes.status})` });
+        return res.status(422).json({ error: `Could not fetch page (${fetchRes.status})` });
 
       const html = await fetchRes.text();
       const jsonLd = extractJsonLd(html);
@@ -201,9 +183,7 @@ export default async function handler(
       });
     } catch (err) {
       console.error("[import-recipe GET]", err);
-      return res
-        .status(500)
-        .json({ error: "Failed to fetch or parse the URL." });
+      return res.status(500).json({ error: "Failed to fetch or parse the URL." });
     }
   }
 
@@ -253,9 +233,7 @@ export default async function handler(
       return res.status(200).json({ success: true, recipe: created });
     } catch (err) {
       console.error("[import-recipe POST]", err);
-      return res
-        .status(500)
-        .json({ error: "Database error while saving recipe." });
+      return res.status(500).json({ error: "Database error while saving recipe." });
     }
   }
 

@@ -1,11 +1,11 @@
 import Box from "@mui/material/Box";
-import Head from "next/head";
-import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
-import RecipeList from "../../src/components/recipes/RecipeList";
 import Typography from "@mui/material/Typography";
-import { findUserByUsername, getAllUsers } from "../../src/data/users";
+import Head from "next/head";
+
+import RecipeList from "../../src/components/recipes/RecipeList";
+import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import { getCooklist } from "../../src/data/recipes";
-import { serializePrisma } from "../../src/data/helpers";
+import { findUserByUsername, getAllUsers } from "../../src/data/users";
 
 interface Props {
   user: any;
@@ -35,16 +35,10 @@ export default function UserCooklist({ cooklist, user }: Props) {
         <ProfileLinkBar username={user.username} />
 
         <Box sx={{ mt: 4 }}>
-          <Typography
-            sx={{ fontSize: "0.8125rem", color: "text.disabled", mb: 3 }}
-          >
-            {cooklist.length} {cooklist.length === 1 ? "recipe" : "recipes"}{" "}
-            saved
+          <Typography sx={{ fontSize: "0.8125rem", color: "text.disabled", mb: 3 }}>
+            {cooklist.length} {cooklist.length === 1 ? "recipe" : "recipes"} saved
           </Typography>
-          <RecipeList
-            header={`${user.username}'s cooklist`}
-            recipes={recipes}
-          />
+          <RecipeList header={`${user.username}'s cooklist`} recipes={recipes} />
         </Box>
       </Box>
     </>
@@ -59,11 +53,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({
-  params,
-}: {
-  params: { username: string };
-}) {
+export async function getStaticProps({ params }: { params: { username: string } }) {
   const { username } = params;
   const user = await findUserByUsername(username);
   if (!user) return { notFound: true };
@@ -71,7 +61,7 @@ export async function getStaticProps({
   const cooklist = await getCooklist(user.id);
 
   return {
-    props: serializePrisma({ cooklist, user }),
+    props: { cooklist, user },
     revalidate: 1800,
   };
 }

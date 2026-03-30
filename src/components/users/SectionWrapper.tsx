@@ -8,12 +8,7 @@ interface SectionWrapperProps {
   children: React.ReactNode;
 }
 
-export default function SectionWrapper({
-  title,
-  empty,
-  emptyText,
-  children,
-}: SectionWrapperProps) {
+export default function SectionWrapper({ title, empty, emptyText, children }: SectionWrapperProps) {
   return (
     <Box>
       <Box
@@ -28,12 +23,12 @@ export default function SectionWrapper({
         }}
       >
         <Typography
-          variant="overline"
           sx={{
             fontSize: "0.65rem",
             letterSpacing: "0.14em",
             color: "text.disabled",
           }}
+          variant="overline"
         >
           {title}
         </Typography>

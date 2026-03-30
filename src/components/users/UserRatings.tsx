@@ -1,59 +1,45 @@
-import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
+import { Box, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts";
 import { Reviews, Users } from "@prisma/client";
+
+import SectionHeader from "./SectionHeader";
 
 interface Props {
   reviews: (Reviews & { users: Users })[];
 }
 
-function UserRatings({ reviews }: Props) {
-  if (!reviews) {
-    return null;
-  }
+export default function UserRatings({ reviews }: Props) {
+  if (!reviews?.length) return null;
 
   const ratingDataset = generateRatingDataset(reviews);
-
   return (
-    <Grid item sx={{ marginTop: "10px" }}>
-      <Grid
-        container
-        sx={{
-          borderBottomWidth: "1px",
-          borderBottomStyle: "solid",
-          borderBottomColor: "theme.palette.secondary",
-          justifyContent: "space-between",
-          margin: "10px 0",
-          maxWidth: "50%",
-        }}
-      >
-        <Grid item>RATINGS</Grid>
-      </Grid>
+    <Box>
+      <SectionHeader title="Ratings" />
       <Stack spacing={1}>
         <BarChart
           dataset={ratingDataset}
-          xAxis={[
-            {
-              scaleType: "band",
-              dataKey: "rating",
-            },
-          ]}
-          series={[{ dataKey: "count" }]}
+          height={200}
+          series={[{ dataKey: "count", color: "#c8a96e" }]}
+          sx={{
+            "& .MuiChartsAxis-tickLabel": { fill: "#888580", fontSize: 11 },
+            "& .MuiChartsAxis-line": { stroke: "rgba(255,255,255,0.07)" },
+            "& .MuiChartsAxis-tick": { stroke: "rgba(255,255,255,0.07)" },
+          }}
           width={375}
-          height={225}
+          xAxis={[{ scaleType: "band", dataKey: "rating" }]}
         />
       </Stack>
-    </Grid>
+    </Box>
   );
 }
 
 function generateRatingDataset(
-  reviews: (Reviews & { users: Users })[],
+  reviews: (Reviews & { users: Users })[]
 ): { rating: number; count: number }[] {
   const ratingCounts: { [rating: number]: number } = {};
 
   reviews.forEach((entry) => {
-    const rating = entry.rating.toNumber();
+    const rating = Number(entry.rating);
     if (rating !== undefined) {
       if (ratingCounts[rating]) {
         ratingCounts[rating]++;
@@ -71,5 +57,3 @@ function generateRatingDataset(
 
   return ratingDataset;
 }
-
-export default UserRatings;

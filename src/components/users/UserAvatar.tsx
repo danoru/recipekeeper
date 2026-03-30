@@ -20,9 +20,7 @@ function stringToColor(str: string): string {
 function getInitials(name: string): string {
   const parts = name.trim().toUpperCase().split(/\s+/);
   if (parts.length === 0 || !parts[0]) return "?";
-  return parts.length === 1
-    ? parts[0][0]
-    : `${parts[0][0]}${parts[parts.length - 1][0]}`;
+  return parts.length === 1 ? parts[0][0] : `${parts[0][0]}${parts[parts.length - 1][0]}`;
 }
 
 function UserAvatar({ avatarSize, name }: Props) {
@@ -33,13 +31,13 @@ function UserAvatar({ avatarSize, name }: Props) {
   return (
     <Avatar
       alt={safeName}
-      title={safeName}
       sx={{
         bgcolor,
         height: avatarSize,
         width: avatarSize,
         fontSize: `calc(${avatarSize} * 0.4)`,
       }}
+      title={safeName}
     >
       {initials}
     </Avatar>

@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+
 import prisma from "../../../src/data/db";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {

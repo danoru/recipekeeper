@@ -1,17 +1,19 @@
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import Head from "next/head";
-import Image from "next/image";
 import MuiLink from "@mui/material/Link";
-import NextLink from "next/link";
-import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
-import StarRating from "../../../src/components/ui/StarRating";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { findUserByUsername, getAllUsers } from "../../../src/data/users";
-import { getUserReviews } from "../../../src/data/reviews";
-import { recipeHref, serializePrisma } from "../../../src/data/helpers";
 import dayjs from "dayjs";
+import Head from "next/head";
+import Image from "next/image";
+import NextLink from "next/link";
+
+import StarRating from "../../../src/components/ui/StarRating";
+import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
+import { recipeHref } from "../../../src/data/helpers";
+import { getUserReviews } from "../../../src/data/reviews";
+import { findUserByUsername, getAllUsers } from "../../../src/data/users";
+
 
 interface SerializedReview {
   id: number;
@@ -94,11 +96,11 @@ export default function UserRecipeReviews({ user, reviews }: Props) {
                       }}
                     >
                       <Image
-                        src={review.recipes.image}
-                        alt={recipeName}
                         fill
-                        style={{ objectFit: "cover" }}
+                        alt={recipeName}
                         sizes="72px"
+                        src={review.recipes.image}
+                        style={{ objectFit: "cover" }}
                       />
                     </Box>
 
@@ -107,7 +109,6 @@ export default function UserRecipeReviews({ user, reviews }: Props) {
                       <MuiLink
                         component={NextLink}
                         href={href}
-                        underline="none"
                         sx={{
                           fontFamily: "'Playfair Display', serif",
                           fontSize: "1rem",
@@ -116,6 +117,7 @@ export default function UserRecipeReviews({ user, reviews }: Props) {
                           mb: 0.5,
                           "&:hover": { color: "primary.main" },
                         }}
+                        underline="none"
                       >
                         {recipeName}
                       </MuiLink>
@@ -129,9 +131,7 @@ export default function UserRecipeReviews({ user, reviews }: Props) {
                         }}
                       >
                         <StarRating rating={review.rating} size="sm" />
-                        <Typography
-                          sx={{ fontSize: "0.75rem", color: "text.disabled" }}
-                        >
+                        <Typography sx={{ fontSize: "0.75rem", color: "text.disabled" }}>
                           {dayjs(review.date).format("MMM D, YYYY")}
                         </Typography>
                       </Box>
@@ -167,11 +167,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({
-  params,
-}: {
-  params: { username: string };
-}) {
+export async function getStaticProps({ params }: { params: { username: string } }) {
   const { username } = params;
   const user = await findUserByUsername(username);
   if (!user) return { notFound: true };
@@ -179,7 +175,7 @@ export async function getStaticProps({
   const reviews = await getUserReviews(user.id);
 
   return {
-    props: serializePrisma({ reviews, user }),
+    props: { reviews, user },
     revalidate: 1800,
   };
 }

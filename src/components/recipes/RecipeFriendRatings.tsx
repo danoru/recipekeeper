@@ -1,10 +1,11 @@
 import Box from "@mui/material/Box";
 import MuiLink from "@mui/material/Link";
-import NextLink from "next/link";
 import Typography from "@mui/material/Typography";
-import UserAvatar from "../users/UserAvatar";
-import StarRating from "../ui/StarRating";
+import NextLink from "next/link";
+
 import type { SReviewWithUser } from "../../types/serialized";
+import StarRating from "../ui/StarRating";
+import UserAvatar from "../users/UserAvatar";
 
 interface Props {
   reviews: SReviewWithUser[];
@@ -40,11 +41,7 @@ export default function RecipeFriendRatings({ reviews }: Props) {
               gap: 0.5,
             }}
           >
-            <MuiLink
-              component={NextLink}
-              href={`/${review.users.username}`}
-              underline="none"
-            >
+            <MuiLink component={NextLink} href={`/${review.users.username}`} underline="none">
               <UserAvatar avatarSize="32px" name={review.users.username} />
             </MuiLink>
             <StarRating rating={review.rating} size="sm" />

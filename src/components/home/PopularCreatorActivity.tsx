@@ -1,7 +1,8 @@
-import { memo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { Creators } from "@prisma/client";
+import { memo } from "react";
+
 import PopularCreatorCard from "../cards/PopularCreatorCard";
 import SectionHeader from "../ui/SectionHeader";
 
@@ -12,14 +13,14 @@ interface Props {
 function PopularCreatorActivity({ creators }: Props) {
   return (
     <Box sx={{ mb: 5 }}>
-      <SectionHeader label="Creators popular with friends" href="/creators" />
+      <SectionHeader href="/creators" label="Creators popular with friends" />
       <Grid container spacing={1.25}>
         {creators.slice(0, 4).map((creator, i) => (
-          <Grid item xs={6} sm={3} key={`pop-creator-${i}`}>
+          <Grid key={`pop-creator-${i}`} size={{ sm: 3, xs: 6 }}>
             <PopularCreatorCard
-              name={creator.name}
               image={creator.image}
               link={`/creators/${creator.link}`}
+              name={creator.name}
             />
           </Grid>
         ))}

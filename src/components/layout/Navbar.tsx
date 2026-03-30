@@ -1,4 +1,4 @@
-import * as React from "react";
+import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -10,13 +10,14 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import MenuIcon from "@mui/icons-material/Menu";
-import NextLink from "next/link";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import LogRecipeButton from "./LogRecipeButton";
-import { useSession } from "next-auth/react";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import * as React from "react";
+
+import LogRecipeButton from "./LogRecipeButton";
 
 interface NavPage {
   id: number;
@@ -58,8 +59,8 @@ export default function Navbar() {
   return (
     <>
       <AppBar
-        position="sticky"
         elevation={0}
+        position="sticky"
         sx={{
           top: 0,
           zIndex: 100,
@@ -69,7 +70,7 @@ export default function Navbar() {
           borderBottom: "1px solid rgba(255,255,255,0.07)",
         }}
       >
-        <Container maxWidth="lg" disableGutters>
+        <Container disableGutters maxWidth="lg">
           <Toolbar
             disableGutters
             sx={{
@@ -109,17 +110,15 @@ export default function Navbar() {
               {pages.map((page) => (
                 <Button
                   key={page.id}
+                  disableRipple
                   component={NextLink}
                   href={page.link}
-                  disableRipple
                   sx={{
                     fontSize: "0.6875rem",
                     fontWeight: 500,
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
-                    color: isActive(page.link)
-                      ? "text.primary"
-                      : "text.secondary",
+                    color: isActive(page.link) ? "text.primary" : "text.secondary",
                     px: 1.25,
                     py: 0.75,
                     minWidth: 0,
@@ -149,14 +148,14 @@ export default function Navbar() {
 
               {/* Mobile hamburger */}
               <IconButton
+                aria-label="Open navigation menu"
                 size="small"
-                onClick={() => setDrawerOpen(true)}
                 sx={{
                   display: { xs: "flex", md: "none" },
                   color: "text.secondary",
                   "&:hover": { color: "text.primary" },
                 }}
-                aria-label="Open navigation menu"
+                onClick={() => setDrawerOpen(true)}
               >
                 <MenuIcon fontSize="small" />
               </IconButton>
@@ -169,7 +168,6 @@ export default function Navbar() {
       <Drawer
         anchor="right"
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
         PaperProps={{
           sx: {
             width: 240,
@@ -177,12 +175,12 @@ export default function Navbar() {
             borderLeft: "1px solid rgba(255,255,255,0.07)",
           },
         }}
+        onClose={() => setDrawerOpen(false)}
       >
         <Box sx={{ p: 2.5 }}>
           <Typography
             component={NextLink}
             href="/"
-            onClick={() => setDrawerOpen(false)}
             sx={{
               fontFamily: "'Playfair Display', serif",
               fontSize: "1.125rem",
@@ -191,6 +189,7 @@ export default function Navbar() {
               display: "block",
               mb: 2,
             }}
+            onClick={() => setDrawerOpen(false)}
           >
             Savry
           </Typography>
@@ -201,19 +200,17 @@ export default function Navbar() {
                 <ListItemButton
                   component={NextLink}
                   href={page.link}
-                  onClick={() => setDrawerOpen(false)}
                   sx={{
                     borderRadius: "6px",
                     px: 1.5,
                     py: 0.875,
-                    color: isActive(page.link)
-                      ? "text.primary"
-                      : "text.secondary",
+                    color: isActive(page.link) ? "text.primary" : "text.secondary",
                     "&:hover": {
                       bgcolor: "rgba(255,255,255,0.05)",
                       color: "text.primary",
                     },
                   }}
+                  onClick={() => setDrawerOpen(false)}
                 >
                   <ListItemText
                     primary={page.title}

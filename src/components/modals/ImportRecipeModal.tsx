@@ -1,6 +1,8 @@
-"use client";
-
-import { useState, useCallback } from "react";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CloseIcon from "@mui/icons-material/Close";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import {
   Dialog,
   DialogTitle,
@@ -18,11 +20,7 @@ import {
   Collapse,
   Fade,
 } from "@mui/material";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import CloseIcon from "@mui/icons-material/Close";
-import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import { useState, useCallback } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -94,15 +92,7 @@ const CREATOR_FIELDS: {
 
 // ─── Small section label ──────────────────────────────────────────────────────
 
-function SectionLabel({
-  letter,
-  label,
-  color,
-}: {
-  letter: string;
-  label: string;
-  color: string;
-}) {
+function SectionLabel({ letter, label, color }: { letter: string; label: string; color: string }) {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
       <Box
@@ -130,12 +120,12 @@ function SectionLabel({
         </Typography>
       </Box>
       <Typography
-        variant="overline"
         sx={{
           color: "text.secondary",
           letterSpacing: "0.12em",
           fontSize: "0.65rem",
         }}
+        variant="overline"
       >
         {label}
       </Typography>
@@ -145,11 +135,7 @@ function SectionLabel({
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function ImportRecipeModal({
-  isOpen,
-  onClose,
-  onSuccess,
-}: ImportRecipeModalProps) {
+export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: ImportRecipeModalProps) {
   const [step, setStep] = useState<Step>("input");
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -178,9 +164,7 @@ export default function ImportRecipeModal({
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(
-        `/api/import-recipe?url=${encodeURIComponent(url.trim())}`,
-      );
+      const res = await fetch(`/api/recipes/import?url=${encodeURIComponent(url.trim())}`);
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "Something went wrong fetching that URL.");
@@ -201,7 +185,7 @@ export default function ImportRecipeModal({
     setSaving(true);
     setError(null);
     try {
-      const res = await fetch("/api/import-recipe", {
+      const res = await fetch("/api/recipes/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ recipe }),
@@ -236,10 +220,9 @@ export default function ImportRecipeModal({
 
   return (
     <Dialog
-      open={isOpen}
-      onClose={handleClose}
-      maxWidth="sm"
       fullWidth
+      maxWidth="sm"
+      open={isOpen}
       slotProps={{
         paper: {
           sx: {
@@ -252,6 +235,7 @@ export default function ImportRecipeModal({
         },
         backdrop: { sx: { backdropFilter: "blur(4px)" } },
       }}
+      onClose={handleClose}
     >
       {/* ── Header ── */}
       <DialogTitle
@@ -266,33 +250,25 @@ export default function ImportRecipeModal({
         }}
       >
         <Box>
-          <Box
-            sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 0.25 }}
-          >
-            <FileDownloadOutlinedIcon
-              sx={{ fontSize: 18, color: "primary.main", mt: "1px" }}
-            />
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 0.25 }}>
+            <FileDownloadOutlinedIcon sx={{ fontSize: 18, color: "primary.main", mt: "1px" }} />
             <Typography
-              variant="h6"
               sx={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: "1.1rem",
                 color: "text.primary",
                 fontWeight: 500,
               }}
+              variant="h6"
             >
               {titleText}
             </Typography>
           </Box>
-          <Typography variant="body2" color="text.secondary" sx={{ pl: 0.5 }}>
+          <Typography color="text.secondary" sx={{ pl: 0.5 }} variant="body2">
             {subtitleText}
           </Typography>
         </Box>
-        <IconButton
-          size="small"
-          onClick={handleClose}
-          sx={{ color: "text.disabled", mt: 0.5 }}
-        >
+        <IconButton size="small" sx={{ color: "text.disabled", mt: 0.5 }} onClick={handleClose}>
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
@@ -306,32 +282,32 @@ export default function ImportRecipeModal({
           <Fade in>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
               <TextField
+                autoFocus
+                fullWidth
                 label="Recipe URL"
                 placeholder="https://budgetbytes.com/some-great-recipe"
+                size="small"
+                type="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleFetch()}
-                fullWidth
-                autoFocus
-                type="url"
-                size="small"
               />
               <Collapse in={!!error}>
                 <Alert
-                  severity="error"
                   icon={<ErrorOutlineIcon fontSize="small" />}
+                  severity="error"
                   sx={{ borderRadius: 1.5 }}
                 >
                   {error}
                 </Alert>
               </Collapse>
               <Typography
-                variant="caption"
                 color="text.disabled"
                 sx={{ textAlign: "center", display: "block" }}
+                variant="caption"
               >
-                Works with AllRecipes, Budget Bytes, Serious Eats, NYT Cooking,
-                and most major recipe sites.
+                Works with AllRecipes, Budget Bytes, Serious Eats, NYT Cooking, and most major
+                recipe sites.
               </Typography>
             </Box>
           </Fade>
@@ -356,17 +332,17 @@ export default function ImportRecipeModal({
                   }}
                 >
                   <Box
+                    alt={recipe.name}
                     component="img"
                     src={recipe.image}
-                    alt={recipe.name}
-                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                      e.currentTarget.style.display = "none";
-                    }}
                     sx={{
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
                       display: "block",
+                    }}
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                      e.currentTarget.style.display = "none";
                     }}
                   />
                 </Box>
@@ -374,24 +350,18 @@ export default function ImportRecipeModal({
 
               {/* Recipe fields */}
               <Box>
-                <SectionLabel
-                  letter="R"
-                  label="Recipe Details"
-                  color="#c8a96e"
-                />
-                <Box
-                  sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
-                >
+                <SectionLabel color="#c8a96e" label="Recipe Details" letter="R" />
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                   {RECIPE_FIELDS.map(({ key, label, multiline }) => (
                     <TextField
                       key={key}
-                      label={label}
-                      value={recipe[key] as string}
-                      onChange={(e) => updateField(key, e.target.value)}
                       fullWidth
-                      size="small"
+                      label={label}
                       multiline={multiline}
                       rows={multiline ? 3 : undefined}
+                      size="small"
+                      value={recipe[key] as string}
+                      onChange={(e) => updateField(key, e.target.value)}
                     />
                   ))}
                 </Box>
@@ -409,7 +379,7 @@ export default function ImportRecipeModal({
                     mb: 2,
                   }}
                 >
-                  <SectionLabel letter="C" label="Creator" color="#888580" />
+                  <SectionLabel color="#888580" label="Creator" letter="C" />
                   {preview.creatorExists && (
                     <Chip
                       label="Already in your DB — won't be overwritten"
@@ -430,12 +400,11 @@ export default function ImportRecipeModal({
 
                 {!preview.creatorExists && (
                   <Typography
-                    variant="caption"
                     color="text.disabled"
                     sx={{ display: "block", mb: 1.5, mt: -1 }}
+                    variant="caption"
                   >
-                    This creator isn&apos;t in your database yet — they&apos;ll
-                    be created on save.
+                    This creator isn&apos;t in your database yet — they&apos;ll be created on save.
                   </Typography>
                 )}
 
@@ -452,12 +421,12 @@ export default function ImportRecipeModal({
                   {CREATOR_FIELDS.map(({ key, label, helperText }) => (
                     <TextField
                       key={key}
+                      fullWidth
+                      helperText={helperText}
                       label={label}
+                      size="small"
                       value={recipe[key] as string}
                       onChange={(e) => updateField(key, e.target.value)}
-                      fullWidth
-                      size="small"
-                      helperText={helperText}
                     />
                   ))}
                 </Box>
@@ -465,8 +434,8 @@ export default function ImportRecipeModal({
 
               <Collapse in={!!error}>
                 <Alert
-                  severity="error"
                   icon={<ErrorOutlineIcon fontSize="small" />}
+                  severity="error"
                   sx={{ borderRadius: 1.5 }}
                 >
                   {error}
@@ -501,26 +470,20 @@ export default function ImportRecipeModal({
                   justifyContent: "center",
                 }}
               >
-                <CheckCircleOutlineIcon
-                  sx={{ fontSize: 28, color: "primary.main" }}
-                />
+                <CheckCircleOutlineIcon sx={{ fontSize: 28, color: "primary.main" }} />
               </Box>
               <Box>
                 <Typography
-                  variant="h6"
                   sx={{
                     fontFamily: "'Playfair Display', serif",
                     fontWeight: 500,
                     fontSize: "1rem",
                   }}
+                  variant="h6"
                 >
                   {recipe?.name}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ mt: 0.5 }}
-                >
+                <Typography color="text.secondary" sx={{ mt: 0.5 }} variant="body2">
                   Added to your recipe database.
                 </Typography>
               </Box>
@@ -535,20 +498,16 @@ export default function ImportRecipeModal({
       <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
         {step === "input" && (
           <>
-            <Button variant="outlined" onClick={handleClose} size="small">
+            <Button size="small" variant="outlined" onClick={handleClose}>
               Cancel
             </Button>
             <Button
-              variant="contained"
-              onClick={handleFetch}
               disabled={!url.trim() || loading}
               size="small"
-              startIcon={
-                loading ? (
-                  <CircularProgress size={13} color="inherit" />
-                ) : undefined
-              }
+              startIcon={loading ? <CircularProgress color="inherit" size={13} /> : undefined}
               sx={{ minWidth: 130 }}
+              variant="contained"
+              onClick={handleFetch}
             >
               {loading ? "Fetching…" : "Fetch Recipe"}
             </Button>
@@ -558,27 +517,23 @@ export default function ImportRecipeModal({
         {step === "preview" && (
           <>
             <Button
+              size="small"
+              startIcon={<ArrowBackIcon fontSize="small" />}
               variant="outlined"
               onClick={() => {
                 setStep("input");
                 setError(null);
               }}
-              size="small"
-              startIcon={<ArrowBackIcon fontSize="small" />}
             >
               Back
             </Button>
             <Button
-              variant="contained"
-              onClick={handleSave}
               disabled={saving}
               size="small"
-              startIcon={
-                saving ? (
-                  <CircularProgress size={13} color="inherit" />
-                ) : undefined
-              }
+              startIcon={saving ? <CircularProgress color="inherit" size={13} /> : undefined}
               sx={{ minWidth: 160 }}
+              variant="contained"
+              onClick={handleSave}
             >
               {saving ? "Saving…" : "Save to Database"}
             </Button>
@@ -587,10 +542,10 @@ export default function ImportRecipeModal({
 
         {step === "success" && (
           <>
-            <Button variant="outlined" onClick={reset} size="small">
+            <Button size="small" variant="outlined" onClick={reset}>
               Import Another
             </Button>
-            <Button variant="contained" onClick={handleClose} size="small">
+            <Button size="small" variant="contained" onClick={handleClose}>
               Done
             </Button>
           </>

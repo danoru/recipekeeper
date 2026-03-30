@@ -1,13 +1,13 @@
-import { memo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { Recipes, Users } from "@prisma/client";
-import type { SDiaryEntry } from "../../types/serialized";
+import { DiaryEntries, Recipes, Users } from "@prisma/client";
+import { memo } from "react";
+
 import FriendRecipeCard from "../cards/FriendRecipeCard";
 import SectionHeader from "../ui/SectionHeader";
 
 interface Props {
-  recentEntries: (SDiaryEntry & { users: Users; recipes: Recipes })[];
+  recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
 }
 
 function FriendRecipeActivity({ recentEntries }: Props) {
@@ -15,28 +15,23 @@ function FriendRecipeActivity({ recentEntries }: Props) {
 
   return (
     <Box sx={{ mb: 5 }}>
-      <SectionHeader label="New recipes from friends" href="/members" />
+      <SectionHeader href="/members" label="New recipes from friends" />
       <Grid container spacing={1.5}>
-        {entries.map(
-          (
-            entry: SDiaryEntry & { users: Users; recipes: Recipes },
-            i: number,
-          ) => {
-            const slug = entry.recipes.name.replace(/\s+/g, "-").toLowerCase();
-            return (
-              <Grid item xs={6} sm={4} key={`friend-${i}`}>
-                <FriendRecipeCard
-                  date={entry.date}
-                  image={entry.recipes.image}
-                  link={`/recipes/${slug}`}
-                  name={entry.recipes.name}
-                  rating={entry.rating}
-                  username={entry.users.username}
-                />
-              </Grid>
-            );
-          },
-        )}
+        {entries.map((entry: DiaryEntries & { users: Users; recipes: Recipes }, i: number) => {
+          const slug = entry.recipes.name.replace(/\s+/g, "-").toLowerCase();
+          return (
+            <Grid key={`friend-${i}`} size={{ sm: 4, xs: 6 }}>
+              <FriendRecipeCard
+                date={entry.date}
+                image={entry.recipes.image}
+                link={`/recipes/${slug}`}
+                name={entry.recipes.name}
+                rating={entry.rating}
+                username={entry.users.username}
+              />
+            </Grid>
+          );
+        })}
       </Grid>
     </Box>
   );

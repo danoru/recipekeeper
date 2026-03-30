@@ -1,24 +1,26 @@
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import Head from "next/head";
 import MuiLink from "@mui/material/Link";
-import NextLink from "next/link";
-import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
-import StarRating from "../../src/components/ui/StarRating";
 import Typography from "@mui/material/Typography";
-import { findUserByUsername, getFollowingList } from "../../src/data/users";
-import { getSession } from "next-auth/react";
-import { GetServerSidePropsContext } from "next";
-import { getDiaryEntriesByUsernames } from "../../src/data/diary";
-import { recipeHref, serializePrisma } from "../../src/data/helpers";
-import advancedFormat from "dayjs/plugin/advancedFormat";
+import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
 import dayjs from "dayjs";
-import { SDiaryEntryComplete } from "../../src/types/serialized";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
+import NextLink from "next/link";
+import { getSession } from "next-auth/react";
+import superjson from "superjson";
+
+import StarRating from "@/components/ui/StarRating";
+import ProfileLinkBar from "@/components/users/ProfileLinkBar";
+import { getDiaryEntriesByUsernames } from "@/data/diary";
+import { creatorHref, recipeHref } from "@/data/helpers";
+import { findUserByUsername, getFollowingList } from "@/data/users";
 
 dayjs.extend(advancedFormat);
 
 interface Props {
-  diaryEntries: SDiaryEntryComplete[];
+  diaryEntries: (DiaryEntries & { recipes: Recipes & { creators: Creators }; users: Users })[];
   user: any;
 }
 
@@ -49,9 +51,8 @@ export default function Activity({ diaryEntries, user }: Props) {
           {diaryEntries.map((entry, i) => {
             const recipeName = entry.recipes?.name ?? "";
             const creatorName = entry.recipes?.creators?.name ?? "";
-            const formattedDate = entry.date
-              ? dayjs(entry.date).format("dddd, MMMM Do YYYY")
-              : "";
+            const formattedDate = entry.date ? dayjs(entry.date).format("dddd, MMMM Do YYYY") : "";
+            const ratingNumber = Number(entry.rating);
 
             return (
               <Box key={i}>
@@ -71,27 +72,24 @@ export default function Activity({ diaryEntries, user }: Props) {
                   <MuiLink
                     component={NextLink}
                     href={`/${entry.users.username}`}
-                    underline="none"
                     sx={{
                       fontSize: "0.875rem",
                       fontWeight: 500,
                       color: "text.primary",
                       "&:hover": { color: "primary.main" },
                     }}
+                    underline="none"
                   >
                     {entry.users.username}
                   </MuiLink>
 
-                  <Typography
-                    sx={{ fontSize: "0.875rem", color: "text.secondary" }}
-                  >
+                  <Typography sx={{ fontSize: "0.875rem", color: "text.secondary" }}>
                     made
                   </Typography>
 
                   <MuiLink
                     component={NextLink}
                     href={recipeHref(creatorName, recipeName)}
-                    underline="none"
                     sx={{
                       fontSize: "0.875rem",
                       fontStyle: "italic",
@@ -99,25 +97,32 @@ export default function Activity({ diaryEntries, user }: Props) {
                       color: "text.primary",
                       "&:hover": { color: "primary.main" },
                     }}
+                    underline="none"
                   >
                     {recipeName}
                   </MuiLink>
-
-                  <Typography
-                    sx={{ fontSize: "0.875rem", color: "text.secondary" }}
+                  <Typography sx={{ fontSize: "0.875rem", color: "text.secondary" }}>by</Typography>
+                  <MuiLink
+                    component={NextLink}
+                    href={creatorHref(creatorName)}
+                    sx={{
+                      fontSize: "0.875rem",
+                      fontStyle: "italic",
+                      fontFamily: "'Playfair Display', serif",
+                      color: "text.primary",
+                      "&:hover": { color: "primary.main" },
+                    }}
+                    underline="none"
                   >
+                    {creatorName}
+                  </MuiLink>
+                  <Typography sx={{ fontSize: "0.875rem", color: "text.secondary" }}>
                     on {formattedDate} and rated it
                   </Typography>
 
-                  {entry.rating != null && (
-                    <StarRating rating={entry.rating} size="sm" />
-                  )}
+                  {ratingNumber != null && <StarRating rating={ratingNumber} size="sm" />}
 
-                  <Typography
-                    sx={{ fontSize: "0.875rem", color: "text.secondary" }}
-                  >
-                    .
-                  </Typography>
+                  <Typography sx={{ fontSize: "0.875rem", color: "text.secondary" }}>.</Typography>
                 </Box>
                 {i < diaryEntries.length - 1 && <Divider />}
               </Box>
@@ -146,6 +151,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const diaryEntries = await getDiaryEntriesByUsernames(usernames);
 
   return {
-    props: serializePrisma({ diaryEntries, user }),
+    props: superjson.serialize({ diaryEntries, user }).json,
   };
 }

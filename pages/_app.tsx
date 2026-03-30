@@ -1,27 +1,17 @@
-import * as React from "react";
-import createEmotionCache from "../src/createEmotionCache";
-import CssBaseline from "@mui/material/CssBaseline";
-import Head from "next/head";
-import Layout from "../src/components/layout/Layout";
-import superjson from "superjson";
-import { savryTheme } from "../src/styles/theme";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { CacheProvider, EmotionCache } from "@emotion/react";
-import { Decimal } from "decimal.js";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { SessionProvider } from "next-auth/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Decimal } from "decimal.js";
 import type { AppProps } from "next/app";
+import Head from "next/head";
+import { SessionProvider } from "next-auth/react";
+import superjson from "superjson";
 
-superjson.registerCustom<Decimal, number>(
-  {
-    isApplicable: (v): v is Decimal => Decimal.isDecimal(v),
-    serialize: (v) => v.toNumber(),
-    deserialize: (v) => new Decimal(v),
-  },
-  "decimal.js",
-);
+import Layout from "../src/components/layout/Layout";
+import createEmotionCache from "../src/createEmotionCache";
+import { savryTheme } from "../src/styles/theme";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -32,10 +22,10 @@ interface MyAppProps extends AppProps {
 export default function App({
   Component,
   emotionCache = clientSideEmotionCache,
-  pageProps: { session, ...pageProps },
+  pageProps,
 }: MyAppProps) {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider>
       <CacheProvider value={emotionCache}>
         <ThemeProvider theme={savryTheme}>
           <CssBaseline />
@@ -44,14 +34,10 @@ export default function App({
               <Head>
                 <title>Savry</title>
                 <meta charSet="utf-8" />
-                <meta
-                  name="viewport"
-                  content="initial-scale=1.0, width=device-width"
-                />
-                <link rel="shortcut icon" href="/favicon.ico" />
+                <meta content="initial-scale=1.0, width=device-width" name="viewport" />
+                <link href="/favicon.ico" rel="shortcut icon" />
               </Head>
               <Component {...pageProps} />
-              <SpeedInsights />
             </Layout>
           </LocalizationProvider>
         </ThemeProvider>
@@ -59,3 +45,12 @@ export default function App({
     </SessionProvider>
   );
 }
+
+superjson.registerCustom<Decimal, string>(
+  {
+    isApplicable: (v): v is Decimal => Decimal.isDecimal(v),
+    serialize: (v) => v.toJSON(),
+    deserialize: (v) => new Decimal(v),
+  },
+  "decimal.js"
+);

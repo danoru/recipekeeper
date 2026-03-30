@@ -1,13 +1,10 @@
-import prisma from "../../../src/data/db";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+import prisma from "../../../src/data/db";
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    const { userId, recipeId, date, hasCookedBefore, comment, rating } =
-      req.body;
+    const { userId, recipeId, date, hasCookedBefore, comment, rating } = req.body;
 
     try {
       const newEntry = await prisma.diaryEntries.create({

@@ -48,8 +48,7 @@ export const RECIPE_LIST = [
     name: "Chicken Pozole Verde",
     creatorId: "isabeleats",
     link: "https://www.isabeleats.com/chicken-pozole-verde/",
-    image:
-      "https://www.isabeleats.com/wp-content/uploads/2022/10/pozole-verde-small-8.jpg",
+    image: "https://www.isabeleats.com/wp-content/uploads/2022/10/pozole-verde-small-8.jpg",
     description:
       "Pozole Verde is a comforting Mexican stew filled with shredded chicken and hominy in a delicious green chile broth made from tomatillos, jalapeños, and cilantro. It’s easy to make, hearty, and ready in only one hour!",
     category: "Soup",
@@ -146,8 +145,7 @@ export const RECIPE_LIST = [
     name: "Taco Soup",
     creatorId: "isabeleats",
     link: "https://www.isabeleats.com/taco-soup-recipe/",
-    image:
-      "https://www.isabeleats.com/wp-content/uploads/2023/02/taco-soup-recipe-small-9.jpg",
+    image: "https://www.isabeleats.com/wp-content/uploads/2023/02/taco-soup-recipe-small-9.jpg",
     description:
       "This taco soup recipe is hearty, healthy, and ready in under 1 hour! Made with ground beef, taco seasoning, canned beans, corn, bell peppers, and other veggies, it’s perfect served with your favorite taco toppings and tortilla chips for a little crunch.",
     category: "Soup",
@@ -160,8 +158,7 @@ export const RECIPE_LIST = [
     name: "Oyakodon",
     creatorId: "justonecookbook",
     link: "https://www.justonecookbook.com/oyakodon/",
-    image:
-      "https://www.justonecookbook.com/wp-content/uploads/2022/10/Oyakodon-0595-II.jpg",
+    image: "https://www.justonecookbook.com/wp-content/uploads/2022/10/Oyakodon-0595-II.jpg",
     description:
       "Oyakodon is a classic comfort food of Japanese home cooking. Tender pieces of chicken, onions, and eggs are simmered in an umami-rich sauce and then poured over a bowl of fluffy steamed rice. Simple, delicious, and utterly comforting, this is the kind of one-bowl meal you can cook in less than 30 minutes!",
     category: "Chicken",
@@ -202,8 +199,7 @@ export const RECIPE_LIST = [
     name: "Creamy Roasted Red Pepper Pasta",
     creatorId: "thegoodbite",
     link: "https://www.thegoodbite.co.uk/recipes/creamy-roasted-red-pepper-pasta-2/",
-    image:
-      "https://www.thegoodbite.co.uk/wp-content/uploads/2020/10/Untitled-1-36-1200x800.jpg",
+    image: "https://www.thegoodbite.co.uk/wp-content/uploads/2020/10/Untitled-1-36-1200x800.jpg",
     description:
       "This Roasted Red Pepper Pasta is so creamy and rich in flavour you can hardly believe it’s vegan, not to mention seriously easy to knock up and super healthy.",
     category: "Pasta",
@@ -230,8 +226,7 @@ export const RECIPE_LIST = [
     name: "Paleo Egg Drop Soup",
     creatorId: "iheartumami",
     link: "https://iheartumami.com/hearty-chinese-egg-drop-soup/",
-    image:
-      "https://iheartumami.com/wp-content/uploads/2016/09/Egg-drop-soup-with-bone-broth.jpg",
+    image: "https://iheartumami.com/wp-content/uploads/2016/09/Egg-drop-soup-with-bone-broth.jpg",
     description:
       "You’ll fall in love with my mom’s Paleo Egg Drop Soup fast! With fluffy egg flowers, the most delicious savory broth, and healthy lean protein, this version is not only delicious but also super easy to make. It’s not only tasty but also packed with nutrition and healthy goodness.",
     category: "Soup",
@@ -258,8 +253,7 @@ export const RECIPE_LIST = [
     name: "Tender Chicken and Broccoli",
     creatorId: "smellylunchbox",
     link: "https://smellylunchbox.com/chicken-and-broccoli/",
-    image:
-      "https://smellylunchbox.com/wp-content/uploads/2023/06/chickenandbroccoli-720x866.webp",
+    image: "https://smellylunchbox.com/wp-content/uploads/2023/06/chickenandbroccoli-720x866.webp",
     description:
       "This tender chicken and broccoli recipe features juicy pieces of chicken breast, and broccoli that soaks up all the delicious, savory sauce!",
     category: "Chicken",
@@ -342,10 +336,7 @@ export async function getRecipeBySlug(creatorSlug: string, recipeSlug: string) {
 
 type RecipeFilterKey = "category" | "cuisine" | "course" | "method" | "diet";
 
-export async function getFilteredRecipes(
-  filterId: string,
-  subfilterId: string,
-) {
+export async function getFilteredRecipes(filterId: string, subfilterId: string) {
   const key = filterId as RecipeFilterKey;
 
   const normalized = subfilterId.replace(/-/g, " ");
@@ -366,19 +357,12 @@ export async function getRecipesByRating(sort: "highest" | "lowest") {
 
   return recipes
     .map((recipe) => {
-      const total = recipe.reviews.reduce(
-        (sum, r) => sum + r.rating.toNumber(),
-        0,
-      );
-      const averageRating = recipe.reviews.length
-        ? total / recipe.reviews.length
-        : 0;
+      const total = recipe.reviews.reduce((sum, r) => sum + r.rating.toNumber(), 0);
+      const averageRating = recipe.reviews.length ? total / recipe.reviews.length : 0;
       return { ...recipe, averageRating };
     })
     .sort((a, b) =>
-      sort === "highest"
-        ? b.averageRating - a.averageRating
-        : a.averageRating - b.averageRating,
+      sort === "highest" ? b.averageRating - a.averageRating : a.averageRating - b.averageRating
     );
 }
 
@@ -397,10 +381,7 @@ export async function getFeaturedRecipes() {
   });
 
   return recipes.filter((recipe) => {
-    const total = recipe.reviews.reduce(
-      (sum, r) => sum + r.rating.toNumber(),
-      0,
-    );
+    const total = recipe.reviews.reduce((sum, r) => sum + r.rating.toNumber(), 0);
     const avg = recipe.reviews.length ? total / recipe.reviews.length : 0;
     return avg === 5;
   });
@@ -434,7 +415,7 @@ export async function getTopLikedRecipes(userId: number) {
       acc[recipeId] = (acc[recipeId] || 0) + 1;
       return acc;
     },
-    {} as Record<number, number>,
+    {} as Record<number, number>
   );
 
   const topRecipeIds = Object.entries(recipeCount)

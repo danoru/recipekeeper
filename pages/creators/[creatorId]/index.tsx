@@ -1,61 +1,25 @@
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid";
-import Head from "next/head";
-import IconButton from "@mui/material/IconButton";
-import Image from "next/image";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LanguageIcon from "@mui/icons-material/Language";
-import MuiLink from "@mui/material/Link";
-import RecipeList from "../../../src/components/recipes/RecipeList";
-import StarRating from "../../../src/components/ui/StarRating";
-import Typography from "@mui/material/Typography";
 import YouTubeIcon from "@mui/icons-material/YouTube";
-import {
-  getAllCreators,
-  getCreatorByLink,
-  getTopRatedRecipesByCreator,
-} from "../../../src/data/creators";
-import { getRecipesByCreator } from "../../../src/data/recipes";
-import { recipeHref, serializePrisma } from "../../../src/data/helpers";
+import { Box, Divider, Grid, IconButton, Link as MuiLink, Typography } from "@mui/material";
+import { Creators, DiaryEntries, Recipes } from "@prisma/client";
+import Head from "next/head";
+import Image from "next/image";
+import superjson from "superjson";
 
-interface SerializedCreator {
-  name: string;
-  link: string;
-  image: string;
-  website: string | null;
-  instagram: string | null;
-  youtube: string | null;
-  [key: string]: any;
-}
-
-interface SerializedRecipe {
-  id: number;
-  name: string;
-  image: string;
-  [key: string]: any;
-}
-
-interface SerializedDiaryEntry {
-  rating: number;
-  [key: string]: any;
-}
-
-interface SerializedRecipeWithDiary extends SerializedRecipe {
-  diaryEntries: SerializedDiaryEntry[];
-}
+import RecipeList from "@/components/recipes/RecipeList";
+import StarRating from "@/components/ui/StarRating";
+import { getAllCreators, getCreatorByLink, getTopRatedRecipesByCreator } from "@/data/creators";
+import { recipeHref } from "@/data/helpers";
+import { getRecipesByCreator } from "@/data/recipes";
 
 interface Props {
-  creator: SerializedCreator;
-  recipes: SerializedRecipeWithDiary[];
-  topRatedRecipes: SerializedRecipe[] | null;
+  creator: Creators;
+  recipes: (Recipes & { diaryEntries: DiaryEntries })[];
+  topRatedRecipes: Recipes[] | null;
 }
 
-export default function CreatorPage({
-  creator,
-  recipes,
-  topRatedRecipes,
-}: Props) {
+export default function CreatorPage({ creator, recipes, topRatedRecipes }: Props) {
   const title = `${creator.name} • Savry`;
 
   const allEntries = recipes.flatMap((r) => r.diaryEntries);
@@ -63,7 +27,7 @@ export default function CreatorPage({
   const averageRating =
     totalReviews === 0
       ? 0
-      : allEntries.reduce((sum, e) => sum + e.rating, 0) / totalReviews;
+      : allEntries.reduce((sum, e) => sum + Number(e.rating), 0) / totalReviews;
 
   return (
     <>
@@ -106,7 +70,7 @@ export default function CreatorPage({
               </Typography>
               <Grid container spacing={1.5}>
                 {topRatedRecipes.slice(0, 5).map((recipe, i) => (
-                  <Grid item xs={6} sm={4} md={3} key={i}>
+                  <Grid key={i} size={{ xs: 6, sm: 4, md: 3 }}>
                     <Box
                       component={MuiLink}
                       href={recipeHref(creator.name, recipe.name)}
@@ -166,14 +130,9 @@ export default function CreatorPage({
 
           <Divider sx={{ mb: 5 }} />
 
-          {/* All recipes */}
-          <RecipeList
-            header={`All recipes by ${creator.name}`}
-            recipes={recipes}
-          />
+          <RecipeList header={`All recipes by ${creator.name}`} recipes={recipes} />
         </Box>
 
-        {/* ── Sidebar: creator card ── */}
         <Box
           sx={{
             position: { md: "sticky" },
@@ -184,21 +143,19 @@ export default function CreatorPage({
             overflow: "hidden",
           }}
         >
-          {/* Creator image */}
           <Box sx={{ position: "relative", aspectRatio: "1", width: "100%" }}>
             <Image
-              src={creator.image}
-              alt={creator.name}
               fill
-              style={{ objectFit: "cover", objectPosition: "top" }}
+              alt={creator.name}
               sizes="220px"
+              src={creator.image}
+              style={{ objectFit: "cover", objectPosition: "top" }}
             />
             <Box
               sx={{
                 position: "absolute",
                 inset: 0,
-                background:
-                  "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)",
+                background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)",
               }}
             />
           </Box>
@@ -216,13 +173,9 @@ export default function CreatorPage({
             </Typography>
 
             {totalReviews > 0 && (
-              <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}
-              >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
                 <StarRating rating={averageRating} size="sm" />
-                <Typography
-                  sx={{ fontSize: "0.75rem", color: "text.disabled" }}
-                >
+                <Typography sx={{ fontSize: "0.75rem", color: "text.disabled" }}>
                   {totalReviews} {totalReviews === 1 ? "review" : "reviews"}
                 </Typography>
               </Box>
@@ -235,13 +188,13 @@ export default function CreatorPage({
               {creator.website && (
                 <IconButton
                   href={creator.website}
-                  target="_blank"
                   rel="noopener noreferrer"
                   size="small"
                   sx={{
                     color: "text.disabled",
                     "&:hover": { color: "text.primary" },
                   }}
+                  target="_blank"
                 >
                   <LanguageIcon fontSize="small" />
                 </IconButton>
@@ -249,13 +202,13 @@ export default function CreatorPage({
               {creator.instagram && (
                 <IconButton
                   href={creator.instagram}
-                  target="_blank"
                   rel="noopener noreferrer"
                   size="small"
                   sx={{
                     color: "text.disabled",
                     "&:hover": { color: "text.primary" },
                   }}
+                  target="_blank"
                 >
                   <InstagramIcon fontSize="small" />
                 </IconButton>
@@ -263,13 +216,13 @@ export default function CreatorPage({
               {creator.youtube && (
                 <IconButton
                   href={creator.youtube}
-                  target="_blank"
                   rel="noopener noreferrer"
                   size="small"
                   sx={{
                     color: "text.disabled",
                     "&:hover": { color: "text.primary" },
                   }}
+                  target="_blank"
                 >
                   <YouTubeIcon fontSize="small" />
                 </IconButton>
@@ -290,11 +243,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({
-  params,
-}: {
-  params: { creatorId: string };
-}) {
+export async function getStaticProps({ params }: { params: { creatorId: string } }) {
   const [creator, recipes, topRatedRecipes] = await Promise.all([
     getCreatorByLink(params.creatorId),
     getRecipesByCreator(params.creatorId),
@@ -304,7 +253,7 @@ export async function getStaticProps({
   if (!creator) return { notFound: true };
 
   return {
-    props: serializePrisma({ creator, recipes, topRatedRecipes }),
+    props: superjson.serialize({ creator, recipes, topRatedRecipes }).json,
     revalidate: 1800,
   };
 }

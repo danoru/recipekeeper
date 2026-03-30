@@ -1,24 +1,4 @@
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Head from "next/head";
-import Image from "next/image";
-import MuiLink from "@mui/material/Link";
-import NextLink from "next/link";
-import RecipeActionBar from "../../../src/components/recipes/RecipeActionBar";
-import RecipeFriendRatings from "../../../src/components/recipes/RecipeFriendRatings";
-import RecipeRatings from "../../../src/components/recipes/RecipeRatings";
-import StarRating from "../../../src/components/ui/StarRating";
-import Typography from "@mui/material/Typography";
-import { serializePrisma } from "../../../src/data/helpers";
-import { findUserByUsername, getFollowingList } from "../../../src/data/users";
-import {
-  getCooklist,
-  getLikedRecipes,
-  getRecipeBySlug,
-} from "../../../src/data/recipes";
-import { getReviewsByRecipe } from "../../../src/data/reviews";
-import { getSession } from "next-auth/react";
-import { getUserDiaryEntries } from "../../../src/data/diary";
+import { Box, Divider, Link as MuiLink, Typography } from "@mui/material";
 import type {
   Cooklist,
   Creators,
@@ -28,31 +8,31 @@ import type {
   Reviews,
   Users,
 } from "@prisma/client";
-import type { SReviewWithUser } from "../../../src/types/serialized";
-import type { SUser } from "../../../src/types/serialized";
+import Head from "next/head";
+import Image from "next/image";
+import NextLink from "next/link";
+import { getSession } from "next-auth/react";
+import superjson from "superjson";
 
-// ── Types ────────────────────────────────────────────────────────────────────
-
-// After serializePrisma, Decimals become numbers and Dates become strings
-type SerializedReview = Omit<Reviews, "rating" | "date"> & {
-  rating: number;
-  date: string;
-};
-type SerializedDiaryEntry = Omit<DiaryEntries, "rating" | "date"> & {
-  rating: number;
-  date: string;
-};
+import RecipeActionBar from "@/components/recipes/RecipeActionBar";
+import RecipeFriendRatings from "@/components/recipes/RecipeFriendRatings";
+import RecipeRatings from "@/components/recipes/RecipeRatings";
+import StarRating from "@/components/ui/StarRating";
+import { getUserDiaryEntries } from "@/data/diary";
+import { getCooklist, getLikedRecipes, getRecipeBySlug } from "@/data/recipes";
+import { getReviewsByRecipe } from "@/data/reviews";
+import { findUserByUsername, getFollowingList } from "@/data/users";
 
 interface Props {
   cooklist: Cooklist[];
-  diaryEntries: SerializedDiaryEntry[];
+  diaryEntries: DiaryEntries[];
   likedRecipes: LikedRecipes[];
   recipe: Omit<Recipes, "rating"> & {
     creators: Creators;
-    reviews: SerializedReview[];
+    reviews: Reviews[];
     averageRating?: number;
   };
-  reviews: (SerializedReview & { users: SUser })[];
+  reviews: (Reviews & { users: Users })[];
   sessionUser: any;
 }
 
@@ -71,7 +51,7 @@ export default function RecipePage({
   const ratingCount = recipe.reviews.length;
   const averageRating =
     ratingCount > 0
-      ? recipe.reviews.reduce((sum, r) => sum + r.rating, 0) / ratingCount
+      ? recipe.reviews.reduce((sum, r) => sum + r.rating.toNumber(), 0) / ratingCount
       : 0;
 
   return (
@@ -79,11 +59,8 @@ export default function RecipePage({
       <Head>
         <title>{title}</title>
         <meta
+          content={recipe.description ?? `${recipe.name} by ${recipe.creators.name} on Savry`}
           name="description"
-          content={
-            recipe.description ??
-            `${recipe.name} by ${recipe.creators.name} on Savry`
-          }
         />
       </Head>
 
@@ -120,12 +97,12 @@ export default function RecipePage({
             }}
           >
             <Image
-              src={recipe.image}
-              alt={recipe.name}
               fill
-              style={{ objectFit: "cover" }}
               priority
+              alt={recipe.name}
               sizes="220px"
+              src={recipe.image}
+              style={{ objectFit: "cover" }}
             />
           </Box>
 
@@ -134,7 +111,6 @@ export default function RecipePage({
             <MuiLink
               component={NextLink}
               href={`/creators/${recipe.creators.link ?? recipe.creatorId}`}
-              underline="none"
               sx={{
                 fontSize: "0.6875rem",
                 letterSpacing: "0.1em",
@@ -145,6 +121,7 @@ export default function RecipePage({
                 transition: "color 0.15s",
                 "&:hover": { color: "primary.light" },
               }}
+              underline="none"
             >
               {recipe.creators.name}
             </MuiLink>
@@ -162,16 +139,10 @@ export default function RecipePage({
               {recipe.name}
             </Typography>
 
-            <Box
-              sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2.5 }}
-            >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2.5 }}>
               <StarRating rating={averageRating} size="md" />
-              <Typography
-                sx={{ fontSize: "0.8125rem", color: "text.secondary" }}
-              >
-                {averageRating > 0
-                  ? averageRating.toFixed(1)
-                  : "No ratings yet"}
+              <Typography sx={{ fontSize: "0.8125rem", color: "text.secondary" }}>
+                {averageRating > 0 ? averageRating.toFixed(1) : "No ratings yet"}
                 {ratingCount > 0 && (
                   <Box component="span" sx={{ color: "#4a4744", ml: 0.75 }}>
                     · {ratingCount} {ratingCount === 1 ? "review" : "reviews"}
@@ -197,9 +168,7 @@ export default function RecipePage({
             {recipe.link && (
               <MuiLink
                 href={recipe.link}
-                target="_blank"
                 rel="noopener noreferrer"
-                underline="none"
                 sx={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -216,6 +185,8 @@ export default function RecipePage({
                     color: "text.primary",
                   },
                 }}
+                target="_blank"
+                underline="none"
               >
                 View original recipe ↗
               </MuiLink>
@@ -287,18 +258,17 @@ export async function getServerSideProps(context: {
     const user = await findUserByUsername(sessionUser.username);
 
     if (user) {
-      const [cooklist, diaryEntries, following, likedRecipes] =
-        await Promise.all([
-          getCooklist(user.id),
-          getUserDiaryEntries(user.id),
-          getFollowingList(user.id),
-          getLikedRecipes(user.id),
-        ]);
+      const [cooklist, diaryEntries, following, likedRecipes] = await Promise.all([
+        getCooklist(user.id),
+        getUserDiaryEntries(user.id),
+        getFollowingList(user.id),
+        getLikedRecipes(user.id),
+      ]);
 
       const reviews = await getReviewsByRecipe(recipe.id, following);
 
       return {
-        props: serializePrisma({
+        props: superjson.serialize({
           cooklist,
           diaryEntries,
           following,
@@ -306,19 +276,19 @@ export async function getServerSideProps(context: {
           recipe,
           reviews,
           sessionUser,
-        }),
+        }).json,
       };
     }
   }
 
   return {
-    props: serializePrisma({
+    props: {
       cooklist: [],
       diaryEntries: [],
       likedRecipes: [],
       recipe,
       reviews: [],
       sessionUser: null,
-    }),
+    },
   };
 }

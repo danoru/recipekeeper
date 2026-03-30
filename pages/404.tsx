@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
-import Head from "next/head";
 import MuiLink from "@mui/material/Link";
-import NextLink from "next/link";
 import Typography from "@mui/material/Typography";
+import Head from "next/head";
+import NextLink from "next/link";
 
 export default function ErrorPage() {
   return (
@@ -61,12 +61,7 @@ export default function ErrorPage() {
 
         <Typography sx={{ fontSize: "0.875rem", color: "text.disabled" }}>
           Are you lost?{" "}
-          <MuiLink
-            component={NextLink}
-            href="/"
-            underline="hover"
-            sx={{ color: "primary.main" }}
-          >
+          <MuiLink component={NextLink} href="/" sx={{ color: "primary.main" }} underline="hover">
             Head back home.
           </MuiLink>
         </Typography>

@@ -1,19 +1,20 @@
 import Box from "@mui/material/Box";
+import { DiaryEntries, Recipes } from "@prisma/client";
 import Head from "next/head";
-import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
+
 import RecipeList from "../../../src/components/recipes/RecipeList";
-import { findUserByUsername, getAllUsers } from "../../../src/data/users";
+import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
 import { getUserDiaryEntries } from "../../../src/data/diary";
-import { serializePrisma } from "../../../src/data/helpers";
+import { findUserByUsername, getAllUsers } from "../../../src/data/users";
 
 interface Props {
   user: any;
-  diaryEntries: any[];
+  diaryEntries: DiaryEntries & { recipes: Recipes }[];
 }
 
 export default function UserRecipeList({ diaryEntries, user }: Props) {
   const title = `${user.username}'s Recipes • Savry`;
-  const recipes = diaryEntries.map((e: any) => e.recipes);
+  const recipes = diaryEntries.map((e) => e.recipes);
 
   return (
     <>
@@ -48,11 +49,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({
-  params,
-}: {
-  params: { username: string };
-}) {
+export async function getStaticProps({ params }: { params: { username: string } }) {
   const { username } = params;
   const user = await findUserByUsername(username);
   if (!user) return { notFound: true };
@@ -60,7 +57,7 @@ export async function getStaticProps({
   const diaryEntries = await getUserDiaryEntries(user.id);
 
   return {
-    props: serializePrisma({ diaryEntries, user }),
+    props: { diaryEntries, user },
     revalidate: 1800,
   };
 }

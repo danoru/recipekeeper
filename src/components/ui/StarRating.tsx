@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 
 interface Props {
-  rating: number;       // 0–5, supports 0.5 steps
+  rating: number; // 0–5, supports 0.5 steps
   size?: "sm" | "md";
 }
 
@@ -25,8 +25,8 @@ export default function StarRating({ rating, size = "sm" }: Props) {
             color: s.filled
               ? "#e6b84a"
               : s.half
-              ? "rgba(230,184,74,0.55)"
-              : "rgba(255,255,255,0.18)",
+                ? "rgba(230,184,74,0.55)"
+                : "rgba(255,255,255,0.18)",
           }}
         >
           ★

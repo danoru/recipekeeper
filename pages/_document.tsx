@@ -1,4 +1,6 @@
-import * as React from "react";
+import { EmotionCache } from "@emotion/cache";
+import createEmotionServer from "@emotion/server/create-instance";
+import { AppType } from "next/dist/shared/lib/utils";
 import Document, {
   Html,
   Head,
@@ -7,9 +9,8 @@ import Document, {
   DocumentContext,
   DocumentInitialProps,
 } from "next/document";
-import { EmotionCache } from "@emotion/cache";
-import createEmotionServer from "@emotion/server/create-instance";
-import { AppType } from "next/dist/shared/lib/utils";
+import * as React from "react";
+
 import createEmotionCache from "../src/createEmotionCache";
 import { savryTheme } from "../src/styles/theme";
 
@@ -21,22 +22,18 @@ const MyDocument = (props: DocumentProps) => {
   return (
     <Html lang="en">
       <Head>
-        <meta name="theme-color" content={savryTheme.palette.primary.main} />
-        <link rel="shortcut icon" href="/favicon.ico" />
+        <meta content={savryTheme.palette.primary.main} name="theme-color" />
+        <link href="/favicon.ico" rel="shortcut icon" />
 
         {/* Fonts */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link href="https://fonts.googleapis.com" rel="preconnect" />
+        <link crossOrigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect" />
         <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+          rel="stylesheet"
         />
 
-        <meta name="emotion-insertion-point" content="" />
+        <meta content="" name="emotion-insertion-point" />
         {props.emotionStyleTags}
       </Head>
       <body>
@@ -47,18 +44,14 @@ const MyDocument = (props: DocumentProps) => {
   );
 };
 
-MyDocument.getInitialProps = async (
-  ctx: DocumentContext,
-): Promise<DocumentProps> => {
+MyDocument.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> => {
   const originalRenderPage = ctx.renderPage;
   const cache = createEmotionCache();
   const { extractCriticalToChunks } = createEmotionServer(cache);
 
   ctx.renderPage = () =>
     originalRenderPage({
-      enhanceApp: (
-        App: AppType | React.ComponentType<{ emotionCache: EmotionCache }>,
-      ) =>
+      enhanceApp: (App: AppType | React.ComponentType<{ emotionCache: EmotionCache }>) =>
         function EnhanceApp(props) {
           return <App emotionCache={cache} {...props} />;
         },
@@ -68,9 +61,9 @@ MyDocument.getInitialProps = async (
   const emotionStyles = extractCriticalToChunks(initialProps.html);
   const emotionStyleTags = emotionStyles.styles.map((style) => (
     <style
-      data-emotion={`${style.key} ${style.ids.join(" ")}`}
       key={style.key}
       dangerouslySetInnerHTML={{ __html: style.css }}
+      data-emotion={`${style.key} ${style.ids.join(" ")}`}
     />
   ));
 

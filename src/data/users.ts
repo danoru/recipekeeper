@@ -71,13 +71,7 @@ export const USER_LIST = [
         "Chicken Pozole Verde",
         "Zuppa Tuscana Congee",
       ],
-      creators: [
-        "littlefatboy",
-        "budgetbytes",
-        "koreanbapsang",
-        "isabeleats",
-        "joshuaweismann",
-      ],
+      creators: ["littlefatboy", "budgetbytes", "koreanbapsang", "isabeleats", "joshuaweismann"],
     },
     following: ["chiquitabananna", "boeboe", "mallorylaabs"],
   },
@@ -99,12 +93,7 @@ export const USER_LIST = [
         "Banana Walnut Mochi Bread",
         "Zuppa Tuscana Congee",
       ],
-      creators: [
-        "yeungmancooking",
-        "koreanbapsang",
-        "joshuaweismann",
-        "justonecookbook",
-      ],
+      creators: ["yeungmancooking", "koreanbapsang", "joshuaweismann", "justonecookbook"],
     },
     liked: {
       recipes: [
@@ -148,12 +137,7 @@ export const USER_LIST = [
         "Pressure Cooker Japanese Curry",
         "Cajun Sausage and Rice Skillet",
       ],
-      creators: [
-        "jkenjilopezalt",
-        "budgetbytes",
-        "tablefortwo",
-        "rainbowplantlife",
-      ],
+      creators: ["jkenjilopezalt", "budgetbytes", "tablefortwo", "rainbowplantlife"],
     },
     liked: {
       recipes: [
@@ -162,12 +146,7 @@ export const USER_LIST = [
         "Pressure Cooker Japanese Curry",
         "Cajun Sausage and Rice Skillet",
       ],
-      creators: [
-        "jkenjilopezalt",
-        "budgetbytes",
-        "tablefortwo",
-        "rainbowplantlife",
-      ],
+      creators: ["jkenjilopezalt", "budgetbytes", "tablefortwo", "rainbowplantlife"],
     },
     following: ["chiquitabananna", "danoru"],
   },
@@ -271,13 +250,7 @@ export const USER_LIST = [
         "Chicken Pozole Verde",
         "Zuppa Tuscana Congee",
       ],
-      creators: [
-        "littlefatboy",
-        "budgetbytes",
-        "koreanbapsang",
-        "isabeleats",
-        "joshuaweismann",
-      ],
+      creators: ["littlefatboy", "budgetbytes", "koreanbapsang", "isabeleats", "joshuaweismann"],
     },
     following: ["danoru", "chiquitabananna", "boeboe", "mallorylaabs"],
   },

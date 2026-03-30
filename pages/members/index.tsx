@@ -1,27 +1,17 @@
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Head from "next/head";
-import MuiLink from "@mui/material/Link";
-import NextLink from "next/link";
-import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
 import FavoriteIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import MenuBookIcon from "@mui/icons-material/MenuBookOutlined";
 import OutdoorGrillIcon from "@mui/icons-material/OutdoorGrillOutlined";
-import UserAvatar from "../../src/components/users/UserAvatar";
-import { getAllUsers } from "../../src/data/users";
-import { serializePrisma } from "../../src/data/helpers";
+import { Box, Divider, Link as MuiLink, Tooltip, Typography } from "@mui/material";
+import { Users } from "@prisma/client";
+import Head from "next/head";
+import NextLink from "next/link";
+import superjson from "superjson";
 
-interface SerializedUser {
-  id: number;
-  username: string;
-  image: string | null;
-  joinDate: string;
-  [key: string]: any;
-}
+import UserAvatar from "@/components/users/UserAvatar";
+import { getAllUsers } from "@/data/users";
 
 interface Props {
-  users: SerializedUser[];
+  users: Users[];
 }
 
 export default function Members({ users }: Props) {
@@ -55,9 +45,7 @@ export default function Members({ users }: Props) {
         >
           Members
         </Typography>
-        <Typography
-          sx={{ fontSize: "0.8125rem", color: "text.disabled", mb: 4 }}
-        >
+        <Typography sx={{ fontSize: "0.8125rem", color: "text.disabled", mb: 4 }}>
           Food lovers, critics, and friends.
         </Typography>
 
@@ -87,13 +75,13 @@ export default function Members({ users }: Props) {
                 <MuiLink
                   component={NextLink}
                   href={`/${user.username}`}
-                  underline="none"
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     gap: 1.5,
                     flex: 1,
                   }}
+                  underline="none"
                 >
                   <UserAvatar avatarSize="36px" name={user.username} />
                   <Typography
@@ -109,7 +97,7 @@ export default function Members({ users }: Props) {
 
                 {/* Quick links */}
                 <Box sx={{ display: "flex", gap: 0.5 }}>
-                  <Tooltip title="Recipes" placement="top">
+                  <Tooltip placement="top" title="Recipes">
                     <MuiLink
                       component={NextLink}
                       href={`/${user.username}/recipes`}
@@ -128,7 +116,7 @@ export default function Members({ users }: Props) {
                       <OutdoorGrillIcon sx={{ fontSize: 18 }} />
                     </MuiLink>
                   </Tooltip>
-                  <Tooltip title="Cooklist" placement="top">
+                  <Tooltip placement="top" title="Cooklist">
                     <MuiLink
                       component={NextLink}
                       href={`/${user.username}/cooklist`}
@@ -147,7 +135,7 @@ export default function Members({ users }: Props) {
                       <MenuBookIcon sx={{ fontSize: 18 }} />
                     </MuiLink>
                   </Tooltip>
-                  <Tooltip title="Likes" placement="top">
+                  <Tooltip placement="top" title="Likes">
                     <MuiLink
                       component={NextLink}
                       href={`/${user.username}/likes`}
@@ -180,7 +168,7 @@ export default function Members({ users }: Props) {
 export async function getStaticProps() {
   const users = await getAllUsers();
   return {
-    props: serializePrisma({ users }),
+    props: superjson.serialize({ users }).json,
     revalidate: 1800,
   };
 }

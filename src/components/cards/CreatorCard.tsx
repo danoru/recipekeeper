@@ -47,8 +47,7 @@ export default function CreatorCard({ image, link, name }: Props) {
         sx={{
           position: "absolute",
           inset: 0,
-          background:
-            "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 55%)",
+          background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 55%)",
         }}
       />
 

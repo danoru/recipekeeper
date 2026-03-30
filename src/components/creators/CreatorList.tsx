@@ -1,7 +1,8 @@
-import CreatorCard from "../cards/CreatorCard";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { Creators } from "@prisma/client";
+
+import CreatorCard from "../cards/CreatorCard";
 
 interface Props {
   creators: Creators[];
@@ -41,15 +42,15 @@ function CreatorList({ creators, header, style }: Props) {
           width: "75%",
         }}
       >
-        <Typography variant={typographyStyle} component="div">
+        <Typography component="div" variant={typographyStyle}>
           {styledHeader}
         </Typography>
       </Grid>
       <Grid
         container
         item
-        rowSpacing={1}
         columnSpacing={2}
+        rowSpacing={1}
         sx={{
           margin: "10px auto",
           maxWidth: "75%",
@@ -58,9 +59,9 @@ function CreatorList({ creators, header, style }: Props) {
         {creators.map((creator: any, i: number) => (
           <CreatorCard
             key={`card-${i}`}
-            name={creator.name}
-            link={`creators/${creator.link}`}
             image={creator.image}
+            link={`creators/${creator.link}`}
+            name={creator.name}
           />
         ))}
       </Grid>

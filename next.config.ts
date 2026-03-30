@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -9,7 +8,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  transpilePackages: ["@mui/x-charts", "@mui/material", "@mui/icons-material"],
 };
 
-export default nextConfig;
+module.exports = nextConfig;

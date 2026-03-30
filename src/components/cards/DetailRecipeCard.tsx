@@ -1,11 +1,4 @@
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
-import Rating from "@mui/material/Rating";
-import Typography from "@mui/material/Typography";
+import { Box, Card, CardContent, CardMedia, Grid, Link, Rating, Typography } from "@mui/material";
 import dayjs from "dayjs";
 
 interface Props {
@@ -17,16 +10,9 @@ interface Props {
   username?: string;
 }
 
-function DetailRecipeCard({
-  date,
-  image,
-  link,
-  name,
-  rating,
-  username,
-}: Props) {
+function DetailRecipeCard({ date, image, link, name, rating, username }: Props) {
   return (
-    <Grid item>
+    <Grid>
       <Card
         sx={{
           position: "relative",
@@ -43,13 +29,13 @@ function DetailRecipeCard({
           <CardMedia
             className="image"
             image={image}
-            title={name}
             sx={{
               position: "absolute",
               inset: 0,
               filter: "brightness(0.5)",
               transition: "filter 0.3s",
             }}
+            title={name}
           />
           <Box
             className="overlay"
@@ -62,24 +48,21 @@ function DetailRecipeCard({
             }}
           />
           <CardContent sx={{ position: "relative" }}>
-            <Typography
-              variant="h6"
-              sx={{ color: "white", textShadow: "0 0 5px rgba(0,0,0,0.7)" }}
-            >
+            <Typography sx={{ color: "white", textShadow: "0 0 5px rgba(0,0,0,0.7)" }} variant="h6">
               {name}
             </Typography>
             {username && (
               <Typography
-                variant="body1"
                 sx={{ color: "white", textShadow: "0 0 5px rgba(0,0,0,0.7)" }}
+                variant="body1"
               >
                 {username}
               </Typography>
             )}
-            <Rating value={rating} size="small" readOnly />
+            <Rating readOnly size="small" value={rating} />
             <Typography
-              variant="body1"
               sx={{ color: "white", textShadow: "0 0 5px rgba(0,0,0,0.7)" }}
+              variant="body1"
             >
               {dayjs(date).format("MMM DD")}
             </Typography>

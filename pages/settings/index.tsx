@@ -1,17 +1,16 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
-import Head from "next/head";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import Head from "next/head";
+import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 
 export default function SettingsPage({ session }: any) {
   const username = session?.user?.username;
-  const router = useRouter();
 
   const [userData, setUserData] = useState({
     username: username ?? "",
@@ -91,113 +90,103 @@ export default function SettingsPage({ session }: any) {
         >
           Account settings
         </Typography>
-        <Typography
-          sx={{ fontSize: "0.8125rem", color: "text.disabled", mb: 4 }}
-        >
+        <Typography sx={{ fontSize: "0.8125rem", color: "text.disabled", mb: 4 }}>
           Update your profile information.
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit}>
           {/* Username (read-only) */}
           <TextField
-            id="username"
-            label="Username"
             disabled
             fullWidth
+            id="username"
+            InputLabelProps={{ shrink: true }}
+            label="Username"
+            sx={{ ...fieldSx, mb: 2.5 }}
             value={username ?? ""}
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            sx={{ ...fieldSx, mb: 2.5 }}
           />
 
           <Divider sx={{ mb: 2.5 }} />
 
           {/* Name row */}
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={1.5}
-            sx={{ mb: 2 }}
-          >
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 2 }}>
             <TextField
-              id="firstName"
-              label="Given name"
-              variant="outlined"
               fullWidth
-              value={userData.firstName ?? ""}
-              onChange={handleChange}
+              id="firstName"
               InputLabelProps={{ shrink: true }}
+              label="Given name"
               sx={fieldSx}
+              value={userData.firstName ?? ""}
+              variant="outlined"
+              onChange={handleChange}
             />
             <TextField
-              id="lastName"
-              label="Family name"
-              variant="outlined"
               fullWidth
-              value={userData.lastName ?? ""}
-              onChange={handleChange}
+              id="lastName"
               InputLabelProps={{ shrink: true }}
+              label="Family name"
               sx={fieldSx}
+              value={userData.lastName ?? ""}
+              variant="outlined"
+              onChange={handleChange}
             />
           </Stack>
 
           <TextField
-            id="email"
-            label="Email address"
-            type="email"
-            variant="outlined"
             fullWidth
-            value={userData.email ?? ""}
-            onChange={handleChange}
+            id="email"
             InputLabelProps={{ shrink: true }}
+            label="Email address"
             sx={{ ...fieldSx, mb: 2 }}
+            type="email"
+            value={userData.email ?? ""}
+            variant="outlined"
+            onChange={handleChange}
           />
 
           {/* Location / website row */}
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={1.5}
-            sx={{ mb: 2 }}
-          >
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 2 }}>
             <TextField
-              id="location"
-              label="Location"
-              variant="outlined"
               fullWidth
-              value={userData.location ?? ""}
-              onChange={handleChange}
+              id="location"
               InputLabelProps={{ shrink: true }}
+              label="Location"
               sx={fieldSx}
+              value={userData.location ?? ""}
+              variant="outlined"
+              onChange={handleChange}
             />
             <TextField
-              id="website"
-              label="Website"
-              variant="outlined"
               fullWidth
-              value={userData.website ?? ""}
-              onChange={handleChange}
+              id="website"
               InputLabelProps={{ shrink: true }}
+              label="Website"
               sx={fieldSx}
+              value={userData.website ?? ""}
+              variant="outlined"
+              onChange={handleChange}
             />
           </Stack>
 
           <TextField
-            id="bio"
-            label="Bio"
-            multiline
-            rows={4}
             fullWidth
-            variant="outlined"
-            value={userData.bio ?? ""}
-            onChange={handleChange}
+            multiline
+            id="bio"
             InputLabelProps={{ shrink: true }}
+            label="Bio"
+            rows={4}
             sx={{ ...fieldSx, mb: 3 }}
+            value={userData.bio ?? ""}
+            variant="outlined"
+            onChange={handleChange}
           />
 
           <Button
-            type="submit"
-            variant="contained"
             disabled={saving || loading}
             sx={{ borderRadius: "8px", px: 3 }}
+            type="submit"
+            variant="contained"
           >
             {saving ? "Saving…" : saved ? "Saved!" : "Save changes"}
           </Button>

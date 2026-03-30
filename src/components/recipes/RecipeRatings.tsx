@@ -1,6 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { BarChart } from "@mui/x-charts";
+
 import type { SRecipe } from "../../types/serialized";
 
 interface Props {
@@ -33,11 +34,9 @@ export default function RecipeRatings({ recipe }: Props) {
     <Stack>
       <BarChart
         dataset={dataset}
-        xAxis={[{ scaleType: "band", dataKey: "rating" }]}
-        series={[{ dataKey: "count", color: "#c8a96e" }]}
-        width={375}
         height={200}
         margin={{ left: 0 }}
+        series={[{ dataKey: "count", color: "#c8a96e" }]}
         sx={{
           "& .MuiChartsAxis-line": { stroke: "rgba(255,255,255,0.15)" },
           "& .MuiChartsAxis-tick": { stroke: "rgba(255,255,255,0.15)" },
@@ -46,6 +45,8 @@ export default function RecipeRatings({ recipe }: Props) {
             fontSize: "0.6875rem",
           },
         }}
+        width={375}
+        xAxis={[{ scaleType: "band", dataKey: "rating" }]}
       />
     </Stack>
   );

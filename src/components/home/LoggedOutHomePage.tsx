@@ -56,7 +56,6 @@ export default function LoggedOutHomePage() {
 
       {/* CTA */}
       <Button
-        variant="contained"
         href="/login"
         size="large"
         sx={{
@@ -67,6 +66,7 @@ export default function LoggedOutHomePage() {
           letterSpacing: "0.06em",
           borderRadius: "8px",
         }}
+        variant="contained"
       >
         Get started — it&apos;s free
       </Button>

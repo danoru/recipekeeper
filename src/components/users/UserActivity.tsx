@@ -1,9 +1,9 @@
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
-import dayjs from "dayjs";
 import Rating from "@mui/material/Rating";
 import Stack from "@mui/material/Stack";
 import { DiaryEntries, Recipes, Users } from "@prisma/client";
+import dayjs from "dayjs";
 
 interface Props {
   diaryEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
@@ -12,7 +12,7 @@ interface Props {
 function UserActivity({ diaryEntries }: Props) {
   const activity = diaryEntries.slice(0, 4);
   return (
-    <Grid item sx={{ marginTop: "10px" }}>
+    <Grid sx={{ marginTop: "10px" }}>
       <Grid
         container
         sx={{
@@ -24,7 +24,7 @@ function UserActivity({ diaryEntries }: Props) {
           maxWidth: "50%",
         }}
       >
-        <Grid item>ACTIVITY</Grid>
+        <Grid>ACTIVITY</Grid>
       </Grid>
       <Stack spacing={1}>
         {activity?.map((diaryEntry, i) => (
@@ -35,9 +35,7 @@ function UserActivity({ diaryEntries }: Props) {
               </Link>
               {" made "}
               <Link
-                href={`/recipes/${diaryEntry.recipes.name
-                  .toLowerCase()
-                  .replace(/ /g, "-")}`}
+                href={`/recipes/${diaryEntry.recipes.name.toLowerCase().replace(/ /g, "-")}`}
                 underline="none"
               >
                 {diaryEntry.recipes.name}
@@ -45,12 +43,7 @@ function UserActivity({ diaryEntries }: Props) {
               {" on "}
               {dayjs(diaryEntry.date).format("dddd, MMMM Do YYYY")}
               {" and rated it "}
-              <Rating
-                value={diaryEntry.rating.toNumber()}
-                size="small"
-                precision={0.5}
-                readOnly
-              />
+              <Rating readOnly precision={0.5} size="small" value={diaryEntry.rating.toNumber()} />
               {"."}
               {/* {dayjs(diaryEntry.date).fromNow()} */}
             </div>

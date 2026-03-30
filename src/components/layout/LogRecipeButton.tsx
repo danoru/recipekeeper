@@ -11,12 +11,12 @@ import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import Image from "next/image";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Recipes } from "@prisma/client";
+import dayjs, { Dayjs } from "dayjs";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import dayjs, { Dayjs } from "dayjs";
 
 interface Props {
   fullWidth?: boolean;
@@ -50,9 +50,7 @@ export default function LogRecipeButton({ fullWidth = false }: Props) {
   const [saving, setSaving] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "success",
-  );
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
 
   const handleOpen = () => setModalOpen(true);
 
@@ -121,10 +119,8 @@ export default function LogRecipeButton({ fullWidth = false }: Props) {
     <>
       {/* Trigger button */}
       <Button
-        variant="outlined"
-        size="small"
-        onClick={handleOpen}
         fullWidth={fullWidth}
+        size="small"
         sx={{
           fontSize: "0.6875rem",
           fontWeight: 500,
@@ -141,6 +137,8 @@ export default function LogRecipeButton({ fullWidth = false }: Props) {
           },
           transition: "all 0.15s",
         }}
+        variant="outlined"
+        onClick={handleOpen}
       >
         + Log
       </Button>
@@ -152,23 +150,23 @@ export default function LogRecipeButton({ fullWidth = false }: Props) {
             <StepOne
               recipes={recipes}
               selectedRecipe={selectedRecipe}
-              onSelect={setSelectedRecipe}
-              onNext={() => setModalStep(2)}
               onClose={handleClose}
+              onNext={() => setModalStep(2)}
+              onSelect={setSelectedRecipe}
             />
           ) : (
             <StepTwo
-              selectedRecipe={selectedRecipe!}
-              date={date}
               comment={comment}
-              rating={rating}
+              date={date}
               hasCookedBefore={hasCookedBefore}
+              rating={rating}
               saving={saving}
-              onDateChange={setDate}
-              onCommentChange={setComment}
-              onRatingChange={setRating}
-              onHasCookedBeforeChange={setHasCookedBefore}
+              selectedRecipe={selectedRecipe!}
               onBack={() => setModalStep(1)}
+              onCommentChange={setComment}
+              onDateChange={setDate}
+              onHasCookedBeforeChange={setHasCookedBefore}
+              onRatingChange={setRating}
               onSave={handleSave}
             />
           )}
@@ -177,16 +175,16 @@ export default function LogRecipeButton({ fullWidth = false }: Props) {
 
       {/* Toast */}
       <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={5000}
-        onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        autoHideDuration={5000}
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
       >
         <Alert
-          onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
-          variant="filled"
           sx={{ borderRadius: "8px" }}
+          variant="filled"
+          onClose={() => setSnackbarOpen(false)}
         >
           {snackbarMessage}
         </Alert>
@@ -229,13 +227,13 @@ function StepOne({
           Log a recipe
         </Typography>
         <Typography
-          onClick={onClose}
           sx={{
             fontSize: "0.75rem",
             color: "text.disabled",
             cursor: "pointer",
             "&:hover": { color: "text.secondary" },
           }}
+          onClick={onClose}
         >
           ✕
         </Typography>
@@ -252,10 +250,8 @@ function StepOne({
         Search for a recipe
       </Typography>
       <Autocomplete
-        options={recipes}
         getOptionLabel={(option) => option.name}
-        value={selectedRecipe}
-        onChange={(_, newValue) => onSelect(newValue)}
+        options={recipes}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -270,22 +266,20 @@ function StepOne({
           />
         )}
         renderOption={(props, option) => (
-          <Box
-            component="li"
-            {...props}
-            sx={{ fontSize: "0.875rem", py: 0.75 }}
-          >
+          <Box component="li" {...props} sx={{ fontSize: "0.875rem", py: 0.75 }}>
             {option.name}
           </Box>
         )}
+        value={selectedRecipe}
+        onChange={(_, newValue) => onSelect(newValue)}
       />
 
       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
         <Button
-          variant="contained"
-          onClick={onNext}
           disabled={!selectedRecipe}
           sx={{ borderRadius: "8px", px: 3 }}
+          variant="contained"
+          onClick={onNext}
         >
           Next →
         </Button>
@@ -328,7 +322,6 @@ function StepTwo({
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2.5 }}>
         <Button
           size="small"
-          onClick={onBack}
           sx={{
             minWidth: 0,
             p: 0.5,
@@ -336,6 +329,7 @@ function StepTwo({
             fontSize: "0.875rem",
             "&:hover": { color: "text.secondary", bgcolor: "transparent" },
           }}
+          onClick={onBack}
         >
           ←
         </Button>
@@ -382,11 +376,11 @@ function StepTwo({
         >
           {selectedRecipe.image && (
             <Image
-              src={selectedRecipe.image}
               alt={selectedRecipe.name}
-              width={80}
               height={80}
+              src={selectedRecipe.image}
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
+              width={80}
             />
           )}
         </Box>
@@ -395,8 +389,6 @@ function StepTwo({
         <Stack spacing={1.25} sx={{ flex: 1 }}>
           <DatePicker
             label="Date cooked"
-            value={date}
-            onChange={onDateChange}
             slotProps={{
               textField: {
                 size: "small",
@@ -409,6 +401,8 @@ function StepTwo({
                 },
               },
             }}
+            value={date}
+            onChange={onDateChange}
           />
           <Box>
             <Typography
@@ -422,14 +416,14 @@ function StepTwo({
               Rating
             </Typography>
             <Rating
-              value={rating}
               precision={0.5}
-              onChange={(_, newValue) => onRatingChange(newValue)}
               sx={{
                 "& .MuiRating-iconFilled": { color: "#e6b84a" },
                 "& .MuiRating-iconHover": { color: "#c8a96e" },
                 "& .MuiRating-iconEmpty": { color: "rgba(255,255,255,0.18)" },
               }}
+              value={rating}
+              onChange={(_, newValue) => onRatingChange(newValue)}
             />
           </Box>
         </Stack>
@@ -437,12 +431,10 @@ function StepTwo({
 
       {/* Review */}
       <TextField
-        label="Notes (optional)"
-        multiline
-        rows={3}
-        value={comment}
-        onChange={(e) => onCommentChange(e.target.value)}
         fullWidth
+        multiline
+        label="Notes (optional)"
+        rows={3}
         size="small"
         sx={{
           mb: 1.5,
@@ -452,6 +444,8 @@ function StepTwo({
           },
           "& .MuiInputLabel-root": { fontSize: "0.8125rem" },
         }}
+        value={comment}
+        onChange={(e) => onCommentChange(e.target.value)}
       />
 
       {/* Remade checkbox */}
@@ -459,12 +453,12 @@ function StepTwo({
         control={
           <Checkbox
             checked={hasCookedBefore}
-            onChange={(e) => onHasCookedBeforeChange(e.target.checked)}
             size="small"
             sx={{
               color: "rgba(255,255,255,0.2)",
               "&.Mui-checked": { color: "primary.main" },
             }}
+            onChange={(e) => onHasCookedBeforeChange(e.target.checked)}
           />
         }
         label={
@@ -477,11 +471,11 @@ function StepTwo({
 
       {/* Save */}
       <Button
+        fullWidth
+        disabled={saving || !rating}
+        sx={{ borderRadius: "8px", py: 1 }}
         variant="contained"
         onClick={onSave}
-        disabled={saving || !rating}
-        fullWidth
-        sx={{ borderRadius: "8px", py: 1 }}
       >
         {saving ? "Saving…" : "Save to diary"}
       </Button>

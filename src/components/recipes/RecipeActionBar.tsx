@@ -1,17 +1,18 @@
-import React, { useState } from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
-import MuiLink from "@mui/material/Link";
-import NextLink from "next/link";
-import Typography from "@mui/material/Typography";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/FavoriteOutlined";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import MenuBookTwoToneIcon from "@mui/icons-material/MenuBookTwoTone";
 import OutdoorGrillIcon from "@mui/icons-material/OutdoorGrill";
 import OutdoorGrillOutlinedIcon from "@mui/icons-material/OutdoorGrillOutlined";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import MuiLink from "@mui/material/Link";
+import Typography from "@mui/material/Typography";
 import type { Cooklist, LikedRecipes } from "@prisma/client";
+import NextLink from "next/link";
+import React, { useState } from "react";
+
 import type { SDiaryEntry, SRecipe } from "../../types/serialized";
 
 interface Props {
@@ -33,13 +34,13 @@ export default function RecipeActionBar({
   const recipeId = recipe.id;
 
   const [hasCooked, setHasCooked] = useState(
-    userId ? diaryEntries?.some((e) => e.userId === userId) : false,
+    userId ? diaryEntries?.some((e) => e.userId === userId) : false
   );
   const [isCooklisted, setIsCooklisted] = useState(
-    userId ? cooklist.some((c) => c.userId === userId) : false,
+    userId ? cooklist.some((c) => c.userId === userId) : false
   );
   const [isLiked, setIsLiked] = useState(
-    userId ? likedRecipes.some((l) => l.userId === userId) : false,
+    userId ? likedRecipes.some((l) => l.userId === userId) : false
   );
   const [copied, setCopied] = useState(false);
 
@@ -91,6 +92,7 @@ export default function RecipeActionBar({
             }}
           >
             <ActionButton
+              active={hasCooked}
               icon={
                 hasCooked ? (
                   <OutdoorGrillIcon fontSize="small" />
@@ -99,10 +101,10 @@ export default function RecipeActionBar({
                 )
               }
               label={hasCooked ? "Cooked" : "Cook"}
-              active={hasCooked}
               onClick={() => {}}
             />
             <ActionButton
+              active={isLiked}
               icon={
                 isLiked ? (
                   <FavoriteIcon fontSize="small" />
@@ -111,10 +113,10 @@ export default function RecipeActionBar({
                 )
               }
               label={isLiked ? "Liked" : "Like"}
-              active={isLiked}
               onClick={handleLikes}
             />
             <ActionButton
+              active={isCooklisted}
               icon={
                 isCooklisted ? (
                   <MenuBookIcon fontSize="small" />
@@ -123,7 +125,6 @@ export default function RecipeActionBar({
                 )
               }
               label="Cooklist"
-              active={isCooklisted}
               onClick={handleCooklist}
             />
           </Box>
@@ -144,12 +145,7 @@ export default function RecipeActionBar({
         </>
       ) : (
         <>
-          <MuiLink
-            component={NextLink}
-            href="/login"
-            underline="none"
-            sx={{ display: "block" }}
-          >
+          <MuiLink component={NextLink} href="/login" sx={{ display: "block" }} underline="none">
             <Typography
               sx={{
                 fontSize: "0.8125rem",
@@ -172,10 +168,10 @@ export default function RecipeActionBar({
         <>
           <MuiLink
             href={recipe.link}
-            target="_blank"
             rel="noopener noreferrer"
-            underline="none"
             sx={{ display: "block" }}
+            target="_blank"
+            underline="none"
           >
             <Typography
               sx={{
@@ -196,9 +192,8 @@ export default function RecipeActionBar({
       )}
 
       <Button
-        fullWidth
-        onClick={handleShare}
         disableRipple
+        fullWidth
         sx={{
           fontSize: "0.8125rem",
           color: copied ? "primary.main" : "text.secondary",
@@ -208,6 +203,7 @@ export default function RecipeActionBar({
           "&:hover": { bgcolor: "transparent", color: "text.primary" },
           transition: "color 0.15s",
         }}
+        onClick={handleShare}
       >
         {copied ? "Copied!" : "Share"}
       </Button>
