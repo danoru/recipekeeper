@@ -6,6 +6,7 @@ import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
 import NextLink from "next/link";
+import superjson from "superjson";
 
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import UserAvatar from "../../src/components/users/UserAvatar";
@@ -114,7 +115,7 @@ export async function getStaticProps({ params }: { params: { username: string } 
   const followers = await getFollowers(username);
 
   return {
-    props: { user, followers },
+    props: superjson.serialize({ user, followers }).json,
     revalidate: 1800,
   };
 }

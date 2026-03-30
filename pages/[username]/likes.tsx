@@ -1,13 +1,14 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
+import superjson from "superjson";
 
-import CreatorCard from "../../src/components/cards/CreatorCard";
-import RecipeList from "../../src/components/recipes/RecipeList";
-import SectionHeader from "../../src/components/ui/SectionHeader";
-import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
-import { creatorHref } from "../../src/data/helpers";
-import { getAllUsers, getUserLikes } from "../../src/data/users";
+import CreatorCard from "@/components/cards/CreatorCard";
+import RecipeList from "@/components/recipes/RecipeList";
+import SectionHeader from "@/components/ui/SectionHeader";
+import ProfileLinkBar from "@/components/users/ProfileLinkBar";
+import { creatorHref } from "@/data/helpers";
+import { getAllUsers, getUserLikes } from "@/data/users";
 
 interface Props {
   user: any;
@@ -81,7 +82,7 @@ export async function getStaticProps({ params }: { params: { username: string } 
   if (!user) return { notFound: true };
 
   return {
-    props: { user },
+    props: superjson.serialize({ user }).json,
     revalidate: 1800,
   };
 }

@@ -9,13 +9,13 @@ import SectionHeader from "./SectionHeader";
 // ─── UserRecipeDiary ──────────────────────────────────────────────────────────
 
 interface DiaryProps {
-  diaryEntries: DiaryEntries[] & { recipes: Recipes }[];
+  diaryEntries: (DiaryEntries & { recipes: Recipes })[];
 }
 
 export default function UserRecipeDiary({ diaryEntries }: DiaryProps) {
   const limited = diaryEntries.slice(0, 9);
 
-  const entriesByMonth: Record<string, DiaryEntries[] & { recipes: Recipes }[]> = {};
+  const entriesByMonth: Record<string, (DiaryEntries & { recipes: Recipes })[]> = {};
   limited.forEach((entry) => {
     const key = dayjs(entry.date).format("MMM YYYY");
     if (!entriesByMonth[key]) entriesByMonth[key] = [];

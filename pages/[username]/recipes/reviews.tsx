@@ -7,13 +7,13 @@ import dayjs from "dayjs";
 import Head from "next/head";
 import Image from "next/image";
 import NextLink from "next/link";
+import superjson from "superjson";
 
-import StarRating from "../../../src/components/ui/StarRating";
-import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
-import { recipeHref } from "../../../src/data/helpers";
-import { getUserReviews } from "../../../src/data/reviews";
-import { findUserByUsername, getAllUsers } from "../../../src/data/users";
-
+import StarRating from "@/components/ui/StarRating";
+import ProfileLinkBar from "@/components/users/ProfileLinkBar";
+import { recipeHref } from "@/data/helpers";
+import { getUserReviews } from "@/data/reviews";
+import { findUserByUsername, getAllUsers } from "@/data/users";
 
 interface SerializedReview {
   id: number;
@@ -167,15 +167,15 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }: { params: { username: string } }) {
-  const { username } = params;
+export async function getStaticProps(context: any) {
+  const { username } = context.params;
   const user = await findUserByUsername(username);
   if (!user) return { notFound: true };
 
   const reviews = await getUserReviews(user.id);
 
   return {
-    props: { reviews, user },
+    props: superjson.serialize({ reviews, user }).json,
     revalidate: 1800,
   };
 }

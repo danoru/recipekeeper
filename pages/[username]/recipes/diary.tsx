@@ -13,11 +13,12 @@ import Typography from "@mui/material/Typography";
 import { DiaryEntries, Recipes } from "@prisma/client";
 import dayjs from "dayjs";
 import Head from "next/head";
+import superjson from "superjson";
 
-import StarRating from "../../../src/components/ui/StarRating";
-import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
-import { getUserDiaryEntries } from "../../../src/data/diary";
-import { findUserByUsername, getAllUsers } from "../../../src/data/users";
+import StarRating from "@/components/ui/StarRating";
+import ProfileLinkBar from "@/components/users/ProfileLinkBar";
+import { getUserDiaryEntries } from "@/data/diary";
+import { findUserByUsername, getAllUsers } from "@/data/users";
 
 interface Props {
   user: any;
@@ -159,7 +160,7 @@ export async function getStaticProps({ params }: { params: { username: string } 
   const diaryEntries = await getUserDiaryEntries(user.id);
 
   return {
-    props: { diaryEntries, user },
+    props: superjson.serialize({ diaryEntries, user }).json,
     revalidate: 1800,
   };
 }

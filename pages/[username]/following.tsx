@@ -6,10 +6,11 @@ import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
 import NextLink from "next/link";
+import superjson from "superjson";
 
-import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
-import UserAvatar from "../../src/components/users/UserAvatar";
-import { findUserByUsername, getAllUsers, getFollowing } from "../../src/data/users";
+import ProfileLinkBar from "@/components/users/ProfileLinkBar";
+import UserAvatar from "@/components/users/UserAvatar";
+import { findUserByUsername, getAllUsers, getFollowing } from "@/data/users";
 
 interface Props {
   user: any;
@@ -114,7 +115,7 @@ export async function getStaticProps({ params }: { params: { username: string } 
   const following = user ? await getFollowing(user.id) : [];
 
   return {
-    props: { user, following },
+    props: superjson.serialize({ user, following }).json,
     revalidate: 1800,
   };
 }

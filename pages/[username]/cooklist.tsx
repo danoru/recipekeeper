@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
+import superjson from "superjson";
 
 import RecipeList from "../../src/components/recipes/RecipeList";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
@@ -61,7 +62,7 @@ export async function getStaticProps({ params }: { params: { username: string } 
   const cooklist = await getCooklist(user.id);
 
   return {
-    props: { cooklist, user },
+    props: superjson.serialize({ cooklist, user }).json,
     revalidate: 1800,
   };
 }

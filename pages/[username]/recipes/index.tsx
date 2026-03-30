@@ -1,11 +1,12 @@
 import Box from "@mui/material/Box";
 import { DiaryEntries, Recipes } from "@prisma/client";
 import Head from "next/head";
+import superjson from "superjson";
 
-import RecipeList from "../../../src/components/recipes/RecipeList";
-import ProfileLinkBar from "../../../src/components/users/ProfileLinkBar";
-import { getUserDiaryEntries } from "../../../src/data/diary";
-import { findUserByUsername, getAllUsers } from "../../../src/data/users";
+import RecipeList from "@/components/recipes/RecipeList";
+import ProfileLinkBar from "@/components/users/ProfileLinkBar";
+import { getUserDiaryEntries } from "@/data/diary";
+import { findUserByUsername, getAllUsers } from "@/data/users";
 
 interface Props {
   user: any;
@@ -57,7 +58,7 @@ export async function getStaticProps({ params }: { params: { username: string } 
   const diaryEntries = await getUserDiaryEntries(user.id);
 
   return {
-    props: { diaryEntries, user },
+    props: superjson.serialize({ diaryEntries, user }).json,
     revalidate: 1800,
   };
 }
