@@ -1,12 +1,13 @@
 import { memo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { DiaryEntries, Recipes, Users } from "@prisma/client";
+import { Recipes, Users } from "@prisma/client";
+import type { SDiaryEntry } from "../../types/serialized";
 import FriendRecipeCard from "../cards/FriendRecipeCard";
 import SectionHeader from "../ui/SectionHeader";
 
 interface Props {
-  recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
+  recentEntries: (SDiaryEntry & { users: Users; recipes: Recipes })[];
 }
 
 function FriendRecipeActivity({ recentEntries }: Props) {
@@ -17,7 +18,10 @@ function FriendRecipeActivity({ recentEntries }: Props) {
       <SectionHeader label="New recipes from friends" href="/members" />
       <Grid container spacing={1.5}>
         {entries.map(
-          (entry: DiaryEntries & { users: Users; recipes: Recipes }, i: number) => {
+          (
+            entry: SDiaryEntry & { users: Users; recipes: Recipes },
+            i: number,
+          ) => {
             const slug = entry.recipes.name.replace(/\s+/g, "-").toLowerCase();
             return (
               <Grid item xs={6} sm={4} key={`friend-${i}`}>
@@ -31,7 +35,7 @@ function FriendRecipeActivity({ recentEntries }: Props) {
                 />
               </Grid>
             );
-          }
+          },
         )}
       </Grid>
     </Box>

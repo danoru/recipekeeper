@@ -28,11 +28,16 @@ import type {
   Reviews,
   Users,
 } from "@prisma/client";
+import type { SReviewWithUser } from "../../../src/types/serialized";
+import type { SUser } from "../../../src/types/serialized";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
 // After serializePrisma, Decimals become numbers and Dates become strings
-type SerializedReview = Omit<Reviews, "rating"> & { rating: number };
+type SerializedReview = Omit<Reviews, "rating" | "date"> & {
+  rating: number;
+  date: string;
+};
 type SerializedDiaryEntry = Omit<DiaryEntries, "rating" | "date"> & {
   rating: number;
   date: string;
@@ -47,7 +52,7 @@ interface Props {
     reviews: SerializedReview[];
     averageRating?: number;
   };
-  reviews: (SerializedReview & { users: Users })[];
+  reviews: (SerializedReview & { users: SUser })[];
   sessionUser: any;
 }
 

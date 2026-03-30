@@ -3,7 +3,8 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import MuiLink from "@mui/material/Link";
 import NextLink from "next/link";
-import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
+import { Creators, Recipes, Users } from "@prisma/client";
+import type { SDiaryEntry } from "../../types/serialized";
 import FriendRecipeActivity from "./FriendRecipeActivity";
 import PopularCreatorActivity from "./PopularCreatorActivity";
 import PopularRecipeActivity from "./PopularRecipeActivity";
@@ -11,7 +12,7 @@ import dayjs from "dayjs";
 
 interface Props {
   creators: Creators[];
-  recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
+  recentEntries: (SDiaryEntry & { users: Users; recipes: Recipes })[];
   recipes: Recipes[];
   username: string;
 }
