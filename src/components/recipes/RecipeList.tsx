@@ -1,13 +1,13 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { DiaryEntries, Recipes } from "@prisma/client";
+import { Recipes } from "@prisma/client";
 
 import RecipeCard from "../cards/RecipeCard";
 import SectionHeader from "../ui/SectionHeader";
 
 interface Props {
   header: string;
-  recipes: Recipes[] & { diaryEntries: DiaryEntries }[];
+  recipes: Recipes[];
   moreHref?: string;
 }
 

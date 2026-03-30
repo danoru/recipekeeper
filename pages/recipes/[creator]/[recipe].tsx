@@ -27,10 +27,9 @@ interface Props {
   cooklist: Cooklist[];
   diaryEntries: DiaryEntries[];
   likedRecipes: LikedRecipes[];
-  recipe: Omit<Recipes, "rating"> & {
+  recipe: Recipes & {
     creators: Creators;
     reviews: Reviews[];
-    averageRating?: number;
   };
   reviews: (Reviews & { users: Users })[];
   sessionUser: any;
@@ -74,7 +73,6 @@ export default function RecipePage({
           pb: 10,
         }}
       >
-        {/* ── TOP: image + meta + actions ── */}
         <Box
           sx={{
             display: "grid",
@@ -106,7 +104,6 @@ export default function RecipePage({
             />
           </Box>
 
-          {/* Meta */}
           <Box sx={{ minWidth: 0 }}>
             <MuiLink
               component={NextLink}

@@ -14,7 +14,7 @@ interface Props {
 
 export default function UserRecipeList({ diaryEntries, user }: Props) {
   const title = `${user.username}'s Recipes • Savry`;
-  const recipes = diaryEntries.map((e) => e.recipes);
+  const recipes: Recipes[] = diaryEntries.map((e) => e.recipes);
 
   return (
     <>

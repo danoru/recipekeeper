@@ -9,17 +9,15 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import type { Cooklist, LikedRecipes } from "@prisma/client";
+import type { Cooklist, DiaryEntries, LikedRecipes, Recipes } from "@prisma/client";
 import NextLink from "next/link";
 import React, { useState } from "react";
 
-import type { SDiaryEntry, SRecipe } from "../../types/serialized";
-
 interface Props {
   cooklist: Cooklist[];
-  diaryEntries: SDiaryEntry[];
+  diaryEntries: DiaryEntries[];
   likedRecipes: LikedRecipes[];
-  recipe: SRecipe;
+  recipe: Recipes;
   sessionUser: any;
 }
 

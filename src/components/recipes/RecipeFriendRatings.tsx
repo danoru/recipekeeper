@@ -2,13 +2,13 @@ import Box from "@mui/material/Box";
 import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
+import { Reviews, Users } from "@prisma/client";
 
-import type { SReviewWithUser } from "../../types/serialized";
 import StarRating from "../ui/StarRating";
 import UserAvatar from "../users/UserAvatar";
 
 interface Props {
-  reviews: SReviewWithUser[];
+  reviews: (Reviews & { users: Users })[];
 }
 
 export default function RecipeFriendRatings({ reviews }: Props) {
@@ -44,7 +44,7 @@ export default function RecipeFriendRatings({ reviews }: Props) {
             <MuiLink component={NextLink} href={`/${review.users.username}`} underline="none">
               <UserAvatar avatarSize="32px" name={review.users.username} />
             </MuiLink>
-            <StarRating rating={review.rating} size="sm" />
+            <StarRating rating={Number(review.rating)} size="sm" />
             {review.comment && (
               <Typography
                 sx={{

@@ -1,17 +1,18 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { BarChart } from "@mui/x-charts";
-
-import type { SRecipe } from "../../types/serialized";
+import { Recipes, Reviews } from "@prisma/client";
 
 interface Props {
-  recipe: SRecipe;
+  recipe: Recipes & {
+    reviews: Reviews[];
+  };
 }
 
-function generateRatingDataset(reviews: { rating: number }[]) {
+function generateRatingDataset(reviews: Reviews[]) {
   const counts: Record<number, number> = {};
   reviews.forEach((r) => {
-    if (r.rating != null) counts[r.rating] = (counts[r.rating] ?? 0) + 1;
+    if (r.rating != null) counts[Number(r.rating)] = (counts[Number(r.rating)] ?? 0) + 1;
   });
   return Array.from({ length: 10 }, (_, i) => {
     const rating = (i + 1) * 0.5;
