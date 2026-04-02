@@ -19,8 +19,37 @@ import {
   IconButton,
   Collapse,
   Fade,
+  MenuItem,
 } from "@mui/material";
 import { useState, useCallback } from "react";
+
+// ─── Dropdown options —────────────────────────────────────────────────────────
+
+const CATEGORY_OPTIONS: string[] = [
+  "Beef",
+  "Chicken",
+  "Noodles",
+  "Pasta",
+  "Pork",
+  "Rice & Grains",
+  "Soup",
+  "Vegetables",
+  "Other",
+];
+const CUISINE_OPTIONS: string[] = [
+  "African",
+  "Asian",
+  "Carribean",
+  "Central American",
+  "European",
+  "Middle Eastern",
+  "North American",
+  "Oceanic",
+  "South American",
+];
+const COURSE_OPTIONS: string[] = ["Appetizers", "Breakfast", "Desserts", "Mains", "Sides"];
+const METHOD_OPTIONS: string[] = ["Air Fryer", "One Pot", "Pressure Cooker", "Slow Cooker"];
+const DIET_OPTIONS: string[] = ["Dairy Free", "Gluten Free", "Paleo", "Vegan", "Vegetarian"];
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -56,9 +85,9 @@ interface ImportRecipeModalProps {
   onSuccess?: (recipeId: number) => void;
 }
 
-// ─── Field config ─────────────────────────────────────────────────────────────
+// ─── Field configs ────────────────────────────────────────────────────────────
 
-const RECIPE_FIELDS: {
+const RECIPE_TEXT_FIELDS: {
   key: keyof ParsedRecipe;
   label: string;
   multiline?: boolean;
@@ -66,11 +95,18 @@ const RECIPE_FIELDS: {
   { key: "name", label: "Name" },
   { key: "description", label: "Description", multiline: true },
   { key: "image", label: "Image URL" },
-  { key: "category", label: "Category" },
-  { key: "cuisine", label: "Cuisine" },
-  { key: "course", label: "Course" },
-  { key: "method", label: "Method" },
-  { key: "diet", label: "Diet" },
+];
+
+const RECIPE_SELECT_FIELDS: {
+  key: keyof ParsedRecipe;
+  label: string;
+  options: string[];
+}[] = [
+  { key: "category", label: "Category", options: CATEGORY_OPTIONS },
+  { key: "cuisine", label: "Cuisine", options: CUISINE_OPTIONS },
+  { key: "course", label: "Course", options: COURSE_OPTIONS },
+  { key: "method", label: "Method", options: METHOD_OPTIONS },
+  { key: "diet", label: "Diet", options: DIET_OPTIONS },
 ];
 
 const CREATOR_FIELDS: {
@@ -108,23 +144,12 @@ function SectionLabel({ letter, label, color }: { letter: string; label: string;
           flexShrink: 0,
         }}
       >
-        <Typography
-          sx={{
-            fontSize: "0.625rem",
-            fontWeight: 700,
-            color,
-            letterSpacing: 0,
-          }}
-        >
+        <Typography sx={{ fontSize: "0.625rem", fontWeight: 700, color, letterSpacing: 0 }}>
           {letter}
         </Typography>
       </Box>
       <Typography
-        sx={{
-          color: "text.secondary",
-          letterSpacing: "0.12em",
-          fontSize: "0.65rem",
-        }}
+        sx={{ color: "text.secondary", letterSpacing: "0.12em", fontSize: "0.65rem" }}
         variant="overline"
       >
         {label}
@@ -335,12 +360,7 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
                     alt={recipe.name}
                     component="img"
                     src={recipe.image}
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      display: "block",
-                    }}
+                    sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                     onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                       e.currentTarget.style.display = "none";
                     }}
@@ -352,7 +372,8 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
               <Box>
                 <SectionLabel color="#c8a96e" label="Recipe Details" letter="R" />
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                  {RECIPE_FIELDS.map(({ key, label, multiline }) => (
+                  {/* Text fields */}
+                  {RECIPE_TEXT_FIELDS.map(({ key, label, multiline }) => (
                     <TextField
                       key={key}
                       fullWidth
@@ -364,6 +385,38 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
                       onChange={(e) => updateField(key, e.target.value)}
                     />
                   ))}
+
+                  {/* Select fields — rendered in a 2-column grid */}
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: 1.5,
+                    }}
+                  >
+                    {RECIPE_SELECT_FIELDS.map(({ key, label, options }) => (
+                      <TextField
+                        key={key}
+                        select
+                        fullWidth
+                        label={label}
+                        size="small"
+                        value={recipe[key] as string}
+                        onChange={(e) => updateField(key, e.target.value)}
+                      >
+                        <MenuItem value="">
+                          <Typography color="text.disabled" variant="body2">
+                            — None —
+                          </Typography>
+                        </MenuItem>
+                        {options.map((opt) => (
+                          <MenuItem key={opt} value={opt}>
+                            {opt}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    ))}
+                  </Box>
                 </Box>
               </Box>
 
