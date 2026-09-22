@@ -1,6 +1,8 @@
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Recipes } from "@prisma/client";
+
+import { recipeHref } from "@/data/helpers";
+import type { Recipes } from "@/generated/prisma/browser";
 
 import RecipeCard from "../cards/RecipeCard";
 
@@ -49,7 +51,7 @@ function CreatorTopRatedRecipes({ header, recipes }: Props) {
             <RecipeCard
               key={`card-${i}`}
               image={recipe.image}
-              link={`/recipes/${recipe.name.replace(/\s+/g, "-").toLowerCase()}`}
+              link={recipeHref(recipe.creatorId, recipe.name)}
               name={recipe.name}
             />
           );

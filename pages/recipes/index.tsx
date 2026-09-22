@@ -7,27 +7,28 @@ import MuiLink from "@mui/material/Link";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
-import { Recipes, Creators } from "@prisma/client";
 import type { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
-import superjson from "superjson";
 
 import RecipeCard from "@/components/cards/RecipeCard";
 import ImportRecipeModal from "@/components/modals/ImportRecipeModal";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { getAllCreators } from "@/data/creators";
 import { recipeHref, creatorHref } from "@/data/helpers";
-import { getAllRecipes, getFilteredRecipes, getRecipesByRating } from "@/data/recipes";
+import { RECIPE_FILTER_KEYS, type RecipeFilters } from "@/data/recipeFilters";
+import { getRecipeCards, getRecipeCardsByRating, getRecipeFilterOptions } from "@/data/recipes";
+import { serialize } from "@/data/serialize";
+import type { Recipes, Creators } from "@/generated/prisma/browser";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type View = "all" | "by-creator" | "popular" | "highest" | "lowest";
 
-const FILTER_KEYS = ["cuisine", "category", "course", "method", "diet"] as const;
+const FILTER_KEYS = RECIPE_FILTER_KEYS;
 type FilterKey = (typeof FILTER_KEYS)[number];
 
 const FILTER_LABELS: Record<FilterKey, string> = {
@@ -364,7 +365,7 @@ export default function RecipesPage({
                   <Grid key={`r-${i}`} size={{ xs: 6, sm: 4, md: 3 }}>
                     <RecipeCard
                       image={recipe.image}
-                      link={recipeHref(recipe.creators.name, recipe.name)}
+                      link={recipeHref(recipe.creatorId, recipe.name)}
                       name={recipe.name}
                     />
                   </Grid>
@@ -439,7 +440,7 @@ export default function RecipesPage({
                     <Grid key={`cr-${i}`} size={{ xs: 6, sm: 4, md: 2.4 }}>
                       <RecipeCard
                         image={recipe.image}
-                        link={recipeHref(recipe.creators.name, recipe.name)}
+                        link={recipeHref(recipe.creatorId, recipe.name)}
                         name={recipe.name}
                       />
                     </Grid>
@@ -479,7 +480,7 @@ export default function RecipesPage({
       <ImportRecipeModal
         isOpen={importOpen}
         onClose={() => setImportOpen(false)}
-        onSuccess={(id) => setImportOpen(false)}
+        onSuccess={() => setImportOpen(false)}
       />
     </>
   );
@@ -496,60 +497,29 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       : "all"
   ) as View;
 
-  // Collect active filter params
-  const activeFilters: Partial<Record<FilterKey, string>> = {};
+  const activeFilters: RecipeFilters = {};
   for (const key of FILTER_KEYS) {
     if (typeof query[key] === "string" && query[key]) {
       activeFilters[key] = query[key] as string;
     }
   }
 
-  const hasFilters = Object.keys(activeFilters).length > 0;
-
-  // Fetch recipes based on view + filters
-  let recipes: (Recipes & { creators: Creators })[] = [];
-
-  if (hasFilters) {
-    // Apply first active filter via existing getFilteredRecipes,
-    // then filter remaining keys in JS (avoids needing a new DB function)
-    const [firstKey, firstVal] = Object.entries(activeFilters)[0];
-    const base = await getFilteredRecipes(firstKey, firstVal as string);
-    recipes = (base as (Recipes & { creators: Creators })[]).filter((r) =>
-      Object.entries(activeFilters).every(([k, v]) => {
-        const recipeVal = r[k as keyof Recipes];
-        return recipeVal?.toString().toLowerCase() === v?.toLowerCase();
-      })
-    );
-  } else if (activeView === "highest") {
-    recipes = await getRecipesByRating("highest");
-  } else if (activeView === "lowest") {
-    recipes = await getRecipesByRating("lowest");
-  } else {
-    // all / by-creator / popular all start from the full list
-    recipes = await getAllRecipes();
-  }
-
-  // Build filter option lists from full recipe set for the dropdowns
-  const allRecipes: (Recipes & { creators: Creators })[] = await getAllRecipes();
-  const filterOptions = Object.fromEntries(
-    FILTER_KEYS.map((key) => [
-      key,
-      [
-        ...new Set(allRecipes.map((r) => r[key as keyof Recipes]?.toString()).filter(Boolean)),
-      ].sort(),
-    ])
-  ) as Record<FilterKey, string[]>;
-
-  const creators = await getAllCreators();
+  const [recipes, { options: filterOptions, totalCount }, creators] = await Promise.all([
+    activeView === "highest" || activeView === "lowest"
+      ? getRecipeCardsByRating(activeView, activeFilters)
+      : getRecipeCards(activeFilters),
+    getRecipeFilterOptions(),
+    getAllCreators(),
+  ]);
 
   return {
-    props: superjson.serialize({
+    props: serialize({
       recipes,
       creators,
       filterOptions,
       activeFilters,
       activeView,
-      totalCount: allRecipes.length,
-    }).json,
+      totalCount,
+    }),
   };
 }

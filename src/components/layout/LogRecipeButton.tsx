@@ -12,11 +12,14 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Recipes } from "@prisma/client";
 import dayjs, { Dayjs } from "dayjs";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+
+import type { Recipes } from "@/generated/prisma/browser";
+
+type RecipeOption = Pick<Recipes, "id" | "name" | "image">;
 
 interface Props {
   fullWidth?: boolean;
@@ -41,12 +44,12 @@ export default function LogRecipeButton({ fullWidth = false }: Props) {
 
   const [modalStep, setModalStep] = useState<1 | 2>(1);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipes | null>(null);
+  const [selectedRecipe, setSelectedRecipe] = useState<RecipeOption | null>(null);
   const [date, setDate] = useState<Dayjs | null>(dayjs());
   const [hasCookedBefore, setHasCookedBefore] = useState(false);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState<number | null>(null);
-  const [recipes, setRecipes] = useState<Recipes[]>([]);
+  const [recipes, setRecipes] = useState<RecipeOption[]>([]);
   const [saving, setSaving] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -75,9 +78,7 @@ export default function LogRecipeButton({ fullWidth = false }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: parseInt(session.user.id),
           recipeId: selectedRecipe.id,
-          name: selectedRecipe.name,
           date,
           hasCookedBefore,
           comment,
@@ -103,15 +104,14 @@ export default function LogRecipeButton({ fullWidth = false }: Props) {
     }
   };
 
+  // Load the (id, name) list lazily, the first time the dialog opens.
   useEffect(() => {
-    const fetchRecipes = async () => {
-      const response = await fetch("/api/recipes");
-      const data: Recipes[] = await response.json();
-      data.sort((a, b) => a.name.localeCompare(b.name));
-      setRecipes(data);
-    };
-    fetchRecipes();
-  }, []);
+    if (!modalOpen || recipes.length > 0) return;
+    fetch("/api/recipes")
+      .then((response) => (response.ok ? response.json() : []))
+      .then((data: RecipeOption[]) => setRecipes(data))
+      .catch(() => setRecipes([]));
+  }, [modalOpen, recipes.length]);
 
   if (!session) return null;
 
@@ -201,9 +201,9 @@ function StepOne({
   onNext,
   onClose,
 }: {
-  recipes: Recipes[];
-  selectedRecipe: Recipes | null;
-  onSelect: (r: Recipes | null) => void;
+  recipes: RecipeOption[];
+  selectedRecipe: RecipeOption | null;
+  onSelect: (r: RecipeOption | null) => void;
   onNext: () => void;
   onClose: () => void;
 }) {
@@ -303,7 +303,7 @@ function StepTwo({
   onBack,
   onSave,
 }: {
-  selectedRecipe: Recipes;
+  selectedRecipe: RecipeOption;
   date: Dayjs | null;
   comment: string;
   rating: number | null;

@@ -1,6 +1,8 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { Recipes } from "@prisma/client";
+
+import { recipeHref } from "@/data/helpers";
+import type { Recipes } from "@/generated/prisma/browser";
 
 import RecipeCard from "../cards/RecipeCard";
 import SectionHeader from "../ui/SectionHeader";
@@ -20,7 +22,7 @@ export default function RecipeList({ header, recipes, moreHref }: Props) {
           <Grid key={`recipe-${i}`} size={{ xs: 6, sm: 4, md: 3 }}>
             <RecipeCard
               image={recipe.image}
-              link={`/recipes/${recipe.name.replace(/\s+/g, "-").toLowerCase()}`}
+              link={recipeHref(recipe.creatorId, recipe.name)}
               name={recipe.name}
             />
           </Grid>

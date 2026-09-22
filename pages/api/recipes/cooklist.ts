@@ -1,38 +1,34 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import prisma from "../../../src/data/db";
+import prisma from "@/data/db";
+import { requireApiUser, revalidateUserPages } from "@/lib/auth";
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  const { method, recipeId, userId } = req.body;
-
-  if (method === "POST") {
-    try {
-      await prisma.cooklist.create({
-        data: {
-          recipeId,
-          userId,
-        },
-      });
-      res.status(200).json({ message: "Added to cooklist." });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Failed to add to cooklist." });
-    }
-  } else if (method === "DELETE") {
-    try {
-      await prisma.cooklist.deleteMany({
-        where: {
-          recipeId,
-          userId,
-        },
-      });
-      res.status(200).json({ message: "Removed from cooklist." });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Failed to remove from cooklist." });
-    }
-  } else {
+  if (req.method !== "POST" && req.method !== "DELETE") {
     res.setHeader("Allow", ["POST", "DELETE"]);
-    res.status(405).end(`Method ${method} is not allowed.`);
+    return res.status(405).json({ error: `Method ${req.method} is not allowed.` });
+  }
+
+  const user = await requireApiUser(req, res);
+  if (!user) return;
+
+  const recipeId = Number(req.body?.recipeId);
+  if (!Number.isInteger(recipeId)) return res.status(400).json({ error: "Invalid recipeId." });
+
+  try {
+    if (req.method === "POST") {
+      await prisma.cooklist.upsert({
+        where: { userId_recipeId: { userId: user.id, recipeId } },
+        update: {},
+        create: { userId: user.id, recipeId },
+      });
+    } else {
+      await prisma.cooklist.deleteMany({ where: { userId: user.id, recipeId } });
+    }
+    await revalidateUserPages(res, user.username, ["/cooklist"]);
+    return res.status(200).json({ message: "Cooklist updated." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Failed to update cooklist." });
   }
 }

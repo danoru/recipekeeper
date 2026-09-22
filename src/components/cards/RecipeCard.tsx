@@ -1,11 +1,9 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import dayjs, { Dayjs } from "dayjs";
-import Decimal from "decimal.js";
 import NextLink from "next/link";
 
 import StarRating from "../ui/StarRating";
-
 
 interface Props {
   image: string;
@@ -13,12 +11,12 @@ interface Props {
   name: string;
 
   date?: Dayjs | string;
-  rating?: number | Decimal;
+  rating?: number;
   username?: string;
 }
 
 export default function RecipeCard({ image, link, name, date, rating, username }: Props) {
-  const numericRating = rating instanceof Decimal ? rating.toNumber() : (rating ?? null);
+  const numericRating = rating ?? null;
 
   const formattedDate = date ? dayjs(date).format("MMM D") : null;
 

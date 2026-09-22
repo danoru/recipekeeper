@@ -7,13 +7,13 @@ import dayjs from "dayjs";
 import Head from "next/head";
 import Image from "next/image";
 import NextLink from "next/link";
-import superjson from "superjson";
 
 import StarRating from "@/components/ui/StarRating";
 import ProfileLinkBar from "@/components/users/ProfileLinkBar";
 import { recipeHref } from "@/data/helpers";
 import { getUserReviews } from "@/data/reviews";
-import { findUserByUsername, getAllUsers } from "@/data/users";
+import { serialize } from "@/data/serialize";
+import { findUserByUsername } from "@/data/users";
 
 interface SerializedReview {
   id: number;
@@ -63,8 +63,8 @@ export default function UserRecipeReviews({ user, reviews }: Props) {
             <Stack divider={<Divider />} spacing={0}>
               {reviews.map((review) => {
                 const recipeName = review.recipes?.name ?? "";
-                const creatorName = review.recipes?.creators?.name ?? "";
-                const href = recipeHref(creatorName, recipeName);
+                const creatorLink = review.recipes?.creatorId ?? "";
+                const href = recipeHref(creatorLink, recipeName);
 
                 return (
                   <Box
@@ -160,22 +160,19 @@ export default function UserRecipeReviews({ user, reviews }: Props) {
 }
 
 export async function getStaticPaths() {
-  const users = await getAllUsers();
-  return {
-    paths: users.map((u) => ({ params: { username: u.username } })),
-    fallback: false,
-  };
+  // Generated on first request and cached, so new users work immediately.
+  return { paths: [], fallback: "blocking" };
 }
 
 export async function getStaticProps(context: any) {
   const { username } = context.params;
   const user = await findUserByUsername(username);
-  if (!user) return { notFound: true };
+  if (!user) return { notFound: true, revalidate: 60 };
 
   const reviews = await getUserReviews(user.id);
 
   return {
-    props: superjson.serialize({ reviews, user }).json,
+    props: serialize({ reviews, user }),
     revalidate: 1800,
   };
 }

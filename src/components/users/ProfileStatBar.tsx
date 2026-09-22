@@ -12,14 +12,21 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
-import { DiaryEntries, Following, Users } from "@prisma/client";
 import dayjs from "dayjs";
 import React, { useState } from "react";
 
-import { followUser, unfollowUser } from "../../data/users";
+import type { DiaryEntries, Following, Users } from "@/generated/prisma/browser";
 
 import UserAvatar from "./UserAvatar";
 
+async function setFollowing(followingUsername: string, follow: boolean) {
+  const res = await fetch("/api/user/follow", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ followingUsername, action: follow ? "follow" : "unfollow" }),
+  });
+  return res.ok;
+}
 
 interface Props {
   avatarSize: string;
@@ -63,20 +70,14 @@ function ProfileStatBar({
   // ── Follow state ─────────────────────────────────────────────────────────
   const isSessionUser = sessionUser?.username === user.username;
   const initiallyFollowing = followers.some(
-    (f) => f.userId === sessionUser?.id && f.followingUsername === user.username
+    (f) => f.userId === Number(sessionUser?.id) && f.followingUsername === user.username
   );
   const [isFollowing, setIsFollowing] = useState(initiallyFollowing);
   const [hoveringFollow, setHoveringFollow] = useState(false);
 
   async function handleFollow() {
     if (!sessionUser) return;
-    if (isFollowing) {
-      await unfollowUser(sessionUser.id, user.username);
-      setIsFollowing(false);
-    } else {
-      await followUser(sessionUser.id, user.username);
-      setIsFollowing(true);
-    }
+    if (await setFollowing(user.username, !isFollowing)) setIsFollowing(!isFollowing);
   }
 
   // ── Stats ────────────────────────────────────────────────────────────────

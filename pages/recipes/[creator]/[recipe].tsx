@@ -1,4 +1,16 @@
 import { Box, Divider, Link as MuiLink, Typography } from "@mui/material";
+import type { GetServerSidePropsContext } from "next";
+import Head from "next/head";
+import Image from "next/image";
+import NextLink from "next/link";
+
+import RecipeActionBar from "@/components/recipes/RecipeActionBar";
+import RecipeFriendRatings from "@/components/recipes/RecipeFriendRatings";
+import RecipeRatings from "@/components/recipes/RecipeRatings";
+import StarRating from "@/components/ui/StarRating";
+import { getRecipeBySlug, getRecipeUserState, getReviewsByRecipe } from "@/data/recipes";
+import { serialize } from "@/data/serialize";
+import { getFollowingList } from "@/data/users";
 import type {
   Cooklist,
   Creators,
@@ -7,21 +19,8 @@ import type {
   Recipes,
   Reviews,
   Users,
-} from "@prisma/client";
-import Head from "next/head";
-import Image from "next/image";
-import NextLink from "next/link";
-import { getSession } from "next-auth/react";
-import superjson from "superjson";
-
-import RecipeActionBar from "@/components/recipes/RecipeActionBar";
-import RecipeFriendRatings from "@/components/recipes/RecipeFriendRatings";
-import RecipeRatings from "@/components/recipes/RecipeRatings";
-import StarRating from "@/components/ui/StarRating";
-import { getUserDiaryEntries } from "@/data/diary";
-import { getCooklist, getLikedRecipes, getRecipeBySlug } from "@/data/recipes";
-import { getReviewsByRecipe } from "@/data/reviews";
-import { findUserByUsername, getFollowingList } from "@/data/users";
+} from "@/generated/prisma/browser";
+import { getSessionFromContext } from "@/lib/auth";
 
 interface Props {
   cooklist: Cooklist[];
@@ -50,7 +49,7 @@ export default function RecipePage({
   const ratingCount = recipe.reviews.length;
   const averageRating =
     ratingCount > 0
-      ? recipe.reviews.reduce((sum, r) => sum + r.rating.toNumber(), 0) / ratingCount
+      ? recipe.reviews.reduce((sum, r) => sum + Number(r.rating), 0) / ratingCount
       : 0;
 
   return (
@@ -239,53 +238,44 @@ export default function RecipePage({
 
 // ── Data fetching ─────────────────────────────────────────────────────────────
 
-export async function getServerSideProps(context: {
-  params: { creator: string; recipe: string };
-  req: any;
-}) {
-  const { creator: creatorSlug, recipe: recipeSlug } = context.params;
-  const session = await getSession({ req: context.req });
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { creator: creatorSegment, recipe: recipeSegment } = context.params as {
+    creator: string;
+    recipe: string;
+  };
 
-  // Fetch recipe by creator slug + recipe slug (handles duplicate names)
-  const recipe = await getRecipeBySlug(creatorSlug, recipeSlug);
+  const [session, recipe] = await Promise.all([
+    getSessionFromContext(context),
+    getRecipeBySlug(creatorSegment, recipeSegment),
+  ]);
   if (!recipe) return { notFound: true };
 
-  if (session) {
-    const sessionUser = session.user;
-    const user = await findUserByUsername(sessionUser.username);
-
-    if (user) {
-      const [cooklist, diaryEntries, following, likedRecipes] = await Promise.all([
-        getCooklist(user.id),
-        getUserDiaryEntries(user.id),
-        getFollowingList(user.id),
-        getLikedRecipes(user.id),
-      ]);
-
-      const reviews = await getReviewsByRecipe(recipe.id, following);
-
-      return {
-        props: superjson.serialize({
-          cooklist,
-          diaryEntries,
-          following,
-          likedRecipes,
-          recipe,
-          reviews,
-          sessionUser,
-        }).json,
-      };
-    }
+  if (!session) {
+    return {
+      props: serialize({
+        cooklist: [],
+        diaryEntries: [],
+        likedRecipes: [],
+        recipe,
+        reviews: [],
+        sessionUser: null,
+      }),
+    };
   }
 
+  const userId = Number(session.user.id);
+  const [userState, following] = await Promise.all([
+    getRecipeUserState(userId, recipe.id),
+    getFollowingList(userId),
+  ]);
+  const reviews = await getReviewsByRecipe(recipe.id, following);
+
   return {
-    props: {
-      cooklist: [],
-      diaryEntries: [],
-      likedRecipes: [],
+    props: serialize({
+      ...userState,
       recipe,
-      reviews: [],
-      sessionUser: null,
-    },
+      reviews,
+      sessionUser: session.user,
+    }),
   };
 }

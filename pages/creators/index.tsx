@@ -1,11 +1,11 @@
 import { Box, Grid, Typography } from "@mui/material";
-import { Creators } from "@prisma/client";
 import Head from "next/head";
 import Link from "next/link";
 
 import SectionHeader from "@/components/ui/SectionHeader";
-import { getAllCreators, getFeaturedCreators } from "@/data/creators";
+import { getAllCreators } from "@/data/creators";
 import { creatorHref } from "@/data/helpers";
+import type { Creators } from "@/generated/prisma/browser";
 
 interface Props {
   creators: Creators[];
@@ -127,16 +127,11 @@ function CreatorCard({ creator, featured = false }: { creator: Creators; feature
   );
 }
 
-export async function getServerSideProps() {
-  const [allCreators, featuredCreators] = await Promise.all([
-    getAllCreators(),
-    getFeaturedCreators(),
-  ]);
+export async function getStaticProps() {
+  const creators = await getAllCreators();
 
   return {
-    props: {
-      creators: allCreators,
-      featured: featuredCreators,
-    },
+    props: { creators, featured: creators },
+    revalidate: 1800,
   };
 }

@@ -1,6 +1,7 @@
 import { Box, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts";
-import { Reviews, Users } from "@prisma/client";
+
+import type { Reviews, Users } from "@/generated/prisma/browser";
 
 import SectionHeader from "./SectionHeader";
 

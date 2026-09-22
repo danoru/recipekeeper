@@ -3,11 +3,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Decimal } from "decimal.js";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { SessionProvider } from "next-auth/react";
-import superjson from "superjson";
 
 import Layout from "../src/components/layout/Layout";
 import createEmotionCache from "../src/createEmotionCache";
@@ -25,7 +23,7 @@ export default function App({
   pageProps,
 }: MyAppProps) {
   return (
-    <SessionProvider>
+    <SessionProvider session={pageProps.session}>
       <CacheProvider value={emotionCache}>
         <ThemeProvider theme={savryTheme}>
           <CssBaseline />
@@ -45,12 +43,3 @@ export default function App({
     </SessionProvider>
   );
 }
-
-superjson.registerCustom<Decimal, string>(
-  {
-    isApplicable: (v): v is Decimal => Decimal.isDecimal(v),
-    serialize: (v) => v.toJSON(),
-    deserialize: (v) => new Decimal(v),
-  },
-  "decimal.js"
-);

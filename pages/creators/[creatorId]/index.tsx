@@ -2,16 +2,16 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import LanguageIcon from "@mui/icons-material/Language";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import { Box, Divider, Grid, IconButton, Link as MuiLink, Typography } from "@mui/material";
-import { Creators, DiaryEntries, Recipes } from "@prisma/client";
 import Head from "next/head";
 import Image from "next/image";
-import superjson from "superjson";
 
 import RecipeList from "@/components/recipes/RecipeList";
 import StarRating from "@/components/ui/StarRating";
-import { getAllCreators, getCreatorByLink, getTopRatedRecipesByCreator } from "@/data/creators";
+import { getCreatorByLink } from "@/data/creators";
 import { recipeHref } from "@/data/helpers";
 import { getRecipesByCreator } from "@/data/recipes";
+import { serialize } from "@/data/serialize";
+import type { Creators, DiaryEntries, Recipes } from "@/generated/prisma/browser";
 
 interface Props {
   creator: Creators;
@@ -73,7 +73,7 @@ export default function CreatorPage({ creator, recipes, topRatedRecipes }: Props
                   <Grid key={i} size={{ xs: 6, sm: 4, md: 3 }}>
                     <Box
                       component={MuiLink}
-                      href={recipeHref(creator.name, recipe.name)}
+                      href={recipeHref(creator.link, recipe.name)}
                       sx={{
                         position: "relative",
                         display: "block",
@@ -236,24 +236,35 @@ export default function CreatorPage({ creator, recipes, topRatedRecipes }: Props
 }
 
 export async function getStaticPaths() {
-  const creators = await getAllCreators();
-  return {
-    paths: creators.map((c) => ({ params: { creatorId: c.link } })),
-    fallback: false,
-  };
+  // Pages are generated on first request and cached, so new creators work immediately.
+  return { paths: [], fallback: "blocking" };
 }
 
 export async function getStaticProps({ params }: { params: { creatorId: string } }) {
-  const [creator, recipes, topRatedRecipes] = await Promise.all([
+  const [creator, recipes] = await Promise.all([
     getCreatorByLink(params.creatorId),
     getRecipesByCreator(params.creatorId),
-    getTopRatedRecipesByCreator(params.creatorId),
   ]);
 
-  if (!creator) return { notFound: true };
+  if (!creator) return { notFound: true, revalidate: 60 };
+
+  const topRatedRecipes = recipes
+    .map((recipe) => {
+      const ratings = recipe.diaryEntries.map((e) => e.rating.toNumber());
+      const averageRating = ratings.length
+        ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
+        : 0;
+      return { ...recipe, averageRating };
+    })
+    .filter((r) => r.averageRating >= 3)
+    .sort((a, b) => b.averageRating - a.averageRating);
 
   return {
-    props: superjson.serialize({ creator, recipes, topRatedRecipes }).json,
+    props: serialize({
+      creator,
+      recipes,
+      topRatedRecipes: topRatedRecipes.length > 0 ? topRatedRecipes : null,
+    }),
     revalidate: 1800,
   };
 }

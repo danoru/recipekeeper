@@ -1,7 +1,8 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { Creators } from "@prisma/client";
 import { memo } from "react";
+
+import type { Creators } from "@/generated/prisma/browser";
 
 import PopularCreatorCard from "../cards/PopularCreatorCard";
 import SectionHeader from "../ui/SectionHeader";

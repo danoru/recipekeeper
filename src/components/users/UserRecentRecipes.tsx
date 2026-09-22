@@ -1,7 +1,8 @@
 import { Box, Grid, Typography } from "@mui/material";
-import { DiaryEntries, Recipes } from "@prisma/client";
 
-import { toSlug } from "../../data/helpers";
+import { recipeHref } from "@/data/helpers";
+import type { DiaryEntries, Recipes } from "@/generated/prisma/browser";
+
 import DetailRecipeCard from "../cards/DetailRecipeCard";
 
 import SectionHeader from "./SectionHeader";
@@ -29,7 +30,7 @@ export default function UserRecentRecipes({ diaryEntries }: RecentRecipesProps) 
               key={`recent-${i}`}
               date={String(entry.date)}
               image={entry.recipes.image}
-              link={`/recipes/${toSlug(entry.recipes.name)}`}
+              link={recipeHref(entry.recipes.creatorId, entry.recipes.name)}
               name={entry.recipes.name}
               rating={Number(entry.rating)}
             />

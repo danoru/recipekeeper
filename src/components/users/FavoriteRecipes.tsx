@@ -2,13 +2,13 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { Recipes } from "@prisma/client";
 
-import { toSlug } from "../../data/helpers";
+import { recipeHref } from "@/data/helpers";
+import type { Recipes } from "@/generated/prisma/browser";
+
 import RecipeCard from "../cards/RecipeCard";
 
 import SectionWrapper from "./SectionWrapper";
-
 
 interface Props {
   recipes: Recipes[];
@@ -26,7 +26,7 @@ export default function FavoriteRecipes({ recipes }: Props) {
           <Grid key={`recipe-${i}`} size={{ xs: 6, sm: 4, md: 3 }}>
             <RecipeCard
               image={recipe.image}
-              link={`/recipes/${toSlug(recipe.name)}`}
+              link={recipeHref(recipe.creatorId, recipe.name)}
               name={recipe.name}
             />
           </Grid>

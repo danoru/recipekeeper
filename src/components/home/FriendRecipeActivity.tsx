@@ -1,8 +1,10 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { DiaryEntries, Recipes, Users } from "@prisma/client";
 import dayjs from "dayjs";
 import { memo } from "react";
+
+import { recipeHref } from "@/data/helpers";
+import type { DiaryEntries, Recipes, Users } from "@/generated/prisma/browser";
 
 import FriendRecipeCard from "../cards/FriendRecipeCard";
 import SectionHeader from "../ui/SectionHeader";
@@ -19,13 +21,12 @@ function FriendRecipeActivity({ recentEntries }: Props) {
       <SectionHeader href="/members" label="New recipes from friends" />
       <Grid container spacing={1.5}>
         {entries.map((entry: DiaryEntries & { users: Users; recipes: Recipes }, i: number) => {
-          const slug = entry.recipes.name.replace(/\s+/g, "-").toLowerCase();
           return (
             <Grid key={`friend-${i}`} size={{ sm: 4, xs: 6 }}>
               <FriendRecipeCard
                 date={dayjs(entry.date)}
                 image={entry.recipes.image}
-                link={`/recipes/${slug}`}
+                link={recipeHref(entry.recipes.creatorId, entry.recipes.name)}
                 name={entry.recipes.name}
                 rating={Number(entry.rating)}
                 username={entry.users.username}

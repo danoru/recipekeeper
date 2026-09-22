@@ -4,36 +4,29 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import type { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { getSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-export default function SettingsPage({ session }: any) {
-  const username = session?.user?.username;
+import { getOwnSettings } from "@/data/users";
+import { getSessionFromContext } from "@/lib/auth";
 
-  const [userData, setUserData] = useState({
-    username: username ?? "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    location: "",
-    website: "",
-    bio: "",
-  });
-  const [loading, setLoading] = useState(true);
+interface SettingsData {
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  location: string;
+  website: string;
+  bio: string;
+}
+
+export default function SettingsPage({ settings }: { settings: SettingsData }) {
+  const username = settings.username;
+
+  const [userData, setUserData] = useState(settings);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    if (!username) return;
-    fetch(`/api/user/${username}`)
-      .then((r) => r.json())
-      .then((data) => {
-        setUserData(data);
-        setLoading(false);
-      });
-  }, [username]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { id, value } = e.target;
@@ -100,8 +93,8 @@ export default function SettingsPage({ session }: any) {
             disabled
             fullWidth
             id="username"
-            InputLabelProps={{ shrink: true }}
             label="Username"
+            slotProps={{ inputLabel: { shrink: true } }}
             sx={{ ...fieldSx, mb: 2.5 }}
             value={username ?? ""}
             variant="outlined"
@@ -114,8 +107,8 @@ export default function SettingsPage({ session }: any) {
             <TextField
               fullWidth
               id="firstName"
-              InputLabelProps={{ shrink: true }}
               label="Given name"
+              slotProps={{ inputLabel: { shrink: true } }}
               sx={fieldSx}
               value={userData.firstName ?? ""}
               variant="outlined"
@@ -124,8 +117,8 @@ export default function SettingsPage({ session }: any) {
             <TextField
               fullWidth
               id="lastName"
-              InputLabelProps={{ shrink: true }}
               label="Family name"
+              slotProps={{ inputLabel: { shrink: true } }}
               sx={fieldSx}
               value={userData.lastName ?? ""}
               variant="outlined"
@@ -136,8 +129,8 @@ export default function SettingsPage({ session }: any) {
           <TextField
             fullWidth
             id="email"
-            InputLabelProps={{ shrink: true }}
             label="Email address"
+            slotProps={{ inputLabel: { shrink: true } }}
             sx={{ ...fieldSx, mb: 2 }}
             type="email"
             value={userData.email ?? ""}
@@ -150,8 +143,8 @@ export default function SettingsPage({ session }: any) {
             <TextField
               fullWidth
               id="location"
-              InputLabelProps={{ shrink: true }}
               label="Location"
+              slotProps={{ inputLabel: { shrink: true } }}
               sx={fieldSx}
               value={userData.location ?? ""}
               variant="outlined"
@@ -160,8 +153,8 @@ export default function SettingsPage({ session }: any) {
             <TextField
               fullWidth
               id="website"
-              InputLabelProps={{ shrink: true }}
               label="Website"
+              slotProps={{ inputLabel: { shrink: true } }}
               sx={fieldSx}
               value={userData.website ?? ""}
               variant="outlined"
@@ -173,9 +166,9 @@ export default function SettingsPage({ session }: any) {
             fullWidth
             multiline
             id="bio"
-            InputLabelProps={{ shrink: true }}
             label="Bio"
             rows={4}
+            slotProps={{ inputLabel: { shrink: true } }}
             sx={{ ...fieldSx, mb: 3 }}
             value={userData.bio ?? ""}
             variant="outlined"
@@ -183,7 +176,7 @@ export default function SettingsPage({ session }: any) {
           />
 
           <Button
-            disabled={saving || loading}
+            disabled={saving}
             sx={{ borderRadius: "8px", px: 3 }}
             type="submit"
             variant="contained"
@@ -196,10 +189,25 @@ export default function SettingsPage({ session }: any) {
   );
 }
 
-export async function getServerSideProps(context: any) {
-  const session = await getSession(context);
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getSessionFromContext(context);
   if (!session) {
     return { redirect: { destination: "/login", permanent: false } };
   }
-  return { props: { session } };
+
+  const user = await getOwnSettings(Number(session.user.id));
+  if (!user) {
+    return { redirect: { destination: "/login", permanent: false } };
+  }
+
+  const settings: SettingsData = {
+    username: user.username,
+    firstName: user.firstName ?? "",
+    lastName: user.lastName ?? "",
+    email: user.email ?? "",
+    location: user.location ?? "",
+    website: user.website ?? "",
+    bio: user.bio ?? "",
+  };
+  return { props: { settings } };
 }

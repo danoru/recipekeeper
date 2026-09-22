@@ -1,15 +1,14 @@
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import { getSession } from "next-auth/react";
-import superjson from "superjson";
 
-import LoggedInHomePage from "../src/components/home/LoggedInHomePage";
-import LoggedOutHomePage from "../src/components/home/LoggedOutHomePage";
-import { getTopLikedCreators } from "../src/data/creators";
-import { getDiaryEntriesByUsernames } from "../src/data/diary";
-import { getTopLikedRecipes } from "../src/data/recipes";
-import { getFollowingList } from "../src/data/users";
-
+import LoggedInHomePage from "@/components/home/LoggedInHomePage";
+import LoggedOutHomePage from "@/components/home/LoggedOutHomePage";
+import { getTopLikedCreators } from "@/data/creators";
+import { getDiaryEntriesByUsernames } from "@/data/diary";
+import { getTopLikedRecipes } from "@/data/recipes";
+import { serialize } from "@/data/serialize";
+import { getFollowingList } from "@/data/users";
+import { getSessionFromContext } from "@/lib/auth";
 
 export default function Home({ recentEntries, session, topLikedCreators, topLikedRecipes }: any) {
   const username = session?.user?.username;
@@ -35,28 +34,26 @@ export default function Home({ recentEntries, session, topLikedCreators, topLike
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession(context);
-  console.log(session);
+  const session = await getSessionFromContext(context);
 
   if (session) {
-    const sessionUserId = Number(session.user?.id);
-    const following = await getFollowingList(sessionUserId);
+    const following = await getFollowingList(Number(session.user.id));
 
     const [recentEntries, topLikedCreators, topLikedRecipes] = await Promise.all([
-      getDiaryEntriesByUsernames(following),
-      getTopLikedCreators(sessionUserId),
-      getTopLikedRecipes(sessionUserId),
+      getDiaryEntriesByUsernames(following, 6),
+      getTopLikedCreators(following),
+      getTopLikedRecipes(following),
     ]);
 
     return {
-      props: superjson.serialize({
+      props: serialize({
         session,
         recentEntries,
         topLikedCreators,
         topLikedRecipes,
-      }).json,
+      }),
     };
   }
 
-  return { props: { session } };
+  return { props: { session: null } };
 }

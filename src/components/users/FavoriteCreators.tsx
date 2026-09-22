@@ -1,5 +1,6 @@
 import { Box, Grid, Link as MuiLink, Typography } from "@mui/material";
-import { Creators } from "@prisma/client";
+
+import type { Creators } from "@/generated/prisma/browser";
 
 import CreatorCard from "../cards/CreatorCard";
 

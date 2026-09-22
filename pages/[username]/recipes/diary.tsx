@@ -10,15 +10,15 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { DiaryEntries, Recipes } from "@prisma/client";
 import dayjs from "dayjs";
 import Head from "next/head";
-import superjson from "superjson";
 
 import StarRating from "@/components/ui/StarRating";
 import ProfileLinkBar from "@/components/users/ProfileLinkBar";
 import { getUserDiaryEntries } from "@/data/diary";
-import { findUserByUsername, getAllUsers } from "@/data/users";
+import { serialize } from "@/data/serialize";
+import { findUserByUsername } from "@/data/users";
+import type { DiaryEntries, Recipes } from "@/generated/prisma/browser";
 
 interface Props {
   user: any;
@@ -145,22 +145,19 @@ export default function RecipeDiary({ user, diaryEntries }: Props) {
 }
 
 export async function getStaticPaths() {
-  const users = await getAllUsers();
-  return {
-    paths: users.map((u) => ({ params: { username: u.username } })),
-    fallback: false,
-  };
+  // Generated on first request and cached, so new users work immediately.
+  return { paths: [], fallback: "blocking" };
 }
 
 export async function getStaticProps({ params }: { params: { username: string } }) {
   const { username } = params;
   const user = await findUserByUsername(username);
-  if (!user) return { notFound: true };
+  if (!user) return { notFound: true, revalidate: 60 };
 
   const diaryEntries = await getUserDiaryEntries(user.id);
 
   return {
-    props: superjson.serialize({ diaryEntries, user }).json,
+    props: serialize({ diaryEntries, user }),
     revalidate: 1800,
   };
 }

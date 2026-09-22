@@ -1,9 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import MuiLink from "@mui/material/Link";
-import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
 import dayjs from "dayjs";
 import NextLink from "next/link";
 import { memo } from "react";
+
+import { recipeHref } from "@/data/helpers";
+import type { Creators, DiaryEntries, Recipes, Users } from "@/generated/prisma/browser";
 
 import FriendRecipeActivity from "./FriendRecipeActivity";
 import PopularCreatorActivity from "./PopularCreatorActivity";
@@ -145,13 +147,12 @@ function LoggedInHomePage({ creators, recentEntries, recipes, username }: Props)
           <SidebarBlock title="Recent diary">
             <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
               {recentEntries.slice(0, 4).map((entry, i) => {
-                const slug = entry.recipes.name.replace(/\s+/g, "-").toLowerCase();
                 const date = dayjs(entry.date).format("MMM D");
                 return (
                   <Box
                     key={i}
                     component={NextLink}
-                    href={`/recipes/${slug}`}
+                    href={recipeHref(entry.recipes.creatorId, entry.recipes.name)}
                     sx={{
                       display: "flex",
                       alignItems: "center",

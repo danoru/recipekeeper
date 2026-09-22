@@ -2,7 +2,8 @@ import Box from "@mui/material/Box";
 import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
-import { Reviews, Users } from "@prisma/client";
+
+import type { Reviews, Users } from "@/generated/prisma/browser";
 
 import StarRating from "../ui/StarRating";
 import UserAvatar from "../users/UserAvatar";

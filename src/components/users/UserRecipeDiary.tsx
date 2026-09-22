@@ -1,8 +1,8 @@
 import { Box, Link, Stack, Typography } from "@mui/material";
-import { DiaryEntries, Recipes } from "@prisma/client";
 import dayjs from "dayjs";
 
-import { toSlug } from "../../data/helpers";
+import { recipeHref } from "@/data/helpers";
+import type { DiaryEntries, Recipes } from "@/generated/prisma/browser";
 
 import SectionHeader from "./SectionHeader";
 
@@ -50,7 +50,7 @@ export default function UserRecipeDiary({ diaryEntries }: DiaryProps) {
                   <Box
                     key={i}
                     component={Link}
-                    href={`/recipes/${toSlug(entry.recipes.name)}`}
+                    href={recipeHref(entry.recipes.creatorId, entry.recipes.name)}
                     sx={{
                       display: "grid",
                       gridTemplateColumns: "32px 1fr",

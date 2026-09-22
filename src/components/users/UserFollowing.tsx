@@ -1,5 +1,6 @@
 import { Box, Grid, Link, Tooltip, Typography } from "@mui/material";
-import { Following } from "@prisma/client";
+
+import type { Following } from "@/generated/prisma/browser";
 
 import SectionHeader from "./SectionHeader";
 import UserAvatar from "./UserAvatar";

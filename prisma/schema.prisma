@@ -1,12 +1,11 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
   previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider   = "postgresql"
-  url        = env("POSTGRES_PRISMA_URL")
-  directUrl  = env("POSTGRES_URL_NON_POOLING")
   extensions = [citext(schema: "public")]
 }
 
@@ -41,6 +40,9 @@ model DiaryEntries {
   hasCookedBefore Boolean  @default(false)
   recipes         Recipes? @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users           Users?   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([userId, date(sort: Desc)])
+  @@index([recipeId])
 }
 
 model FavoritesCreators {
@@ -67,6 +69,7 @@ model Following {
   users             Users  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([userId, followingUsername])
+  @@index([followingUsername])
 }
 
 model LikedCreators {
@@ -76,6 +79,7 @@ model LikedCreators {
   users     Users    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([userId, creatorId])
+  @@index([creatorId])
 }
 
 model LikedRecipes {
@@ -85,6 +89,7 @@ model LikedRecipes {
   users    Users   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([userId, recipeId])
+  @@index([recipeId])
 }
 
 model Recipes {
@@ -105,6 +110,8 @@ model Recipes {
   likedRecipes     LikedRecipes[]
   creators         Creators           @relation(fields: [creatorId], references: [link], onDelete: NoAction, onUpdate: NoAction)
   reviews          Reviews[]
+
+  @@index([creatorId])
 }
 
 model Reviews {
@@ -116,6 +123,9 @@ model Reviews {
   date     DateTime @default(now())
   recipes  Recipes  @relation(fields: [recipeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users    Users    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([recipeId])
+  @@index([userId])
 }
 
 model Users {

@@ -9,9 +9,10 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import type { Cooklist, DiaryEntries, LikedRecipes, Recipes } from "@prisma/client";
 import NextLink from "next/link";
 import React, { useState } from "react";
+
+import type { Cooklist, DiaryEntries, LikedRecipes, Recipes } from "@/generated/prisma/browser";
 
 interface Props {
   cooklist: Cooklist[];
@@ -31,9 +32,7 @@ export default function RecipeActionBar({
   const userId = sessionUser ? Number(sessionUser.id) : null;
   const recipeId = recipe.id;
 
-  const [hasCooked, setHasCooked] = useState(
-    userId ? diaryEntries?.some((e) => e.userId === userId) : false
-  );
+  const hasCooked = userId ? diaryEntries.some((e) => e.userId === userId) : false;
   const [isCooklisted, setIsCooklisted] = useState(
     userId ? cooklist.some((c) => c.userId === userId) : false
   );
@@ -54,7 +53,7 @@ export default function RecipeActionBar({
     const res = await fetch("/api/recipes/cooklist", {
       method: isCooklisted ? "DELETE" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, recipeId }),
+      body: JSON.stringify({ recipeId }),
     });
     if (res.ok) setIsCooklisted(!isCooklisted);
   };
@@ -64,7 +63,7 @@ export default function RecipeActionBar({
     const res = await fetch("/api/recipes/likes", {
       method: isLiked ? "DELETE" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, recipeId }),
+      body: JSON.stringify({ recipeId }),
     });
     if (res.ok) setIsLiked(!isLiked);
   };

@@ -1,7 +1,7 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import {
   Dialog,
@@ -397,8 +397,8 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
                     {RECIPE_SELECT_FIELDS.map(({ key, label, options }) => (
                       <TextField
                         key={key}
-                        select
                         fullWidth
+                        select
                         label={label}
                         size="small"
                         value={recipe[key] as string}

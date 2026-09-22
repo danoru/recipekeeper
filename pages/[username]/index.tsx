@@ -1,8 +1,6 @@
 import Box from "@mui/material/Box";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import { getSession } from "next-auth/react";
-import superjson from "superjson";
 
 import FavoriteCreators from "@/components/users/FavoriteCreators";
 import FavoriteRecipes from "@/components/users/FavoriteRecipes";
@@ -13,7 +11,9 @@ import UserFollowing from "@/components/users/UserFollowing";
 import UserRatings from "@/components/users/UserRatings";
 import UserRecentRecipes from "@/components/users/UserRecentRecipes";
 import UserRecipeDiary from "@/components/users/UserRecipeDiary";
+import { serialize } from "@/data/serialize";
 import { getFollowers, getUserProfile } from "@/data/users";
+import { getSessionFromContext } from "@/lib/auth";
 
 export default function UserPage({
   user,
@@ -92,17 +92,18 @@ export default function UserPage({
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { username } = context.params as { username: string };
-  const session = await getSession(context);
-  const sessionUser = session?.user ?? null;
 
-  const user = await getUserProfile(username);
+  const [session, user, followers] = await Promise.all([
+    getSessionFromContext(context),
+    getUserProfile(username),
+    getFollowers(username),
+  ]);
   if (!user) return { notFound: true };
 
-  const followers = await getFollowers(username);
   const { cooklist, diaryEntries, favoritesCreators, favoritesRecipes, following, reviews } = user;
 
   return {
-    props: superjson.serialize({
+    props: serialize({
       user,
       cooklist,
       diaryEntries,
@@ -111,7 +112,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       following,
       followers,
       reviews,
-      sessionUser,
-    }).json,
+      sessionUser: session?.user ?? null,
+    }),
   };
 }

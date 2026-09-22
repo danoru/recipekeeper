@@ -1,14 +1,14 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Head from "next/head";
-import superjson from "superjson";
 
 import CreatorCard from "@/components/cards/CreatorCard";
 import RecipeList from "@/components/recipes/RecipeList";
 import SectionHeader from "@/components/ui/SectionHeader";
 import ProfileLinkBar from "@/components/users/ProfileLinkBar";
 import { creatorHref } from "@/data/helpers";
-import { getAllUsers, getUserLikes } from "@/data/users";
+import { serialize } from "@/data/serialize";
+import { getUserLikes } from "@/data/users";
 
 interface Props {
   user: any;
@@ -69,20 +69,17 @@ export default function UserLikes({ user }: Props) {
 }
 
 export async function getStaticPaths() {
-  const users = await getAllUsers();
-  return {
-    paths: users.map((u) => ({ params: { username: u.username } })),
-    fallback: false,
-  };
+  // Generated on first request and cached, so new users work immediately.
+  return { paths: [], fallback: "blocking" };
 }
 
 export async function getStaticProps({ params }: { params: { username: string } }) {
   const { username } = params;
   const user = await getUserLikes(username);
-  if (!user) return { notFound: true };
+  if (!user) return { notFound: true, revalidate: 60 };
 
   return {
-    props: superjson.serialize({ user }).json,
+    props: serialize({ user }),
     revalidate: 1800,
   };
 }

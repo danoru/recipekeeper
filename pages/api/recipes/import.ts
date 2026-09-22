@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import prisma from "../../../src/data/db";
+import prisma from "@/data/db";
+import { requireApiUser } from "@/lib/auth";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -147,17 +148,38 @@ function mapToSchema(recipe: JsonLdRecipe, pageUrl: string, html: string): Parse
 
 // ─── Handler ──────────────────────────────────────────────────────────────────
 
+function parseHttpUrl(value: unknown): URL | null {
+  if (typeof value !== "string") return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:" ? url : null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "GET" && req.method !== "POST") {
+    res.setHeader("Allow", ["GET", "POST"]);
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  // Importing fetches arbitrary URLs server-side, so it is limited to signed-in users.
+  const user = await requireApiUser(req, res);
+  if (!user) return;
+
   // GET — preview without saving
   if (req.method === "GET") {
-    const url = req.query.url as string | undefined;
-    if (!url) return res.status(400).json({ error: "url parameter required" });
+    const parsedUrl = parseHttpUrl(req.query.url);
+    if (!parsedUrl) return res.status(400).json({ error: "A valid http(s) url is required" });
+    const url = parsedUrl.toString();
 
     try {
       const fetchRes = await fetch(url, {
         headers: {
           "User-Agent": "Mozilla/5.0 (compatible; RecipeImporter/1.0; +https://savry.app)",
         },
+        signal: AbortSignal.timeout(10_000),
       });
       if (!fetchRes.ok)
         return res.status(422).json({ error: `Could not fetch page (${fetchRes.status})` });
@@ -190,25 +212,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // POST — save after user confirms
   if (req.method === "POST") {
     const { recipe }: { recipe: ParsedRecipe } = req.body;
-    if (!recipe?.name || !recipe?.link)
+    if (!recipe?.name || !parseHttpUrl(recipe?.link))
       return res.status(400).json({ error: "Invalid recipe data" });
 
     try {
-      await prisma.creators.upsert({
-        where: { link: recipe.creatorLink },
-        update: {},
-        create: {
-          link: recipe.creatorLink,
-          name: recipe.creatorName,
-          image: recipe.creatorImage || "",
-          website: recipe.creatorWebsite || "",
-          instagram: recipe.creatorInstagram || "",
-          youtube: recipe.creatorYoutube || "",
-        },
-      });
-
       const existingRecipe = await prisma.recipes.findFirst({
         where: { link: recipe.link },
+        select: { id: true },
       });
       if (existingRecipe)
         return res.status(409).json({
@@ -218,7 +228,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const created = await prisma.recipes.create({
         data: {
           name: recipe.name,
-          creatorId: recipe.creatorLink,
+          creators: {
+            connectOrCreate: {
+              where: { link: recipe.creatorLink },
+              create: {
+                link: recipe.creatorLink,
+                name: recipe.creatorName,
+                image: recipe.creatorImage || "",
+                website: recipe.creatorWebsite || "",
+                instagram: recipe.creatorInstagram || "",
+                youtube: recipe.creatorYoutube || "",
+              },
+            },
+          },
           link: recipe.link,
           image: recipe.image || "",
           description: recipe.description,
@@ -230,6 +252,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
 
+      await Promise.allSettled([
+        res.revalidate("/creators"),
+        res.revalidate(`/creators/${recipe.creatorLink}`),
+      ]);
       return res.status(200).json({ success: true, recipe: created });
     } catch (err) {
       console.error("[import-recipe POST]", err);

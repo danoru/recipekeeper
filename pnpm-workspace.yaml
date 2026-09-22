@@ -1,0 +1,9 @@
+allowBuilds:
+  "@prisma/client": true
+  "@prisma/engines": true
+  prisma: true
+  bcrypt: true
+  "@swc/core": false
+  bufferutil: false
+  unrs-resolver: false
+  esbuild: true

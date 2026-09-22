@@ -2,20 +2,20 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { Creators, DiaryEntries, Recipes, Users } from "@prisma/client";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
-import { getSession } from "next-auth/react";
-import superjson from "superjson";
 
 import StarRating from "@/components/ui/StarRating";
 import ProfileLinkBar from "@/components/users/ProfileLinkBar";
 import { getDiaryEntriesByUsernames } from "@/data/diary";
 import { creatorHref, recipeHref } from "@/data/helpers";
-import { findUserByUsername, getFollowingList } from "@/data/users";
+import { serialize } from "@/data/serialize";
+import { getFollowingList } from "@/data/users";
+import type { Creators, DiaryEntries, Recipes, Users } from "@/generated/prisma/browser";
+import { getSessionFromContext } from "@/lib/auth";
 
 dayjs.extend(advancedFormat);
 
@@ -89,7 +89,7 @@ export default function Activity({ diaryEntries, user }: Props) {
 
                   <MuiLink
                     component={NextLink}
-                    href={recipeHref(creatorName, recipeName)}
+                    href={recipeHref(entry.recipes?.creatorId ?? "", recipeName)}
                     sx={{
                       fontSize: "0.875rem",
                       fontStyle: "italic",
@@ -104,7 +104,7 @@ export default function Activity({ diaryEntries, user }: Props) {
                   <Typography sx={{ fontSize: "0.875rem", color: "text.secondary" }}>by</Typography>
                   <MuiLink
                     component={NextLink}
-                    href={creatorHref(creatorName)}
+                    href={creatorHref(entry.recipes?.creatorId ?? "")}
                     sx={{
                       fontSize: "0.875rem",
                       fontStyle: "italic",
@@ -135,22 +135,17 @@ export default function Activity({ diaryEntries, user }: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession(context);
+  const session = await getSessionFromContext(context);
 
   if (!session) {
     return { redirect: { destination: "/login", permanent: false } };
   }
 
-  const username = session.user.username;
-  const user = await findUserByUsername(username);
-
-  if (!user) return { notFound: true };
-
-  const following = await getFollowingList(user.id);
-  const usernames = [...following, username];
-  const diaryEntries = await getDiaryEntriesByUsernames(usernames);
+  const { username } = session.user;
+  const following = await getFollowingList(Number(session.user.id));
+  const diaryEntries = await getDiaryEntriesByUsernames([...following, username], 100);
 
   return {
-    props: superjson.serialize({ diaryEntries, user }).json,
+    props: serialize({ diaryEntries, user: { username } }),
   };
 }

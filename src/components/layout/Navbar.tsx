@@ -168,11 +168,13 @@ export default function Navbar() {
       <Drawer
         anchor="right"
         open={drawerOpen}
-        PaperProps={{
-          sx: {
-            width: 240,
-            bgcolor: "#161616",
-            borderLeft: "1px solid rgba(255,255,255,0.07)",
+        slotProps={{
+          paper: {
+            sx: {
+              width: 240,
+              bgcolor: "#161616",
+              borderLeft: "1px solid rgba(255,255,255,0.07)",
+            },
           },
         }}
         onClose={() => setDrawerOpen(false)}
@@ -214,10 +216,14 @@ export default function Navbar() {
                 >
                   <ListItemText
                     primary={page.title}
-                    primaryTypographyProps={{
-                      fontSize: "0.875rem",
-                      fontWeight: isActive(page.link) ? 500 : 400,
-                      letterSpacing: "0.04em",
+                    slotProps={{
+                      primary: {
+                        sx: {
+                          fontSize: "0.875rem",
+                          fontWeight: isActive(page.link) ? 500 : 400,
+                          letterSpacing: "0.04em",
+                        },
+                      },
                     }}
                   />
                 </ListItemButton>

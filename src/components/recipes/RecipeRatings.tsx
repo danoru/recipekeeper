@@ -1,7 +1,8 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { BarChart } from "@mui/x-charts";
-import { Recipes, Reviews } from "@prisma/client";
+
+import type { Recipes, Reviews } from "@/generated/prisma/browser";
 
 interface Props {
   recipe: Recipes & {

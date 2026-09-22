@@ -6,8 +6,9 @@ import IconButton from "@mui/material/IconButton";
 import Slide from "@mui/material/Slide";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Creators } from "@prisma/client";
 import React, { useState } from "react";
+
+import type { Creators } from "@/generated/prisma/browser";
 
 import CreatorCard from "../cards/CreatorCard";
 
@@ -64,11 +65,14 @@ function CreatorCarousel({ creators }: Props) {
         <Box sx={{ width: `${containerWidth}px`, height: "100%" }}>
           <Slide direction={slideDirection} in={true}>
             <Stack
-              alignContent="center"
               direction="row"
-              justifyContent="center"
               spacing={2}
-              sx={{ width: "100%", height: "100%" }}
+              sx={{
+                width: "100%",
+                height: "100%",
+                alignContent: "center",
+                justifyContent: "center",
+              }}
             >
               {creators
                 .slice(currentPage * cardsPerPage, (currentPage + 1) * cardsPerPage)

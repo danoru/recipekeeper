@@ -14,8 +14,9 @@ export function toSlug(str: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-export function recipeHref(creatorName: string, recipeName: string): string {
-  return `/recipes/${creatorSlug(creatorName)}/${toSlug(recipeName)}`;
+/** `creatorLink` is the recipe's `creatorId` (i.e. `Creators.link`). */
+export function recipeHref(creatorLink: string, recipeName: string): string {
+  return `/recipes/${creatorSlug(creatorLink)}/${toSlug(recipeName)}`;
 }
 
 export function creatorHref(creatorLinkOrName: string): string {

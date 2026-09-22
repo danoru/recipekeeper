@@ -19,19 +19,20 @@ export const authOptions: NextAuthOptions = {
         username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
+        if (!credentials?.username || !credentials.password) return null;
+
         try {
           const user = await prisma.users.findUnique({
-            where: {
-              username: credentials?.username,
-            },
+            where: { username: credentials.username },
+            select: { id: true, username: true, password: true },
           });
 
           if (!user) {
             return null;
           }
 
-          const passwordCorrect = await compare(credentials?.password || "", user.password || "");
+          const passwordCorrect = await compare(credentials.password, user.password);
 
           if (passwordCorrect) {
             return {

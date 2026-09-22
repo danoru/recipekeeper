@@ -1,6 +1,7 @@
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Creators } from "@prisma/client";
+
+import type { Creators } from "@/generated/prisma/browser";
 
 import CreatorCard from "../cards/CreatorCard";
 

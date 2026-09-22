@@ -1,7 +1,8 @@
 import { Box, Grid, Typography } from "@mui/material";
-import { Cooklist, Recipes } from "@prisma/client";
 
-import { toSlug } from "../../data/helpers";
+import { recipeHref } from "@/data/helpers";
+import type { Cooklist, Recipes } from "@/generated/prisma/browser";
+
 import TinyCard from "../cards/TinyCard";
 
 interface Props {
@@ -47,7 +48,7 @@ function UserCooklistPreview({ cooklist }: Props) {
             <TinyCard
               key={`cooklist-${i}`}
               image={item.recipes.image}
-              link={`/recipes/${toSlug(item.recipes.name)}`}
+              link={recipeHref(item.recipes.creatorId, item.recipes.name)}
               name={item.recipes.name}
             />
           ))}

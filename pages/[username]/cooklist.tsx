@@ -1,12 +1,13 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
-import superjson from "superjson";
+
+import { serialize } from "@/data/serialize";
 
 import RecipeList from "../../src/components/recipes/RecipeList";
 import ProfileLinkBar from "../../src/components/users/ProfileLinkBar";
 import { getCooklist } from "../../src/data/recipes";
-import { findUserByUsername, getAllUsers } from "../../src/data/users";
+import { findUserByUsername } from "../../src/data/users";
 
 interface Props {
   user: any;
@@ -47,22 +48,19 @@ export default function UserCooklist({ cooklist, user }: Props) {
 }
 
 export async function getStaticPaths() {
-  const users = await getAllUsers();
-  return {
-    paths: users.map((u) => ({ params: { username: u.username } })),
-    fallback: false,
-  };
+  // Generated on first request and cached, so new users work immediately.
+  return { paths: [], fallback: "blocking" };
 }
 
 export async function getStaticProps({ params }: { params: { username: string } }) {
   const { username } = params;
   const user = await findUserByUsername(username);
-  if (!user) return { notFound: true };
+  if (!user) return { notFound: true, revalidate: 60 };
 
   const cooklist = await getCooklist(user.id);
 
   return {
-    props: superjson.serialize({ cooklist, user }).json,
+    props: serialize({ cooklist, user }),
     revalidate: 1800,
   };
 }

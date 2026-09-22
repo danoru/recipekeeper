@@ -1,7 +1,9 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { Recipes } from "@prisma/client";
 import { memo } from "react";
+
+import { recipeHref } from "@/data/helpers";
+import type { Recipes } from "@/generated/prisma/browser";
 
 import PopularRecipeCard from "../cards/PopularRecipeCard";
 import SectionHeader from "../ui/SectionHeader";
@@ -19,7 +21,7 @@ function PopularRecipeActivity({ recipes }: Props) {
           <Grid key={`pop-recipe-${i}`} size={{ sm: 3, xs: 6 }}>
             <PopularRecipeCard
               image={recipe.image}
-              link={`/recipes/${recipe.name.replace(/\s+/g, "-").toLowerCase()}`}
+              link={recipeHref(recipe.creatorId, recipe.name)}
               name={recipe.name}
             />
           </Grid>

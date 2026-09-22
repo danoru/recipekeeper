@@ -2,13 +2,13 @@ import FavoriteIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import MenuBookIcon from "@mui/icons-material/MenuBookOutlined";
 import OutdoorGrillIcon from "@mui/icons-material/OutdoorGrillOutlined";
 import { Box, Divider, Link as MuiLink, Tooltip, Typography } from "@mui/material";
-import { Users } from "@prisma/client";
 import Head from "next/head";
 import NextLink from "next/link";
-import superjson from "superjson";
 
 import UserAvatar from "@/components/users/UserAvatar";
+import { serialize } from "@/data/serialize";
 import { getAllUsers } from "@/data/users";
+import type { Users } from "@/generated/prisma/browser";
 
 interface Props {
   users: Users[];
@@ -168,7 +168,7 @@ export default function Members({ users }: Props) {
 export async function getStaticProps() {
   const users = await getAllUsers();
   return {
-    props: superjson.serialize({ users }).json,
+    props: serialize({ users }),
     revalidate: 1800,
   };
 }

@@ -6,11 +6,11 @@ import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
 import NextLink from "next/link";
-import superjson from "superjson";
 
 import ProfileLinkBar from "@/components/users/ProfileLinkBar";
 import UserAvatar from "@/components/users/UserAvatar";
-import { findUserByUsername, getAllUsers, getFollowing } from "@/data/users";
+import { serialize } from "@/data/serialize";
+import { findUserByUsername, getFollowing } from "@/data/users";
 
 interface Props {
   user: any;
@@ -100,22 +100,19 @@ export default function UserFollowing({ user, following }: Props) {
 }
 
 export async function getStaticPaths() {
-  const users = await getAllUsers();
-  return {
-    paths: users.map((u) => ({ params: { username: u.username } })),
-    fallback: false,
-  };
+  // Generated on first request and cached, so new users work immediately.
+  return { paths: [], fallback: "blocking" };
 }
 
 export async function getStaticProps({ params }: { params: { username: string } }) {
   const { username } = params;
   const user = await findUserByUsername(username);
-  if (!user) return { notFound: true };
+  if (!user) return { notFound: true, revalidate: 60 };
 
   const following = user ? await getFollowing(user.id) : [];
 
   return {
-    props: superjson.serialize({ user, following }).json,
+    props: serialize({ user, following }),
     revalidate: 1800,
   };
 }
