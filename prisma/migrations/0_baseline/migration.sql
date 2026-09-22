@@ -1,3 +1,9 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
+-- CreateExtension
+CREATE EXTENSION IF NOT EXISTS "citext" WITH SCHEMA "public";
+
 -- CreateEnum
 CREATE TYPE "Badge" AS ENUM ('ADMIN', 'PATRON', 'USER');
 
@@ -13,10 +19,10 @@ CREATE TABLE "Cooklist" (
 CREATE TABLE "Creators" (
     "link" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "image" TEXT,
-    "website" TEXT,
-    "instagram" TEXT,
-    "youtube" TEXT,
+    "image" TEXT NOT NULL,
+    "website" TEXT NOT NULL,
+    "instagram" TEXT NOT NULL,
+    "youtube" TEXT NOT NULL,
 
     CONSTRAINT "Creators_pkey" PRIMARY KEY ("link")
 );
@@ -25,10 +31,10 @@ CREATE TABLE "Creators" (
 CREATE TABLE "DiaryEntries" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
-    "recipeId" INTEGER,
-    "rating" DECIMAL(2,1),
+    "recipeId" INTEGER NOT NULL,
+    "rating" DECIMAL(65,30) NOT NULL,
     "comment" TEXT,
-    "date" DATE,
+    "date" TIMESTAMPTZ(6) NOT NULL,
     "hasCookedBefore" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "DiaryEntries_pkey" PRIMARY KEY ("id")
@@ -45,9 +51,9 @@ CREATE TABLE "FavoritesCreators" (
 -- CreateTable
 CREATE TABLE "FavoritesRecipes" (
     "userId" INTEGER NOT NULL,
-    "recipeid" INTEGER NOT NULL,
+    "recipeId" INTEGER NOT NULL,
 
-    CONSTRAINT "FavoritesRecipes_pkey" PRIMARY KEY ("userId","recipeid")
+    CONSTRAINT "FavoritesRecipes_pkey" PRIMARY KEY ("userId","recipeId")
 );
 
 -- CreateTable
@@ -96,9 +102,9 @@ CREATE TABLE "Reviews" (
     "id" SERIAL NOT NULL,
     "recipeId" INTEGER NOT NULL,
     "userId" INTEGER NOT NULL,
-    "rating" DECIMAL(2,1),
+    "rating" DECIMAL(65,30) NOT NULL,
     "comment" TEXT,
-    "date" DATE,
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Reviews_pkey" PRIMARY KEY ("id")
 );
@@ -106,7 +112,7 @@ CREATE TABLE "Reviews" (
 -- CreateTable
 CREATE TABLE "Users" (
     "id" SERIAL NOT NULL,
-    "username" TEXT NOT NULL,
+    "username" CITEXT NOT NULL,
     "password" TEXT NOT NULL,
     "firstName" TEXT,
     "lastName" TEXT,
@@ -116,13 +122,37 @@ CREATE TABLE "Users" (
     "bio" TEXT,
     "image" TEXT,
     "badge" "Badge" NOT NULL DEFAULT 'USER',
-    "joinDate" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "joinDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Creators_link_key" ON "Creators"("link");
+
+-- CreateIndex
+CREATE INDEX "DiaryEntries_userId_date_idx" ON "DiaryEntries"("userId", "date" DESC);
+
+-- CreateIndex
+CREATE INDEX "DiaryEntries_recipeId_idx" ON "DiaryEntries"("recipeId");
+
+-- CreateIndex
+CREATE INDEX "Following_followingUsername_idx" ON "Following"("followingUsername");
+
+-- CreateIndex
+CREATE INDEX "LikedCreators_creatorId_idx" ON "LikedCreators"("creatorId");
+
+-- CreateIndex
+CREATE INDEX "LikedRecipes_recipeId_idx" ON "LikedRecipes"("recipeId");
+
+-- CreateIndex
+CREATE INDEX "Recipes_creatorId_idx" ON "Recipes"("creatorId");
+
+-- CreateIndex
+CREATE INDEX "Reviews_recipeId_idx" ON "Reviews"("recipeId");
+
+-- CreateIndex
+CREATE INDEX "Reviews_userId_idx" ON "Reviews"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Users_username_key" ON "Users"("username");
@@ -146,7 +176,7 @@ ALTER TABLE "FavoritesCreators" ADD CONSTRAINT "FavoritesCreators_creatorId_fkey
 ALTER TABLE "FavoritesCreators" ADD CONSTRAINT "FavoritesCreators_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "FavoritesRecipes" ADD CONSTRAINT "FavoritesRecipes_recipeid_fkey" FOREIGN KEY ("recipeid") REFERENCES "Recipes"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "FavoritesRecipes" ADD CONSTRAINT "FavoritesRecipes_recipeId_fkey" FOREIGN KEY ("recipeId") REFERENCES "Recipes"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "FavoritesRecipes" ADD CONSTRAINT "FavoritesRecipes_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
