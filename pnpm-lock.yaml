@@ -53,6 +53,9 @@ importers:
       next-auth:
         specifier: ^4
         version: 4.24.15(next@16.3.5(@babel/core@7.29.7)(@types/node@24.13.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      parse-ingredient:
+        specifier: ^3.0.0
+        version: 3.0.0
       pg:
         specifier: ^8.23.0
         version: 8.23.0
@@ -2746,6 +2749,10 @@ packages:
     resolution: {integrity: sha512-x0InOIyzgdk+eyaWaRJFH5snEtiImgBgblZ2CyPrLmqqcuMQkEvcDPHbzqbD8eDsSeJbVOjn+crzyzHaM4D+/A==}
     engines: {node: '>=18'}
 
+  numeric-quantity@3.3.2:
+    resolution: {integrity: sha512-Gg/0rVyiaTePGl4AwVLtCvU/XNhYHAhcxrbyHpQKsUidlnEims/0g6WFrWynr8bL/0WFvNq0JTRmTzkDYZ/wwQ==}
+    engines: {node: '>=16'}
+
   oauth@0.9.15:
     resolution: {integrity: sha512-a5ERWK1kh38ExDEfoO6qUHJb32rd7aYmPHuyCu3Fta/cnICvYmgd2uhuKXvPD+PXB+gCEYYEaQdIRAjCOwAKNA==}
 
@@ -2821,6 +2828,10 @@ packages:
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
+
+  parse-ingredient@3.0.0:
+    resolution: {integrity: sha512-1pmfoDfK2i/rE2jIBmGfcATDGEoCvYD98hClaMKzKsh11VNdgQzX44hs1YW1R7dgy0fO08VkNiK5+3isNlYbZA==}
+    engines: {node: '>=20'}
 
   parse-json@5.2.0:
     resolution: {integrity: sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==}
@@ -6248,6 +6259,8 @@ snapshots:
 
   node-releases@2.0.56: {}
 
+  numeric-quantity@3.3.2: {}
+
   oauth@0.9.15: {}
 
   object-assign@4.1.1: {}
@@ -6336,6 +6349,10 @@ snapshots:
   parent-module@1.0.1:
     dependencies:
       callsites: 3.1.0
+
+  parse-ingredient@3.0.0:
+    dependencies:
+      numeric-quantity: 3.3.2
 
   parse-json@5.2.0:
     dependencies:

@@ -27,12 +27,20 @@ Environment variables (read from `.env.local`, then `.env`):
 The schema lives in `prisma/schema.prisma`; CLI settings are in `prisma.config.ts`.
 
 ```bash
-pnpm exec prisma db push   # sync the schema to the database
-pnpm exec prisma db seed   # load creators and recipes from prisma/seed-data.ts
+pnpm exec prisma migrate deploy   # apply migrations in prisma/migrations
+pnpm exec prisma db seed          # creators, recipes, and the ingredient dictionary (safe to re-run)
+pnpm backfill:ingredients         # fill in ingredients for recipes from their source pages
 ```
+
+Schema changes: edit `schema.prisma`, then `pnpm exec prisma migrate dev --name <change>`.
+
+The ingredient dictionary is in `prisma/ingredients-data.ts`. Admins can see which ingredient names
+don't match it yet at `/admin/ingredients`; add them as names or aliases, re-seed, then run
+`pnpm backfill:ingredients --all`.
 
 ## Scripts
 
-- `pnpm check`: lint, format check, and typecheck
+- `pnpm check`: lint, format check, typecheck, and tests
+- `pnpm test` / `pnpm test:watch`: unit tests (Vitest)
 - `pnpm lint:fix` / `pnpm format`: auto-fix
 - `pnpm build` / `pnpm start`: production build and server

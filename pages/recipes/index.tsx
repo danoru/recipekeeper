@@ -480,7 +480,7 @@ export default function RecipesPage({
       <ImportRecipeModal
         isOpen={importOpen}
         onClose={() => setImportOpen(false)}
-        onSuccess={() => setImportOpen(false)}
+        onSuccess={() => router.replace(router.asPath, undefined, { scroll: false })}
       />
     </>
   );

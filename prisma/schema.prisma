@@ -93,23 +93,29 @@ model LikedRecipes {
 }
 
 model Recipes {
-  id               Int                @id @default(autoincrement())
-  name             String
-  creatorId        String
-  link             String
-  image            String
-  description      String
-  category         String
-  cuisine          String
-  course           String
-  method           String
-  diet             String
-  cooklist         Cooklist[]
-  diaryEntries     DiaryEntries[]
-  favoritesRecipes FavoritesRecipes[]
-  likedRecipes     LikedRecipes[]
-  creators         Creators           @relation(fields: [creatorId], references: [link], onDelete: NoAction, onUpdate: NoAction)
-  reviews          Reviews[]
+  id                 Int                @id @default(autoincrement())
+  name               String
+  creatorId          String
+  link               String
+  image              String
+  description        String
+  category           String
+  cuisine            String
+  course             String
+  method             String
+  diet               String
+  recipeYield        String?
+  totalTimeMinutes   Int?
+  /// Normalized source URL (no tracking params), used to detect duplicate imports.
+  sourceUrlCanonical String?            @unique
+  cooklist           Cooklist[]
+  diaryEntries       DiaryEntries[]
+  favoritesRecipes   FavoritesRecipes[]
+  likedRecipes       LikedRecipes[]
+  creators           Creators           @relation(fields: [creatorId], references: [link], onDelete: NoAction, onUpdate: NoAction)
+  reviews            Reviews[]
+  ingredients        RecipeIngredient[]
+  steps              RecipeStep[]
 
   @@index([creatorId])
 }
@@ -155,4 +161,45 @@ enum Badge {
   ADMIN
   PATRON
   USER
+}
+
+/// One line of a recipe's ingredient list. `raw` is always kept so lines can be
+/// re-parsed as the parser improves; the other fields are best-effort.
+model RecipeIngredient {
+  id           Int         @id @default(autoincrement())
+  recipeId     Int
+  position     Int
+  section      String?
+  raw          String
+  quantity     Decimal?    @db.Decimal(10, 3)
+  quantityMax  Decimal?    @db.Decimal(10, 3)
+  unit         String?
+  name         String?
+  note         String?
+  ingredientId Int?
+  recipe       Recipes     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient? @relation(fields: [ingredientId], references: [id], onDelete: SetNull)
+
+  @@index([recipeId])
+  @@index([ingredientId])
+}
+
+model RecipeStep {
+  id       Int     @id @default(autoincrement())
+  recipeId Int
+  position Int
+  section  String?
+  text     String
+  recipe   Recipes @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
+}
+
+/// Canonical ingredient dictionary (seeded from prisma/ingredients-data.ts).
+model Ingredient {
+  id          Int                @id @default(autoincrement())
+  name        String             @unique
+  aliases     String[]
+  category    String?
+  recipeLines RecipeIngredient[]
 }

@@ -21,60 +21,27 @@ import {
   Fade,
   MenuItem,
 } from "@mui/material";
-import { useState, useCallback } from "react";
+import NextLink from "next/link";
+import { useState, useCallback, useEffect, useRef } from "react";
 
-// ─── Dropdown options —────────────────────────────────────────────────────────
-
-const CATEGORY_OPTIONS: string[] = [
-  "Beef",
-  "Chicken",
-  "Noodles",
-  "Pasta",
-  "Pork",
-  "Rice & Grains",
-  "Soup",
-  "Vegetables",
-  "Other",
-];
-const CUISINE_OPTIONS: string[] = [
-  "African",
-  "Asian",
-  "Carribean",
-  "Central American",
-  "European",
-  "Middle Eastern",
-  "North American",
-  "Oceanic",
-  "South American",
-];
-const COURSE_OPTIONS: string[] = ["Appetizers", "Breakfast", "Desserts", "Mains", "Sides"];
-const METHOD_OPTIONS: string[] = ["Air Fryer", "One Pot", "Pressure Cooker", "Slow Cooker"];
-const DIET_OPTIONS: string[] = ["Dairy Free", "Gluten Free", "Paleo", "Vegan", "Vegetarian"];
+import type { ImportedRecipe, PageData } from "@/lib/import/jsonld";
+import {
+  CATEGORY_OPTIONS,
+  COURSE_OPTIONS,
+  CUISINE_OPTIONS,
+  DIET_OPTIONS,
+  METHOD_OPTIONS,
+} from "@/lib/import/taxonomy";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface ParsedRecipe {
-  name: string;
-  description: string;
-  image: string;
-  category: string;
-  cuisine: string;
-  course: string;
-  method: string;
-  diet: string;
-  link: string;
-  creatorName: string;
-  creatorLink: string;
-  creatorWebsite: string;
-  creatorImage: string;
-  creatorInstagram: string;
-  creatorYoutube: string;
-}
+type ParsedRecipe = ImportedRecipe;
 
 interface ImportPreview {
   recipe: ParsedRecipe;
   creatorExists: boolean;
   existingCreator: { name: string; link: string; image: string } | null;
+  existingRecipe: { name: string; href: string } | null;
 }
 
 type Step = "input" | "preview" | "success";
@@ -83,6 +50,10 @@ interface ImportRecipeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: (recipeId: number) => void;
+  /** Start by fetching this URL (e.g. from the share target). */
+  initialUrl?: string;
+  /** Start from page data captured by the bookmarklet. */
+  initialPage?: PageData;
 }
 
 // ─── Field configs ────────────────────────────────────────────────────────────
@@ -126,6 +97,12 @@ const CREATOR_FIELDS: {
   { key: "creatorYoutube", label: "YouTube" },
 ];
 
+function formatMinutes(total: number) {
+  const h = Math.floor(total / 60);
+  const m = total % 60;
+  return [h && `${h} hr`, m && `${m} min`].filter(Boolean).join(" ");
+}
+
 // ─── Small section label ──────────────────────────────────────────────────────
 
 function SectionLabel({ letter, label, color }: { letter: string; label: string; color: string }) {
@@ -160,21 +137,32 @@ function SectionLabel({ letter, label, color }: { letter: string; label: string;
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: ImportRecipeModalProps) {
+export default function ImportRecipeModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  initialUrl,
+  initialPage,
+}: ImportRecipeModalProps) {
   const [step, setStep] = useState<Step>("input");
-  const [url, setUrl] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [url, setUrl] = useState(initialUrl ?? initialPage?.url ?? "");
+  // Opened with a URL or bookmarklet data, the preview starts loading immediately.
+  const [loading, setLoading] = useState(Boolean(initialUrl || initialPage));
   const [error, setError] = useState<string | null>(null);
+  const [errorHref, setErrorHref] = useState<string | null>(null);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [recipe, setRecipe] = useState<ParsedRecipe | null>(null);
+  const [savedHref, setSavedHref] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const reset = useCallback(() => {
     setStep("input");
     setUrl("");
     setError(null);
+    setErrorHref(null);
     setPreview(null);
     setRecipe(null);
+    setSavedHref(null);
     setLoading(false);
     setSaving(false);
   }, []);
@@ -184,12 +172,11 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
     onClose();
   };
 
-  const handleFetch = async () => {
-    if (!url.trim()) return;
-    setLoading(true);
-    setError(null);
+  // Shared by the URL fetch (GET) and bookmarklet page data (POST). State is
+  // only set after the request settles, so this is safe to start from an effect.
+  const loadPreview = useCallback(async (request: Promise<Response>) => {
     try {
-      const res = await fetch(`/api/recipes/import?url=${encodeURIComponent(url.trim())}`);
+      const res = await request;
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "Something went wrong fetching that URL.");
@@ -203,12 +190,37 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  const handleFetch = () => {
+    if (!url.trim()) return;
+    setLoading(true);
+    setError(null);
+    setErrorHref(null);
+    loadPreview(fetch(`/api/recipes/import?url=${encodeURIComponent(url.trim())}`));
   };
+
+  // Kick off automatically when opened from the share target or bookmarklet.
+  const started = useRef(false);
+  useEffect(() => {
+    if (!isOpen || started.current || !(initialPage || initialUrl)) return;
+    started.current = true;
+    loadPreview(
+      initialPage
+        ? fetch("/api/recipes/import", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ page: initialPage }),
+          })
+        : fetch(`/api/recipes/import?url=${encodeURIComponent(initialUrl!.trim())}`)
+    );
+  }, [isOpen, initialPage, initialUrl, loadPreview]);
 
   const handleSave = async () => {
     if (!recipe) return;
     setSaving(true);
     setError(null);
+    setErrorHref(null);
     try {
       const res = await fetch("/api/recipes/import", {
         method: "POST",
@@ -218,8 +230,10 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "Failed to save recipe.");
+        setErrorHref(data.href ?? null);
         return;
       }
+      setSavedHref(data.recipe.href ?? null);
       setStep("success");
       onSuccess?.(data.recipe.id);
     } catch {
@@ -228,6 +242,15 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
       setSaving(false);
     }
   };
+
+  const found = recipe
+    ? [
+        recipe.ingredients.length && `${recipe.ingredients.length} ingredients`,
+        recipe.steps.length && `${recipe.steps.length} steps`,
+        recipe.totalTimeMinutes && formatMinutes(recipe.totalTimeMinutes),
+        recipe.recipeYield && `serves ${recipe.recipeYield.replace(/\s*servings?$/i, "")}`,
+      ].filter(Boolean)
+    : [];
 
   const updateField = (key: keyof ParsedRecipe, value: string) =>
     setRecipe((prev) => (prev ? { ...prev, [key]: value } : prev));
@@ -239,7 +262,7 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
   }[step];
   const subtitleText = {
     input: "Paste a URL — we'll extract the recipe automatically",
-    preview: "Check the details before saving to your database",
+    preview: "Check the details before saving",
     success: "Successfully added to your collection",
   }[step];
 
@@ -342,6 +365,33 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
         {step === "preview" && recipe && preview && (
           <Fade in>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+              {preview.existingRecipe && (
+                <Alert severity="info" sx={{ borderRadius: 1.5 }}>
+                  This recipe is already on Savry.{" "}
+                  <NextLink href={preview.existingRecipe.href} onClick={handleClose}>
+                    View {preview.existingRecipe.name}
+                  </NextLink>
+                </Alert>
+              )}
+
+              {/* What the page gave us */}
+              <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap" }}>
+                {found.length > 0 ? (
+                  found.map((label) => (
+                    <Chip
+                      key={String(label)}
+                      label={label}
+                      size="small"
+                      sx={{ fontSize: "0.7rem", bgcolor: "rgba(200,169,110,0.1)" }}
+                    />
+                  ))
+                ) : (
+                  <Typography color="text.disabled" variant="caption">
+                    No ingredient list found on this page — you can still save the recipe.
+                  </Typography>
+                )}
+              </Box>
+
               {/* Image */}
               {recipe.image && (
                 <Box
@@ -435,7 +485,7 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
                   <SectionLabel color="#888580" label="Creator" letter="C" />
                   {preview.creatorExists && (
                     <Chip
-                      label="Already in your DB — won't be overwritten"
+                      label="Already on Savry — won't be overwritten"
                       size="small"
                       sx={{
                         height: 20,
@@ -457,7 +507,7 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
                     sx={{ display: "block", mb: 1.5, mt: -1 }}
                     variant="caption"
                   >
-                    This creator isn&apos;t in your database yet — they&apos;ll be created on save.
+                    This creator isn&apos;t on Savry yet — they&apos;ll be added on save.
                   </Typography>
                 )}
 
@@ -491,7 +541,12 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
                   severity="error"
                   sx={{ borderRadius: 1.5 }}
                 >
-                  {error}
+                  {error}{" "}
+                  {errorHref && (
+                    <NextLink href={errorHref} onClick={handleClose}>
+                      View it
+                    </NextLink>
+                  )}
                 </Alert>
               </Collapse>
             </Box>
@@ -537,7 +592,7 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
                   {recipe?.name}
                 </Typography>
                 <Typography color="text.secondary" sx={{ mt: 0.5 }} variant="body2">
-                  Added to your recipe database.
+                  Added to Savry.
                 </Typography>
               </Box>
             </Box>
@@ -581,14 +636,14 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
               Back
             </Button>
             <Button
-              disabled={saving}
+              disabled={saving || !!preview?.existingRecipe}
               size="small"
               startIcon={saving ? <CircularProgress color="inherit" size={13} /> : undefined}
               sx={{ minWidth: 160 }}
               variant="contained"
               onClick={handleSave}
             >
-              {saving ? "Saving…" : "Save to Database"}
+              {saving ? "Saving…" : "Save to Savry"}
             </Button>
           </>
         )}
@@ -598,9 +653,21 @@ export default function ImportRecipeModal({ isOpen, onClose, onSuccess }: Import
             <Button size="small" variant="outlined" onClick={reset}>
               Import Another
             </Button>
-            <Button size="small" variant="contained" onClick={handleClose}>
-              Done
-            </Button>
+            {savedHref ? (
+              <Button
+                component={NextLink}
+                href={savedHref}
+                size="small"
+                variant="contained"
+                onClick={handleClose}
+              >
+                View recipe
+              </Button>
+            ) : (
+              <Button size="small" variant="contained" onClick={handleClose}>
+                Done
+              </Button>
+            )}
           </>
         )}
       </DialogActions>

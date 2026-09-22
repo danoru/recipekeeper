@@ -18,7 +18,7 @@ const fontCache = new Map<string, Promise<ArrayBuffer | null>>();
  * A Google Font as TTF, cached per server instance. Requesting the CSS without
  * a modern user agent returns a TTF URL, which Satori needs (not WOFF2).
  */
-function loadGoogleFont(family: string): Promise<ArrayBuffer | null> {
+export function loadGoogleFont(family: string): Promise<ArrayBuffer | null> {
   const cached = fontCache.get(family);
   if (cached) return cached;
 

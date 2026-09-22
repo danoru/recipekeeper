@@ -88,6 +88,11 @@ export async function getRecipeBySlug(creatorSegment: string, recipeSegment: str
     include: {
       creators: true,
       reviews: { select: { rating: true } },
+      ingredients: {
+        select: { id: true, section: true, raw: true },
+        orderBy: { position: "asc" },
+      },
+      _count: { select: { steps: true } },
     },
   });
 }

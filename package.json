@@ -14,7 +14,8 @@
     "check": "pnpm run lint && pnpm run format:check && pnpm run typecheck && pnpm run test",
     "postinstall": "prisma generate",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "backfill:ingredients": "tsx scripts/backfill-ingredients.ts"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -32,6 +33,7 @@
     "formik": "^2.4.6",
     "next": "^16.3.5",
     "next-auth": "^4",
+    "parse-ingredient": "^3.0.0",
     "pg": "^8.23.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

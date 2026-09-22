@@ -13,9 +13,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerSession(context.req, context.res, authOptions);
 
   if (session) {
+    const callback = context.query.callbackUrl;
+    const destination =
+      typeof callback === "string" && callback.startsWith("/") && !callback.startsWith("//")
+        ? callback
+        : "/";
     return {
       redirect: {
-        destination: "/",
+        destination,
         permanent: false,
       },
     };

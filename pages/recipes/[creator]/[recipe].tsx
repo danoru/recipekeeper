@@ -6,6 +6,7 @@ import NextLink from "next/link";
 
 import RecipeActionBar from "@/components/recipes/RecipeActionBar";
 import RecipeFriendRatings from "@/components/recipes/RecipeFriendRatings";
+import RecipeIngredients from "@/components/recipes/RecipeIngredients";
 import RecipeRatings from "@/components/recipes/RecipeRatings";
 import SocialMeta from "@/components/ui/SocialMeta";
 import StarRating from "@/components/ui/StarRating";
@@ -31,6 +32,8 @@ interface Props {
   recipe: Recipes & {
     creators: Creators;
     reviews: Reviews[];
+    ingredients: { id: number; section: string | null; raw: string }[];
+    _count: { steps: number };
   };
   reviews: (Reviews & { users: Users })[];
   sessionUser: any;
@@ -225,20 +228,42 @@ export default function RecipePage({
 
         <Divider sx={{ mb: 5 }} />
 
-        <Box sx={{ maxWidth: 480 }}>
-          <Typography
-            sx={{
-              fontSize: "0.625rem",
-              fontWeight: 500,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "#4a4744",
-              mb: 2,
-            }}
-          >
-            Rating distribution
-          </Typography>
-          <RecipeRatings recipe={recipe} />
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              md: recipe.ingredients.length > 0 ? "minmax(0, 1fr) 380px" : "minmax(0, 480px)",
+            },
+            gap: { xs: 5, md: 6 },
+            alignItems: "start",
+          }}
+        >
+          {recipe.ingredients.length > 0 && (
+            <RecipeIngredients
+              ingredients={recipe.ingredients}
+              recipeYield={recipe.recipeYield}
+              sourceUrl={recipe.link}
+              stepCount={recipe._count.steps}
+              totalTimeMinutes={recipe.totalTimeMinutes}
+            />
+          )}
+
+          <Box>
+            <Typography
+              sx={{
+                fontSize: "0.625rem",
+                fontWeight: 500,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "#4a4744",
+                mb: 2,
+              }}
+            >
+              Rating distribution
+            </Typography>
+            <RecipeRatings recipe={recipe} />
+          </Box>
         </Box>
       </Box>
     </>

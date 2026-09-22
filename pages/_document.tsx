@@ -24,6 +24,8 @@ const MyDocument = (props: DocumentProps) => {
       <Head>
         <meta content={savryTheme.palette.primary.main} name="theme-color" />
         <link href="/favicon.ico" rel="shortcut icon" />
+        <link href="/manifest.webmanifest" rel="manifest" />
+        <link href="/api/og/icon/180" rel="apple-touch-icon" />
 
         {/* Fonts */}
         <link href="https://fonts.googleapis.com" rel="preconnect" />

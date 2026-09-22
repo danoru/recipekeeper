@@ -9,7 +9,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Formik, Form } from "formik";
 import NextLink from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import * as Yup from "yup";
@@ -24,8 +24,14 @@ const fieldSx = {
   "& .MuiInputLabel-root": { fontSize: "0.8125rem" },
 };
 
+// Only same-site paths, so the login page can't be used as an open redirect.
+function safeCallback(value: string | null | undefined): string {
+  return value && value.startsWith("/") && !value.startsWith("//") ? value : "/";
+}
+
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -55,7 +61,7 @@ export default function LoginForm() {
         message: "Login successful. Redirecting…",
         severity: "success",
       });
-      router.push("/");
+      router.push(safeCallback(searchParams?.get("callbackUrl")));
       router.refresh();
     }
 
