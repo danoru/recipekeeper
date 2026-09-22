@@ -4,13 +4,20 @@ import Head from "next/head";
 import LoggedInHomePage from "@/components/home/LoggedInHomePage";
 import LoggedOutHomePage from "@/components/home/LoggedOutHomePage";
 import { getTopLikedCreators } from "@/data/creators";
-import { getDiaryEntriesByUsernames } from "@/data/diary";
+import { getCookAgain, getDiaryEntriesByUsernames, getYearSnapshot } from "@/data/diary";
 import { getTopLikedRecipes } from "@/data/recipes";
 import { serialize } from "@/data/serialize";
 import { getFollowingList } from "@/data/users";
 import { getSessionFromContext } from "@/lib/auth";
 
-export default function Home({ recentEntries, session, topLikedCreators, topLikedRecipes }: any) {
+export default function Home({
+  cookAgain,
+  recentEntries,
+  session,
+  topLikedCreators,
+  topLikedRecipes,
+  yearSnapshot,
+}: any) {
   const username = session?.user?.username;
 
   return (
@@ -21,10 +28,12 @@ export default function Home({ recentEntries, session, topLikedCreators, topLike
       </Head>
       {session ? (
         <LoggedInHomePage
+          cookAgain={cookAgain}
           creators={topLikedCreators}
           recentEntries={recentEntries}
           recipes={topLikedRecipes}
           username={username}
+          yearSnapshot={yearSnapshot}
         />
       ) : (
         <LoggedOutHomePage />
@@ -37,13 +46,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSessionFromContext(context);
 
   if (session) {
-    const following = await getFollowingList(Number(session.user.id));
+    const userId = Number(session.user.id);
+    const following = await getFollowingList(userId);
 
-    const [recentEntries, topLikedCreators, topLikedRecipes] = await Promise.all([
-      getDiaryEntriesByUsernames(following, 6),
-      getTopLikedCreators(following),
-      getTopLikedRecipes(following),
-    ]);
+    const [recentEntries, topLikedCreators, topLikedRecipes, cookAgain, yearSnapshot] =
+      await Promise.all([
+        getDiaryEntriesByUsernames(following, 6),
+        getTopLikedCreators(following),
+        getTopLikedRecipes(following),
+        getCookAgain(userId),
+        getYearSnapshot(userId, session.user.username),
+      ]);
 
     return {
       props: serialize({
@@ -51,6 +64,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         recentEntries,
         topLikedCreators,
         topLikedRecipes,
+        cookAgain,
+        yearSnapshot,
       }),
     };
   }

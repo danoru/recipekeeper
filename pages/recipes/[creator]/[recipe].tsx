@@ -7,6 +7,7 @@ import NextLink from "next/link";
 import RecipeActionBar from "@/components/recipes/RecipeActionBar";
 import RecipeFriendRatings from "@/components/recipes/RecipeFriendRatings";
 import RecipeRatings from "@/components/recipes/RecipeRatings";
+import SocialMeta from "@/components/ui/SocialMeta";
 import StarRating from "@/components/ui/StarRating";
 import { getRecipeBySlug, getRecipeUserState, getReviewsByRecipe } from "@/data/recipes";
 import { serialize } from "@/data/serialize";
@@ -21,6 +22,7 @@ import type {
   Users,
 } from "@/generated/prisma/browser";
 import { getSessionFromContext } from "@/lib/auth";
+import { siteUrl } from "@/lib/site";
 
 interface Props {
   cooklist: Cooklist[];
@@ -32,6 +34,7 @@ interface Props {
   };
   reviews: (Reviews & { users: Users })[];
   sessionUser: any;
+  ogImage: string;
 }
 
 // ── Page ─────────────────────────────────────────────────────────────────────
@@ -43,6 +46,7 @@ export default function RecipePage({
   recipe,
   reviews,
   sessionUser,
+  ogImage,
 }: Props) {
   const title = `${recipe.name} by ${recipe.creators.name} • Savry`;
 
@@ -54,6 +58,11 @@ export default function RecipePage({
 
   return (
     <>
+      <SocialMeta
+        description={recipe.description || `${recipe.name} by ${recipe.creators.name} on Savry`}
+        image={ogImage}
+        title={`${recipe.name} by ${recipe.creators.name}`}
+      />
       <Head>
         <title>{title}</title>
         <meta
@@ -250,6 +259,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   ]);
   if (!recipe) return { notFound: true };
 
+  const ogImage = `${siteUrl()}/api/og/recipe/${creatorSegment}/${recipeSegment}`;
+
   if (!session) {
     return {
       props: serialize({
@@ -259,6 +270,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         recipe,
         reviews: [],
         sessionUser: null,
+        ogImage,
       }),
     };
   }
@@ -276,6 +288,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       recipe,
       reviews,
       sessionUser: session.user,
+      ogImage,
     }),
   };
 }

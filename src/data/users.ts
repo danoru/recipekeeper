@@ -33,6 +33,7 @@ export async function getUserProfile(username: string) {
         select: {
           id: true,
           userId: true,
+          recipeId: true,
           rating: true,
           date: true,
           recipes: { select: RECIPE_CARD },

@@ -16,6 +16,7 @@ const NAV_LINKS = [
   { label: "Cooklist", path: "/cooklist" },
   { label: "Likes", path: "/likes" },
   { label: "Network", path: "/following" },
+  { label: "Wrapped", path: `/wrapped/${new Date().getFullYear()}` },
 ];
 
 function ProfileLinkBar({ username }: Props) {
@@ -24,7 +25,9 @@ function ProfileLinkBar({ username }: Props) {
   // Derive active tab from current URL
   const base = `/${username}`;
   const activePath = pathname?.replace(base, "") ?? "";
-  const activeIndex = NAV_LINKS.findIndex((l) => l.path === activePath);
+  const activeIndex = activePath.startsWith("/wrapped/")
+    ? NAV_LINKS.findIndex((l) => l.label === "Wrapped")
+    : NAV_LINKS.findIndex((l) => l.path === activePath);
   const currentTab = activeIndex === -1 ? 0 : activeIndex;
 
   return (

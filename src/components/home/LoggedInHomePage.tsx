@@ -11,14 +11,31 @@ import FriendRecipeActivity from "./FriendRecipeActivity";
 import PopularCreatorActivity from "./PopularCreatorActivity";
 import PopularRecipeActivity from "./PopularRecipeActivity";
 
+interface CookAgainItem {
+  recipe: Recipes;
+  rating: number;
+  lastCooked: string;
+}
+
 interface Props {
+  cookAgain: CookAgainItem[];
   creators: Creators[];
   recentEntries: (DiaryEntries & { users: Users; recipes: Recipes })[];
   recipes: Recipes[];
   username: string;
+  yearSnapshot: { cookedThisYear: number; following: number; followers: number };
 }
 
-function LoggedInHomePage({ creators, recentEntries, recipes, username }: Props) {
+function LoggedInHomePage({
+  cookAgain,
+  creators,
+  recentEntries,
+  recipes,
+  username,
+  yearSnapshot,
+}: Props) {
+  const year = new Date().getFullYear();
+
   return (
     <Box
       component="main"
@@ -78,7 +95,7 @@ function LoggedInHomePage({ creators, recentEntries, recipes, username }: Props)
           top: "72px",
         }}
       >
-        <SidebarBlock title="Your year">
+        <SidebarBlock title={`Your ${year}`}>
           <Box
             sx={{
               display: "grid",
@@ -88,9 +105,9 @@ function LoggedInHomePage({ creators, recentEntries, recipes, username }: Props)
             }}
           >
             {[
-              { label: "Recipes", value: "—" },
-              { label: "Following", value: "—" },
-              { label: "Followers", value: "—" },
+              { label: "Cooked", value: yearSnapshot.cookedThisYear },
+              { label: "Following", value: yearSnapshot.following },
+              { label: "Followers", value: yearSnapshot.followers },
             ].map(({ label, value }) => (
               <Box
                 key={label}
@@ -127,7 +144,7 @@ function LoggedInHomePage({ creators, recentEntries, recipes, username }: Props)
           </Box>
           <MuiLink
             component={NextLink}
-            href={`/${username}`}
+            href={`/${username}/wrapped/${year}`}
             sx={{
               display: "block",
               textAlign: "center",
@@ -139,75 +156,90 @@ function LoggedInHomePage({ creators, recentEntries, recipes, username }: Props)
             }}
             underline="none"
           >
-            View full profile →
+            Your {year} Wrapped →
           </MuiLink>
         </SidebarBlock>
+
+        {cookAgain.length > 0 && (
+          <SidebarBlock title="Cook it again">
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+              {cookAgain.map(({ recipe, lastCooked }) => (
+                <SidebarRecipeRow
+                  key={recipe.id}
+                  meta={dayjs(lastCooked).format("MMM D")}
+                  recipe={recipe}
+                />
+              ))}
+            </Box>
+          </SidebarBlock>
+        )}
 
         {recentEntries.length > 0 && (
           <SidebarBlock title="Recent diary">
             <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-              {recentEntries.slice(0, 4).map((entry, i) => {
-                const date = dayjs(entry.date).format("MMM D");
-                return (
-                  <Box
-                    key={i}
-                    component={NextLink}
-                    href={recipeHref(entry.recipes.creatorId, entry.recipes.name)}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1.25,
-                      p: "8px 6px",
-                      borderRadius: "6px",
-                      textDecoration: "none",
-                      transition: "background 0.15s",
-                      "&:hover": { bgcolor: "#1e1e1e" },
-                    }}
-                  >
-                    <Box
-                      alt={entry.recipes.name}
-                      component="img"
-                      src={entry.recipes.image}
-                      sx={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: "5px",
-                        objectFit: "cover",
-                        flexShrink: 0,
-                        border: "1px solid rgba(255,255,255,0.07)",
-                      }}
-                    />
-                    <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Typography
-                        sx={{
-                          fontSize: "0.8125rem",
-                          color: "text.primary",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        {entry.recipes.name}
-                      </Typography>
-                    </Box>
-                    <Typography
-                      sx={{
-                        fontSize: "0.625rem",
-                        color: "#4a4744",
-                        flexShrink: 0,
-                        letterSpacing: "0.04em",
-                      }}
-                    >
-                      {date}
-                    </Typography>
-                  </Box>
-                );
-              })}
+              {recentEntries.slice(0, 4).map((entry) => (
+                <SidebarRecipeRow
+                  key={entry.id}
+                  meta={dayjs(entry.date).format("MMM D")}
+                  recipe={entry.recipes}
+                />
+              ))}
             </Box>
           </SidebarBlock>
         )}
       </Box>
+    </Box>
+  );
+}
+
+function SidebarRecipeRow({ recipe, meta }: { recipe: Recipes; meta: string }) {
+  return (
+    <Box
+      component={NextLink}
+      href={recipeHref(recipe.creatorId, recipe.name)}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1.25,
+        p: "8px 6px",
+        borderRadius: "6px",
+        textDecoration: "none",
+        transition: "background 0.15s",
+        "&:hover": { bgcolor: "#1e1e1e" },
+      }}
+    >
+      <Box
+        alt={recipe.name}
+        component="img"
+        src={recipe.image}
+        sx={{
+          width: 36,
+          height: 36,
+          borderRadius: "5px",
+          objectFit: "cover",
+          flexShrink: 0,
+          border: "1px solid rgba(255,255,255,0.07)",
+        }}
+      />
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Typography
+          sx={{
+            fontSize: "0.8125rem",
+            color: "text.primary",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            lineHeight: 1.4,
+          }}
+        >
+          {recipe.name}
+        </Typography>
+      </Box>
+      <Typography
+        sx={{ fontSize: "0.625rem", color: "#4a4744", flexShrink: 0, letterSpacing: "0.04em" }}
+      >
+        {meta}
+      </Typography>
     </Box>
   );
 }

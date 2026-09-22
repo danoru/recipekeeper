@@ -29,7 +29,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         hasCookedBefore: Boolean(hasCookedBefore),
       },
     });
-    await revalidateUserPages(res, user.username, ["/recipes", "/recipes/diary"]);
+    await revalidateUserPages(res, user.username, [
+      "/recipes",
+      "/recipes/diary",
+      `/wrapped/${newEntry.date.getUTCFullYear()}`,
+    ]);
     return res.status(201).json(newEntry);
   } catch (error) {
     console.error("Error logging recipe:", error);

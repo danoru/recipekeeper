@@ -30,3 +30,55 @@ export async function getDiaryEntriesByUsernames(usernames: string[], take?: num
     take,
   });
 }
+
+/** Just (recipeId, rating) pairs — enough for taste comparisons. */
+export async function getUserRatings(userId: number) {
+  const entries = await prisma.diaryEntries.findMany({
+    where: { userId },
+    select: { recipeId: true, rating: true },
+  });
+  return entries.map((e) => ({ recipeId: e.recipeId, rating: e.rating.toNumber() }));
+}
+
+/**
+ * Recipes the user rated 4+ but hasn't cooked in `weeks` weeks — highest
+ * rated first, then the longest since last cooked.
+ */
+export async function getCookAgain(userId: number, weeks = 6, take = 4) {
+  const cutoff = new Date(Date.now() - weeks * 7 * 24 * 60 * 60 * 1000);
+
+  const groups = await prisma.diaryEntries.groupBy({
+    by: ["recipeId"],
+    where: { userId },
+    _max: { rating: true, date: true },
+    having: {
+      rating: { _max: { gte: 4 } },
+      date: { _max: { lt: cutoff } },
+    },
+    orderBy: [{ _max: { rating: "desc" } }, { _max: { date: "asc" } }],
+    take,
+  });
+  if (groups.length === 0) return [];
+
+  const recipes = await prisma.recipes.findMany({
+    where: { id: { in: groups.map((g) => g.recipeId) } },
+    select: RECIPE_CARD,
+  });
+  const byId = new Map(recipes.map((r) => [r.id, r]));
+
+  return groups.flatMap((g) => {
+    const recipe = byId.get(g.recipeId);
+    return recipe ? [{ recipe, rating: g._max.rating, lastCooked: g._max.date }] : [];
+  });
+}
+
+/** Counts for the home sidebar. */
+export async function getYearSnapshot(userId: number, username: string) {
+  const startOfYear = new Date(Date.UTC(new Date().getUTCFullYear(), 0, 1));
+  const [cookedThisYear, following, followers] = await Promise.all([
+    prisma.diaryEntries.count({ where: { userId, date: { gte: startOfYear } } }),
+    prisma.following.count({ where: { userId } }),
+    prisma.following.count({ where: { followingUsername: username } }),
+  ]);
+  return { cookedThisYear, following, followers };
+}
