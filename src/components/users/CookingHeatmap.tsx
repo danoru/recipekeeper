@@ -1,13 +1,12 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
-import { useEffect, useRef } from "react";
 
 import type { CookingActivity } from "@/lib/stats";
 
 import SectionHeader from "./SectionHeader";
 
-const CELL = 11;
+const CELL = 10;
 const GAP = 3;
 
 function cellColor(count: number) {
@@ -23,13 +22,6 @@ function plural(n: number, word: string) {
 
 export default function CookingHeatmap({ activity }: { activity: CookingActivity }) {
   const { weeks, currentStreak, longestStreak, totalLastYear } = activity;
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  // On narrow screens, start scrolled to the most recent weeks.
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollLeft = el.scrollWidth;
-  }, []);
 
   return (
     <Box>
@@ -41,32 +33,43 @@ export default function CookingHeatmap({ activity }: { activity: CookingActivity
         <Stat label="best streak" value={plural(longestStreak, "day")} />
       </Box>
 
-      <Box ref={scrollRef} sx={{ overflowX: "auto", pb: 0.5 }}>
-        <Box
-          aria-label={`Cooking activity heatmap: ${plural(totalLastYear, "meal")} in the last year`}
-          role="img"
-          sx={{ display: "flex", gap: `${GAP}px`, width: "max-content" }}
-        >
-          {weeks.map((week) => (
-            <Box
-              key={week[0]?.date}
-              sx={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}
-            >
-              {week.map((cell) => (
-                <Box
-                  key={cell.date}
-                  sx={{
-                    width: CELL,
-                    height: CELL,
-                    borderRadius: "2px",
-                    bgcolor: cellColor(cell.count),
-                  }}
-                  title={`${cell.count ? plural(cell.count, "meal") : "Nothing logged"} on ${dayjs(cell.date).format("MMM D, YYYY")}`}
-                />
-              ))}
-            </Box>
-          ))}
-        </Box>
+      {/*
+        Shows as many recent weeks as fit, with no scrollbar: weeks are laid out
+        newest-first from the right (row-reverse), and whole weeks that don't fit
+        wrap onto a second row that the fixed height hides.
+      */}
+      <Box
+        aria-label={`Cooking activity heatmap: ${plural(totalLastYear, "meal")} in the last year`}
+        role="img"
+        sx={{
+          display: "flex",
+          flexDirection: "row-reverse",
+          flexWrap: "wrap",
+          columnGap: `${GAP}px`,
+          rowGap: `${GAP * 4}px`,
+          height: 7 * CELL + 6 * GAP,
+          overflow: "hidden",
+        }}
+      >
+        {[...weeks].reverse().map((week) => (
+          <Box
+            key={week[0]?.date}
+            sx={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}
+          >
+            {week.map((cell) => (
+              <Box
+                key={cell.date}
+                sx={{
+                  width: CELL,
+                  height: CELL,
+                  borderRadius: "2px",
+                  bgcolor: cellColor(cell.count),
+                }}
+                title={`${cell.count ? plural(cell.count, "meal") : "Nothing logged"} on ${dayjs(cell.date).format("MMM D, YYYY")}`}
+              />
+            ))}
+          </Box>
+        ))}
       </Box>
     </Box>
   );
