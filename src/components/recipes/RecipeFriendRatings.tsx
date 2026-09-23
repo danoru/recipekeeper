@@ -3,17 +3,18 @@ import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 
-import type { Reviews, Users } from "@/generated/prisma/browser";
-
 import StarRating from "../ui/StarRating";
 import UserAvatar from "../users/UserAvatar";
 
-interface Props {
-  reviews: (Reviews & { users: Users })[];
+export interface FriendScore {
+  user: { username: string };
+  /** The friend's average rating of this recipe, or null if they never rated it. */
+  score: number | null;
+  timesCooked: number;
 }
 
-export default function RecipeFriendRatings({ reviews }: Props) {
-  if (!reviews?.length) return null;
+export default function RecipeFriendRatings({ friends }: { friends: FriendScore[] }) {
+  if (!friends.length) return null;
 
   return (
     <Box>
@@ -29,34 +30,25 @@ export default function RecipeFriendRatings({ reviews }: Props) {
           borderBottom: "1px solid rgba(255,255,255,0.07)",
         }}
       >
-        Activity from friends
+        Friends who cooked this
       </Typography>
-      <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-        {reviews.map((review, i) => (
+      <Box sx={{ display: "flex", gap: 2.5, flexWrap: "wrap" }}>
+        {friends.map(({ user, score, timesCooked }) => (
           <Box
-            key={i}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 0.5,
-            }}
+            key={user.username}
+            sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5 }}
           >
-            <MuiLink component={NextLink} href={`/${review.users.username}`} underline="none">
-              <UserAvatar avatarSize="32px" name={review.users.username} />
+            <MuiLink component={NextLink} href={`/${user.username}`} underline="none">
+              <UserAvatar avatarSize="32px" name={user.username} />
             </MuiLink>
-            <StarRating rating={Number(review.rating)} size="sm" />
-            {review.comment && (
-              <Typography
-                sx={{
-                  fontSize: "0.6875rem",
-                  color: "text.secondary",
-                  maxWidth: "120px",
-                  textAlign: "center",
-                  lineHeight: 1.4,
-                }}
-              >
-                {review.comment}
+            {score !== null ? (
+              <StarRating rating={score} size="sm" />
+            ) : (
+              <Typography sx={{ fontSize: "0.6875rem", color: "text.disabled" }}>N/A</Typography>
+            )}
+            {timesCooked > 1 && (
+              <Typography sx={{ fontSize: "0.625rem", color: "text.disabled" }}>
+                cooked {timesCooked}×
               </Typography>
             )}
           </Box>

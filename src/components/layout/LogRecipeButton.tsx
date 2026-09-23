@@ -370,7 +370,7 @@ function StepTwo({
       {/* Save */}
       <Button
         fullWidth
-        disabled={saving || !rating}
+        disabled={saving || !date?.isValid()}
         sx={{ borderRadius: "8px", py: 1 }}
         variant="contained"
         onClick={onSave}

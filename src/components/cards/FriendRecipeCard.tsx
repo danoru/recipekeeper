@@ -10,7 +10,7 @@ interface Props {
   image: string;
   link: string;
   name: string;
-  rating: number;
+  rating: number | null;
   username: string;
 }
 
@@ -67,7 +67,7 @@ export default function FriendRecipeCard({ date, image, link, name, rating, user
           gap: 0.5,
         }}
       >
-        <StarRating rating={rating} size="sm" />
+        {rating !== null && <StarRating rating={rating} size="sm" />}
 
         <Typography
           sx={{

@@ -36,7 +36,7 @@ export async function getYearInReview(username: string, year: number) {
   ]);
 
   const cooked = entries.flatMap((e) =>
-    e.recipes ? [{ date: e.date, rating: e.rating.toNumber(), recipe: e.recipes }] : []
+    e.recipes ? [{ date: e.date, rating: e.rating?.toNumber() ?? null, recipe: e.recipes }] : []
   );
   const recipesById = new Map(cooked.map((c) => [c.recipe.id, c.recipe]));
 
@@ -71,9 +71,12 @@ export async function getYearInReview(username: string, year: number) {
     ? { recipe: recipesById.get(Number(byRecipe.key))!, times: byRecipe.count }
     : null;
 
-  // Highest rated: best rating, most recent wins ties.
+  // Highest rated: best rating, most recent wins ties. Meals logged without a rating are skipped.
+  const ratedMeals = cooked.flatMap((c) => (c.rating === null ? [] : [{ ...c, rating: c.rating }]));
   const highestRated =
-    cooked.length > 0 ? cooked.reduce((best, c) => (c.rating >= best.rating ? c : best)) : null;
+    ratedMeals.length > 0
+      ? ratedMeals.reduce((best, c) => (c.rating >= best.rating ? c : best))
+      : null;
 
   const creatorNames = new Map(cooked.map((c) => [c.recipe.creatorId, c.recipe.creators]));
   const topCreators = topBy(cooked, (c) => c.recipe.creatorId, 3).map((t) => ({
@@ -81,7 +84,7 @@ export async function getYearInReview(username: string, year: number) {
     count: t.count,
   }));
 
-  const ratings = cooked.map((c) => c.rating);
+  const ratings = ratedMeals.map((c) => c.rating);
 
   return {
     user,

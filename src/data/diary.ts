@@ -31,13 +31,13 @@ export async function getDiaryEntriesByUsernames(usernames: string[], take?: num
   });
 }
 
-/** Just (recipeId, rating) pairs — enough for taste comparisons. */
+/** Just (recipeId, rating) pairs — enough for taste comparisons. Skips N/A. */
 export async function getUserRatings(userId: number) {
   const entries = await prisma.diaryEntries.findMany({
-    where: { userId },
+    where: { userId, rating: { not: null } },
     select: { recipeId: true, rating: true },
   });
-  return entries.map((e) => ({ recipeId: e.recipeId, rating: e.rating.toNumber() }));
+  return entries.map((e) => ({ recipeId: e.recipeId, rating: e.rating!.toNumber() }));
 }
 
 /**

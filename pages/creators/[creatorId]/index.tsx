@@ -15,16 +15,19 @@ import StarRating from "@/components/ui/StarRating";
 import { getCreatorByLink } from "@/data/creators";
 import { recipeHref } from "@/data/helpers";
 import { getRecipesByCreator } from "@/data/recipes";
+import { getRecipeScores } from "@/data/scores";
 import { serialize } from "@/data/serialize";
-import type { Creators, DiaryEntries, Recipes } from "@/generated/prisma/browser";
+import type { Creators, Recipes } from "@/generated/prisma/browser";
+import { creatorScore, type Score } from "@/lib/scores";
 
 interface Props {
   creator: Creators;
-  recipes: (Recipes & { diaryEntries: DiaryEntries })[];
+  recipes: Recipes[];
+  creatorRating: Score;
   topRatedRecipes: Recipes[] | null;
 }
 
-export default function CreatorPage({ creator, recipes, topRatedRecipes }: Props) {
+export default function CreatorPage({ creator, recipes, creatorRating, topRatedRecipes }: Props) {
   const title = `${creator.name} • Savry`;
 
   // The page is cached, so the admin check happens in the browser; the API
@@ -34,12 +37,9 @@ export default function CreatorPage({ creator, recipes, topRatedRecipes }: Props
   const router = useRouter();
   const [editing, setEditing] = useState(false);
 
-  const allEntries = recipes.flatMap((r) => r.diaryEntries);
-  const totalReviews = allEntries.length;
-  const averageRating =
-    totalReviews === 0
-      ? 0
-      : allEntries.reduce((sum, e) => sum + Number(e.rating), 0) / totalReviews;
+  // Creator score = average of their recipes' scores (see src/lib/scores.ts).
+  const averageRating = creatorRating.score ?? 0;
+  const ratedRecipes = creatorRating.count;
 
   return (
     <>
@@ -202,11 +202,12 @@ export default function CreatorPage({ creator, recipes, topRatedRecipes }: Props
               {creator.name}
             </Typography>
 
-            {totalReviews > 0 && (
+            {ratedRecipes > 0 && (
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
                 <StarRating rating={averageRating} size="sm" />
                 <Typography sx={{ fontSize: "0.75rem", color: "text.disabled" }}>
-                  {totalReviews} {totalReviews === 1 ? "review" : "reviews"}
+                  {averageRating.toFixed(1)} across {ratedRecipes} rated{" "}
+                  {ratedRecipes === 1 ? "recipe" : "recipes"}
                 </Typography>
               </Box>
             )}
@@ -302,14 +303,13 @@ export async function getStaticProps({ params }: { params: { creatorId: string }
 
   if (!creator) return { notFound: true, revalidate: 60 };
 
+  const scores = await getRecipeScores(recipes.map((r) => r.id));
+  const creatorRating = creatorScore(
+    recipes.map((r) => scores.get(r.id) ?? { score: null, count: 0 })
+  );
+
   const topRatedRecipes = recipes
-    .map((recipe) => {
-      const ratings = recipe.diaryEntries.map((e) => e.rating.toNumber());
-      const averageRating = ratings.length
-        ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
-        : 0;
-      return { ...recipe, averageRating };
-    })
+    .map((recipe) => ({ ...recipe, averageRating: scores.get(recipe.id)?.score ?? 0 }))
     .filter((r) => r.averageRating >= 3)
     .sort((a, b) => b.averageRating - a.averageRating);
 
@@ -317,6 +317,7 @@ export async function getStaticProps({ params }: { params: { creatorId: string }
     props: serialize({
       creator,
       recipes,
+      creatorRating,
       topRatedRecipes: topRatedRecipes.length > 0 ? topRatedRecipes : null,
     }),
     revalidate: 1800,

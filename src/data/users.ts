@@ -43,7 +43,6 @@ export async function getUserProfile(username: string) {
       favoritesCreators: { select: { creators: { select: CREATOR_SUMMARY } } },
       favoritesRecipes: { select: { recipes: { select: RECIPE_CARD } } },
       following: true,
-      reviews: { select: { rating: true } },
     },
   });
 }

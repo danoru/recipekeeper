@@ -28,7 +28,7 @@ function FriendRecipeActivity({ recentEntries }: Props) {
                 image={entry.recipes.image}
                 link={recipeHref(entry.recipes.creatorId, entry.recipes.name)}
                 name={entry.recipes.name}
-                rating={Number(entry.rating)}
+                rating={entry.rating === null ? null : Number(entry.rating)}
                 username={entry.users.username}
               />
             </Grid>

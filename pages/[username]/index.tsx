@@ -18,6 +18,7 @@ import { getUserRatings } from "@/data/diary";
 import { serialize } from "@/data/serialize";
 import { getFollowers, getUserProfile } from "@/data/users";
 import { getSessionFromContext } from "@/lib/auth";
+import { userRecipeScores } from "@/lib/scores";
 import { siteUrl } from "@/lib/site";
 import { cookingActivity, ratingAgreement } from "@/lib/stats";
 
@@ -29,7 +30,7 @@ export default function UserPage({
   favoritesRecipes,
   followers,
   following,
-  reviews,
+  ratingScores,
   sessionUser,
   activity,
   tasteMatch,
@@ -98,7 +99,7 @@ export default function UserPage({
             {tasteMatch && <TasteMatch match={tasteMatch} username={user.username} />}
             <UserCooklistPreview cooklist={cooklist} />
             <UserRecipeDiary diaryEntries={diaryEntries} />
-            <UserRatings reviews={reviews} />
+            <UserRatings scores={ratingScores} />
           </Box>
         </Box>
       </Box>
@@ -116,20 +117,26 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   ]);
   if (!user) return { notFound: true };
 
-  const { cooklist, diaryEntries, favoritesCreators, favoritesRecipes, following, reviews } = user;
+  const { cooklist, diaryEntries, favoritesCreators, favoritesRecipes, following } = user;
 
   const activity = cookingActivity(diaryEntries, new Date());
+
+  // This user's rated diary entries, and their score for each recipe.
+  const rated = diaryEntries.flatMap((e) =>
+    e.rating === null
+      ? []
+      : [{ userId: user.id, recipeId: e.recipeId, rating: e.rating.toNumber() }]
+  );
+  const ratingScores = [...userRecipeScores(rated).values()].flatMap((byUser) => [
+    ...byUser.values(),
+  ]);
 
   // Taste match: only when a signed-in viewer looks at someone else.
   const viewerId = Number(session?.user.id);
   let tasteMatch = null;
   if (session && viewerId !== user.id) {
     const viewerRatings = await getUserRatings(viewerId);
-    const profileRatings = diaryEntries.map((e) => ({
-      recipeId: e.recipeId,
-      rating: e.rating.toNumber(),
-    }));
-    tasteMatch = ratingAgreement(viewerRatings, profileRatings);
+    tasteMatch = ratingAgreement(viewerRatings, rated);
   }
 
   return {
@@ -141,7 +148,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       favoritesRecipes,
       following,
       followers,
-      reviews,
+      ratingScores,
       sessionUser: session?.user ?? null,
       activity,
       tasteMatch,

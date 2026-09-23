@@ -117,7 +117,13 @@ export default function RecipeDiary({ user, diaryEntries }: Props) {
                         </Typography>
                       </TableCell>
                       <TableCell sx={cellSx}>
-                        <StarRating rating={Number(entry.rating)} size="sm" />
+                        {entry.rating === null ? (
+                          <Typography sx={{ fontSize: "0.75rem", color: "text.disabled" }}>
+                            N/A
+                          </Typography>
+                        ) : (
+                          <StarRating rating={Number(entry.rating)} size="sm" />
+                        )}
                       </TableCell>
                       <TableCell sx={{ ...cellSx, textAlign: "center" }}>
                         {entry.hasCookedBefore && (

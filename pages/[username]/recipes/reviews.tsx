@@ -17,7 +17,7 @@ import { findUserByUsername } from "@/data/users";
 
 interface SerializedReview {
   id: number;
-  rating: number;
+  rating: number | null;
   date: string;
   comment: string | null;
   recipes: {
@@ -132,7 +132,7 @@ export default function UserRecipeReviews({ user, reviews }: Props) {
                           mb: 0.75,
                         }}
                       >
-                        <StarRating rating={review.rating} size="sm" />
+                        {review.rating !== null && <StarRating rating={review.rating} size="sm" />}
                         <Typography sx={{ fontSize: "0.75rem", color: "text.disabled" }}>
                           {dayjs(review.date).format("MMM D, YYYY")}
                         </Typography>

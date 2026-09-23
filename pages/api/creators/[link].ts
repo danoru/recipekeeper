@@ -6,7 +6,7 @@ import { parseHttpUrl } from "@/lib/import/url";
 
 const URL_FIELDS = ["image", "website", "instagram", "youtube"] as const;
 
-/** Admin-only: edit a creator's name, photo, and links. */
+/** Admin-only: edit a creator's name, photo, links, and whether they're featured. */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "PUT") {
     res.setHeader("Allow", ["PUT"]);
@@ -24,7 +24,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const name = typeof body.name === "string" ? body.name.trim().slice(0, 200) : "";
   if (!name) return res.status(400).json({ error: "Name is required." });
 
-  const data: Record<string, string> = { name };
+  const data: Record<string, string | boolean> = { name };
+  if (typeof body.featured === "boolean") data.featured = body.featured;
   for (const field of URL_FIELDS) {
     const raw = typeof body[field] === "string" ? body[field].trim() : "";
     if (!raw) {
@@ -38,7 +39,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const updated = await prisma.creators.update({ where: { link }, data });
-    await Promise.allSettled([res.revalidate("/creators"), res.revalidate(`/creators/${link}`)]);
+    // /creators is rendered per request, so only the creator's own page needs refreshing.
+    await res.revalidate(`/creators/${link}`).catch(() => {});
     return res.status(200).json(updated);
   } catch (error) {
     console.error("[creator update]", error);

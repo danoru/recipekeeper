@@ -34,7 +34,7 @@ export default function CreatorsPage({ creators, featured }: Props) {
           <Box sx={{ mb: 6 }}>
             <SectionHeader label="Featured creators" />
             <Grid container spacing={1.5}>
-              {featured.slice(0, 4).map((creator) => (
+              {featured.map((creator) => (
                 <Grid key={creator.link} size={{ xs: 6, sm: 3 }}>
                   <CreatorCard featured creator={creator} />
                 </Grid>
@@ -127,11 +127,28 @@ function CreatorCard({ creator, featured = false }: { creator: Creators; feature
   );
 }
 
-export async function getStaticProps() {
-  const creators = await getAllCreators();
+const FEATURED_SLOTS = 4;
 
-  return {
-    props: { creators, featured: creators },
-    revalidate: 1800,
-  };
+/** Fisher–Yates shuffle (returns a new array). */
+function shuffle<T>(items: T[]): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+// Rendered per request so a different set of featured creators can rotate in
+// on each visit when more are featured than there are slots.
+export async function getServerSideProps() {
+  const creators = await getAllCreators();
+  const featuredPool = creators.filter((c) => c.featured);
+  // Until an admin features anyone, show a random handful so the section isn't empty.
+  const featured = shuffle(featuredPool.length > 0 ? featuredPool : creators).slice(
+    0,
+    FEATURED_SLOTS
+  );
+
+  return { props: { creators, featured } };
 }

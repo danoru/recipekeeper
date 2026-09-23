@@ -2,10 +2,16 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import prisma from "@/data/db";
 import { requireApiUser, revalidateUserPages } from "@/lib/auth";
+import { parseOptionalRating } from "@/lib/rating";
 
 /** Diary pages that show an entry (and Wrapped for each year it touches). */
 function affectedPaths(years: number[]) {
-  return ["/recipes", "/recipes/diary", ...new Set(years.map((y) => `/wrapped/${y}`))];
+  return [
+    "/recipes",
+    "/recipes/diary",
+    "/recipes/reviews",
+    ...new Set(years.map((y) => `/wrapped/${y}`)),
+  ];
 }
 
 /** Edit (PUT) or delete (DELETE) one of your own diary entries. */
@@ -38,10 +44,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const { date, rating, comment, hasCookedBefore } = req.body ?? {};
-    const numericRating = Number(rating);
+    const parsedRating = parseOptionalRating(rating);
     const newDate = new Date(date);
-    if (!(numericRating >= 0.5 && numericRating <= 5) || Number.isNaN(newDate.getTime())) {
-      return res.status(400).json({ error: "Please choose a date and a rating." });
+    if (!parsedRating.ok) return res.status(400).json({ error: "Ratings go from ½ to 5 stars." });
+    if (Number.isNaN(newDate.getTime())) {
+      return res.status(400).json({ error: "Please choose a date." });
     }
     if (newDate.getTime() > Date.now() + 24 * 60 * 60 * 1000) {
       return res.status(400).json({ error: "The date can't be in the future." });
@@ -51,7 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       where: { id },
       data: {
         date: newDate,
-        rating: numericRating,
+        rating: parsedRating.rating,
         comment:
           typeof comment === "string" && comment.trim() ? comment.trim().slice(0, 5000) : null,
         hasCookedBefore: Boolean(hasCookedBefore),
@@ -66,7 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     );
     return res.status(200).json({
       ...updated,
-      rating: updated.rating.toNumber(),
+      rating: updated.rating?.toNumber() ?? null,
       date: updated.date.toISOString(),
     });
   } catch (error) {

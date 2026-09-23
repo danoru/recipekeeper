@@ -116,10 +116,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const created = await createImportedRecipe(recipe);
-    await Promise.allSettled([
-      res.revalidate("/creators"),
-      res.revalidate(`/creators/${created.creatorId}`),
-    ]);
+    await res.revalidate(`/creators/${created.creatorId}`).catch(() => {});
     return res.status(200).json({
       success: true,
       recipe: { ...created, href: recipeHref(created.creatorId, created.name) },

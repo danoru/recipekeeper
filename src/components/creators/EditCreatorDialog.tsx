@@ -3,7 +3,9 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Stack from "@mui/material/Stack";
+import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
@@ -15,6 +17,7 @@ export interface EditableCreator {
   website: string;
   instagram: string;
   youtube: string;
+  featured: boolean;
 }
 
 interface Props {
@@ -23,7 +26,11 @@ interface Props {
   onSaved: (creator: EditableCreator) => void;
 }
 
-const FIELDS: { key: keyof EditableCreator; label: string; placeholder?: string }[] = [
+const FIELDS: {
+  key: "name" | "image" | "website" | "instagram" | "youtube";
+  label: string;
+  placeholder?: string;
+}[] = [
   { key: "name", label: "Name" },
   { key: "image", label: "Photo URL", placeholder: "https://…/photo.jpg" },
   { key: "website", label: "Website", placeholder: "https://…" },
@@ -141,6 +148,24 @@ export default function EditCreatorDialog({ creator, onClose, onSaved }: Props) 
             />
           ))}
         </Stack>
+
+        <FormControlLabel
+          control={
+            <Switch
+              checked={values.featured}
+              onChange={(e) => setValues((prev) => ({ ...prev, featured: e.target.checked }))}
+            />
+          }
+          label={
+            <Box>
+              <Typography sx={{ fontSize: "0.875rem" }}>Featured</Typography>
+              <Typography sx={{ fontSize: "0.75rem", color: "text.disabled" }}>
+                Shown in the Featured section of the Creators page
+              </Typography>
+            </Box>
+          }
+          sx={{ mb: 2.5, alignItems: "flex-start", "& .MuiSwitch-root": { mt: -0.5 } }}
+        />
 
         {error && (
           <Alert severity="error" sx={{ mb: 2, borderRadius: "8px" }}>

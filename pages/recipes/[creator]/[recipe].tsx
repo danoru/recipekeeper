@@ -5,12 +5,13 @@ import Image from "next/image";
 import NextLink from "next/link";
 
 import RecipeActionBar from "@/components/recipes/RecipeActionBar";
-import RecipeFriendRatings from "@/components/recipes/RecipeFriendRatings";
+import RecipeFriendRatings, { type FriendScore } from "@/components/recipes/RecipeFriendRatings";
 import RecipeIngredients from "@/components/recipes/RecipeIngredients";
-import RecipeRatings from "@/components/recipes/RecipeRatings";
+import RatingHistogram from "@/components/ui/RatingHistogram";
 import SocialMeta from "@/components/ui/SocialMeta";
 import StarRating from "@/components/ui/StarRating";
-import { getRecipeBySlug, getRecipeUserState, getReviewsByRecipe } from "@/data/recipes";
+import { getRecipeBySlug, getRecipeUserState } from "@/data/recipes";
+import { getFriendScores, getRecipeScoreDetail } from "@/data/scores";
 import { serialize } from "@/data/serialize";
 import { getFollowingList } from "@/data/users";
 import type {
@@ -19,8 +20,6 @@ import type {
   DiaryEntries,
   LikedRecipes,
   Recipes,
-  Reviews,
-  Users,
 } from "@/generated/prisma/browser";
 import { getSessionFromContext } from "@/lib/auth";
 import { siteUrl } from "@/lib/site";
@@ -31,11 +30,11 @@ interface Props {
   likedRecipes: LikedRecipes[];
   recipe: Recipes & {
     creators: Creators;
-    reviews: Reviews[];
     ingredients: { id: number; section: string | null; raw: string }[];
     _count: { steps: number };
   };
-  reviews: (Reviews & { users: Users })[];
+  score: { score: number | null; count: number; userScores: number[] };
+  friends: FriendScore[];
   sessionUser: any;
   ogImage: string;
 }
@@ -47,17 +46,16 @@ export default function RecipePage({
   diaryEntries,
   likedRecipes,
   recipe,
-  reviews,
+  score,
+  friends,
   sessionUser,
   ogImage,
 }: Props) {
   const title = `${recipe.name} by ${recipe.creators.name} • Savry`;
 
-  const ratingCount = recipe.reviews.length;
-  const averageRating =
-    ratingCount > 0
-      ? recipe.reviews.reduce((sum, r) => sum + Number(r.rating), 0) / ratingCount
-      : 0;
+  // Recipe score = average of each rater's average (see src/lib/scores.ts).
+  const ratingCount = score.count;
+  const averageRating = score.score ?? 0;
 
   return (
     <>
@@ -155,7 +153,7 @@ export default function RecipePage({
                 {averageRating > 0 ? averageRating.toFixed(1) : "No ratings yet"}
                 {ratingCount > 0 && (
                   <Box component="span" sx={{ color: "#4a4744", ml: 0.75 }}>
-                    · {ratingCount} {ratingCount === 1 ? "review" : "reviews"}
+                    · {ratingCount} {ratingCount === 1 ? "rating" : "ratings"}
                   </Box>
                 )}
               </Typography>
@@ -202,9 +200,9 @@ export default function RecipePage({
               </MuiLink>
             )}
 
-            {reviews.length > 0 && (
+            {friends.length > 0 && (
               <Box sx={{ mt: 3 }}>
-                <RecipeFriendRatings reviews={reviews} />
+                <RecipeFriendRatings friends={friends} />
               </Box>
             )}
           </Box>
@@ -264,7 +262,7 @@ export default function RecipePage({
             >
               Rating distribution
             </Typography>
-            <RecipeRatings recipe={recipe} />
+            <RatingHistogram scores={score.userScores} />
           </Box>
         </Box>
       </Box>
@@ -285,6 +283,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     getRecipeBySlug(creatorSegment, recipeSegment),
   ]);
   if (!recipe) return { notFound: true };
+  const score = await getRecipeScoreDetail(recipe.id);
 
   const ogImage = `${siteUrl()}/api/og/recipe/${creatorSegment}/${recipeSegment}`;
 
@@ -295,7 +294,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         diaryEntries: [],
         likedRecipes: [],
         recipe,
-        reviews: [],
+        score,
+        friends: [],
         sessionUser: null,
         ogImage,
       }),
@@ -307,13 +307,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     getRecipeUserState(userId, recipe.id),
     getFollowingList(userId),
   ]);
-  const reviews = await getReviewsByRecipe(recipe.id, following);
+  const friends = await getFriendScores(recipe.id, following);
 
   return {
     props: serialize({
       ...userState,
       recipe,
-      reviews,
+      score,
+      friends,
       sessionUser: session.user,
       ogImage,
     }),

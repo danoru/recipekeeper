@@ -6,7 +6,7 @@ interface Props {
   image: string;
   link: string;
   name: string;
-  rating: number;
+  rating?: number;
   username?: string;
 }
 
@@ -59,7 +59,9 @@ function DetailRecipeCard({ date, image, link, name, rating, username }: Props) 
                 {username}
               </Typography>
             )}
-            <Rating readOnly size="small" value={rating} />
+            {rating !== undefined && (
+              <Rating readOnly precision={0.5} size="small" value={rating} />
+            )}
             <Typography
               sx={{ color: "white", textShadow: "0 0 5px rgba(0,0,0,0.7)" }}
               variant="body1"

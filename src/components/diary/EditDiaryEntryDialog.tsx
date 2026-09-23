@@ -12,7 +12,7 @@ import DiaryEntryFields, { type DiaryEntryValues } from "./DiaryEntryFields";
 export interface EditableDiaryEntry {
   id: number;
   date: string;
-  rating: number | string;
+  rating: number | string | null;
   comment: string | null;
   hasCookedBefore: boolean;
   recipes: { name: string; image: string } | null;
@@ -21,7 +21,7 @@ export interface EditableDiaryEntry {
 export interface DiaryEntryUpdate {
   id: number;
   date: string;
-  rating: number;
+  rating: number | null;
   comment: string | null;
   hasCookedBefore: boolean;
 }
@@ -36,7 +36,7 @@ interface Props {
 export default function EditDiaryEntryDialog({ entry, onClose, onSaved, onDeleted }: Props) {
   const [values, setValues] = useState<DiaryEntryValues>({
     date: dayjs(entry.date),
-    rating: Number(entry.rating),
+    rating: entry.rating === null ? null : Number(entry.rating),
     comment: entry.comment ?? "",
     hasCookedBefore: entry.hasCookedBefore,
   });
@@ -138,7 +138,7 @@ export default function EditDiaryEntryDialog({ entry, onClose, onSaved, onDelete
                 Cancel
               </Button>
               <Button
-                disabled={busy || !values.rating || !values.date?.isValid()}
+                disabled={busy || !values.date?.isValid()}
                 size="small"
                 variant="contained"
                 onClick={() => send("PUT")}

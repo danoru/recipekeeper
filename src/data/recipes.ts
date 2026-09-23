@@ -3,7 +3,8 @@ import type { Prisma } from "@/generated/prisma/client";
 import prisma from "./db";
 import { creatorSlug, toSlug } from "./helpers";
 import { RECIPE_FILTER_KEYS, type RecipeFilterKey, type RecipeFilters } from "./recipeFilters";
-import { RECIPE_CARD, USER_SUMMARY } from "./selects";
+import { getRecipeScores } from "./scores";
+import { RECIPE_CARD } from "./selects";
 
 // ── Queries ───────────────────────────────────────────────────────────────────
 
@@ -29,20 +30,15 @@ export async function getRecipeCards(filters: RecipeFilters = {}) {
   });
 }
 
-/** Recipe cards sorted by average review rating (unreviewed recipes count as 0). */
+/** Recipe cards sorted by diary score (unrated recipes count as 0). */
 export async function getRecipeCardsByRating(
   sort: "highest" | "lowest",
   filters: RecipeFilters = {}
 ) {
-  const [recipes, averages] = await Promise.all([
-    getRecipeCards(filters),
-    prisma.reviews.groupBy({ by: ["recipeId"], _avg: { rating: true } }),
-  ]);
-
-  const avgById = new Map(averages.map((a) => [a.recipeId, a._avg.rating?.toNumber() ?? 0]));
+  const [recipes, scores] = await Promise.all([getRecipeCards(filters), getRecipeScores()]);
 
   return recipes
-    .map((recipe) => ({ ...recipe, averageRating: avgById.get(recipe.id) ?? 0 }))
+    .map((recipe) => ({ ...recipe, averageRating: scores.get(recipe.id)?.score ?? 0 }))
     .sort((a, b) =>
       sort === "highest" ? b.averageRating - a.averageRating : a.averageRating - b.averageRating
     );
@@ -87,7 +83,6 @@ export async function getRecipeBySlug(creatorSegment: string, recipeSegment: str
     where: { id: match.id },
     include: {
       creators: true,
-      reviews: { select: { rating: true } },
       ingredients: {
         select: { id: true, section: true, raw: true },
         orderBy: { position: "asc" },
@@ -110,22 +105,10 @@ export async function getRecipeUserState(userId: number, recipeId: number) {
   return { cooklist, diaryEntries, likedRecipes };
 }
 
-/** Reviews of a recipe written by users that `usernames` contains. */
-export async function getReviewsByRecipe(recipeId: number, usernames: string[]) {
-  if (usernames.length === 0) return [];
-  return prisma.reviews.findMany({
-    where: { recipeId, users: { username: { in: usernames } } },
-    include: { users: { select: USER_SUMMARY } },
-  });
-}
-
 export async function getRecipesByCreator(creatorId: string) {
   return prisma.recipes.findMany({
     where: { creatorId },
-    select: {
-      ...RECIPE_CARD,
-      diaryEntries: { select: { rating: true } },
-    },
+    select: RECIPE_CARD,
     orderBy: { name: "asc" },
   });
 }

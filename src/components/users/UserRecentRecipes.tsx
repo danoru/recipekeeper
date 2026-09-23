@@ -32,7 +32,7 @@ export default function UserRecentRecipes({ diaryEntries }: RecentRecipesProps) 
               image={entry.recipes.image}
               link={recipeHref(entry.recipes.creatorId, entry.recipes.name)}
               name={entry.recipes.name}
-              rating={Number(entry.rating)}
+              rating={entry.rating === null ? undefined : Number(entry.rating)}
             />
           ))}
         </Grid>

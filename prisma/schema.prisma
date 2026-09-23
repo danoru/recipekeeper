@@ -25,6 +25,8 @@ model Creators {
   website           String
   instagram         String
   youtube           String
+  /// Shown in the Featured section of the Creators page (admins toggle this).
+  featured          Boolean             @default(false)
   favoritesCreators FavoritesCreators[]
   likedCreators     LikedCreators[]
   recipes           Recipes[]
@@ -34,7 +36,8 @@ model DiaryEntries {
   id              Int      @id @default(autoincrement())
   userId          Int
   recipeId        Int
-  rating          Decimal
+  /// Null means "N/A" — logged without a rating.
+  rating          Decimal?
   comment         String?
   date            DateTime @db.Timestamptz(6)
   hasCookedBefore Boolean  @default(false)

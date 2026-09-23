@@ -52,7 +52,7 @@ export default function Activity({ diaryEntries, user }: Props) {
             const recipeName = entry.recipes?.name ?? "";
             const creatorName = entry.recipes?.creators?.name ?? "";
             const formattedDate = entry.date ? dayjs(entry.date).format("dddd, MMMM Do YYYY") : "";
-            const ratingNumber = Number(entry.rating);
+            const ratingNumber = entry.rating === null ? null : Number(entry.rating);
 
             return (
               <Box key={i}>
@@ -117,10 +117,11 @@ export default function Activity({ diaryEntries, user }: Props) {
                     {creatorName}
                   </MuiLink>
                   <Typography sx={{ fontSize: "0.875rem", color: "text.secondary" }}>
-                    on {formattedDate} and rated it
+                    on {formattedDate}
+                    {ratingNumber !== null && " and rated it"}
                   </Typography>
 
-                  {ratingNumber != null && <StarRating rating={ratingNumber} size="sm" />}
+                  {ratingNumber !== null && <StarRating rating={ratingNumber} size="sm" />}
 
                   <Typography sx={{ fontSize: "0.875rem", color: "text.secondary" }}>.</Typography>
                 </Box>

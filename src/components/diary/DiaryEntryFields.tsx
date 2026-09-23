@@ -79,7 +79,10 @@ export default function DiaryEntryFields({ recipe, values, onChange }: Props) {
                 letterSpacing: "0.06em",
               }}
             >
-              Rating
+              Rating{" "}
+              <Box component="span" sx={{ color: "text.disabled" }}>
+                (optional — tap the same star again to clear)
+              </Box>
             </Typography>
             <Rating
               precision={0.5}
