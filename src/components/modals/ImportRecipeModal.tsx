@@ -24,7 +24,7 @@ import {
 import NextLink from "next/link";
 import { useState, useCallback, useEffect, useRef } from "react";
 
-import type { ImportedRecipe, PageData } from "@/lib/import/jsonld";
+import { blankRecipe, type ImportedRecipe, type PageData } from "@/lib/import/jsonld";
 import {
   CATEGORY_OPTIONS,
   COURSE_OPTIONS,
@@ -150,6 +150,9 @@ export default function ImportRecipeModal({
   const [loading, setLoading] = useState(Boolean(initialUrl || initialPage));
   const [error, setError] = useState<string | null>(null);
   const [errorHref, setErrorHref] = useState<string | null>(null);
+  // Set when the page couldn't be read, so the user can fill in the recipe themselves.
+  const [canEnterManually, setCanEnterManually] = useState(false);
+  const [manual, setManual] = useState(false);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [recipe, setRecipe] = useState<ParsedRecipe | null>(null);
   const [savedHref, setSavedHref] = useState<string | null>(null);
@@ -160,6 +163,8 @@ export default function ImportRecipeModal({
     setUrl("");
     setError(null);
     setErrorHref(null);
+    setCanEnterManually(false);
+    setManual(false);
     setPreview(null);
     setRecipe(null);
     setSavedHref(null);
@@ -180,6 +185,7 @@ export default function ImportRecipeModal({
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "Something went wrong fetching that URL.");
+        setCanEnterManually(Boolean(data.manual));
         return;
       }
       setPreview(data);
@@ -197,7 +203,22 @@ export default function ImportRecipeModal({
     setLoading(true);
     setError(null);
     setErrorHref(null);
+    setCanEnterManually(false);
     loadPreview(fetch(`/api/recipes/import?url=${encodeURIComponent(url.trim())}`));
+  };
+
+  const enterManually = () => {
+    const blank = blankRecipe(url.trim());
+    setPreview({
+      recipe: blank,
+      creatorExists: false,
+      existingCreator: null,
+      existingRecipe: null,
+    });
+    setRecipe(blank);
+    setManual(true);
+    setError(null);
+    setStep("preview");
   };
 
   // Kick off automatically when opened from the share target or bookmarklet.
@@ -342,6 +363,13 @@ export default function ImportRecipeModal({
               />
               <Collapse in={!!error}>
                 <Alert
+                  action={
+                    canEnterManually ? (
+                      <Button color="inherit" size="small" onClick={enterManually}>
+                        Enter it manually
+                      </Button>
+                    ) : undefined
+                  }
                   icon={<ErrorOutlineIcon fontSize="small" />}
                   severity="error"
                   sx={{ borderRadius: 1.5 }}
@@ -375,22 +403,24 @@ export default function ImportRecipeModal({
               )}
 
               {/* What the page gave us */}
-              <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap" }}>
-                {found.length > 0 ? (
-                  found.map((label) => (
-                    <Chip
-                      key={String(label)}
-                      label={label}
-                      size="small"
-                      sx={{ fontSize: "0.7rem", bgcolor: "rgba(200,169,110,0.1)" }}
-                    />
-                  ))
-                ) : (
-                  <Typography color="text.disabled" variant="caption">
-                    No ingredient list found on this page — you can still save the recipe.
-                  </Typography>
-                )}
-              </Box>
+              {!manual && (
+                <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap" }}>
+                  {found.length > 0 ? (
+                    found.map((label) => (
+                      <Chip
+                        key={String(label)}
+                        label={label}
+                        size="small"
+                        sx={{ fontSize: "0.7rem", bgcolor: "rgba(200,169,110,0.1)" }}
+                      />
+                    ))
+                  ) : (
+                    <Typography color="text.disabled" variant="caption">
+                      No ingredient list found on this page — you can add one below.
+                    </Typography>
+                  )}
+                </Box>
+              )}
 
               {/* Image */}
               {recipe.image && (
@@ -435,6 +465,21 @@ export default function ImportRecipeModal({
                       onChange={(e) => updateField(key, e.target.value)}
                     />
                   ))}
+
+                  <TextField
+                    fullWidth
+                    multiline
+                    helperText="One per line, e.g. “2 cups flour”. Lines ending in “:” become sections."
+                    label="Ingredients"
+                    minRows={4}
+                    size="small"
+                    value={recipe.ingredients.join("\n")}
+                    onChange={(e) =>
+                      setRecipe((prev) =>
+                        prev ? { ...prev, ingredients: e.target.value.split("\n") } : prev
+                      )
+                    }
+                  />
 
                   {/* Select fields — rendered in a 2-column grid */}
                   <Box
@@ -636,7 +681,7 @@ export default function ImportRecipeModal({
               Back
             </Button>
             <Button
-              disabled={saving || !!preview?.existingRecipe}
+              disabled={saving || !!preview?.existingRecipe || !recipe?.name.trim()}
               size="small"
               startIcon={saving ? <CircularProgress color="inherit" size={13} /> : undefined}
               sx={{ minWidth: 160 }}

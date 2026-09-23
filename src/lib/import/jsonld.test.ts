@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  blankRecipe,
   cleanText,
   decodeEntities,
   extractPageData,
@@ -207,5 +208,16 @@ describe("helpers", () => {
 
   it("ignores empty steps", () => {
     expect(extractSteps([{ "@type": "HowToStep", text: "  " }, ""])).toEqual([]);
+  });
+});
+
+describe("blankRecipe", () => {
+  it("prefills the link and a creator from the site's domain", () => {
+    const r = blankRecipe("https://www.sudachirecipes.com/mushroom-donburi/");
+    expect(r.link).toBe("https://www.sudachirecipes.com/mushroom-donburi/");
+    expect(r.creatorLink).toBe("sudachirecipes");
+    expect(r.creatorWebsite).toBe("https://www.sudachirecipes.com");
+    expect(r.name).toBe("");
+    expect(r.ingredients).toEqual([]);
   });
 });

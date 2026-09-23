@@ -4,7 +4,12 @@ import prisma from "@/data/db";
 import { recipeHref } from "@/data/helpers";
 import { createImportedRecipe, findRecipeByUrl } from "@/data/imports";
 import { requireApiUser } from "@/lib/auth";
-import { extractPageData, parseRecipe, type PageData } from "@/lib/import/jsonld";
+import {
+  extractPageData,
+  parseRecipe,
+  type ImportedRecipe,
+  type PageData,
+} from "@/lib/import/jsonld";
 import { sanitizeImportedRecipe, sanitizePageData } from "@/lib/import/sanitize";
 import { parseHttpUrl } from "@/lib/import/url";
 
@@ -12,16 +17,13 @@ import { parseHttpUrl } from "@/lib/import/url";
 export const config = { api: { bodyParser: { sizeLimit: "2mb" } } };
 
 /** Builds the preview the import form shows before saving. */
-async function preview(page: PageData) {
-  const recipe = parseRecipe(page);
-  if (!recipe) return null;
-
+async function preview(recipe: ImportedRecipe, url: string) {
   const [existingCreator, existingRecipe] = await Promise.all([
     prisma.creators.findUnique({
       where: { link: recipe.creatorLink },
       select: { name: true, link: true, image: true },
     }),
-    findRecipeByUrl(page.url),
+    findRecipeByUrl(url),
   ]);
 
   return {
@@ -38,7 +40,20 @@ async function preview(page: PageData) {
 }
 
 const NO_RECIPE =
-  "No structured recipe data found on this page. The site may not support Schema.org markup.";
+  "We couldn't find recipe details on this page. You can enter them yourself instead.";
+const DB_ERROR = "Savry couldn't check its recipe database. Please try again in a moment.";
+
+/** Parses a page and builds the preview, reporting each failure distinctly. */
+async function respondWithPreview(res: NextApiResponse, page: PageData) {
+  const recipe = parseRecipe(page);
+  if (!recipe) return res.status(422).json({ error: NO_RECIPE, manual: true });
+  try {
+    return res.status(200).json(await preview(recipe, page.url));
+  } catch (err) {
+    console.error("[import-recipe preview] database lookup failed", err);
+    return res.status(500).json({ error: DB_ERROR });
+  }
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET" && req.method !== "POST") {
@@ -55,6 +70,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const url = parseHttpUrl(req.query.url)?.toString();
     if (!url) return res.status(400).json({ error: "A valid http(s) url is required" });
 
+    let html: string;
     try {
       const fetchRes = await fetch(url, {
         headers: {
@@ -64,23 +80,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
       if (!fetchRes.ok) {
         return res.status(422).json({
-          error: `Could not fetch page (${fetchRes.status}). If the site blocks importers, try the "Save to Savry" bookmarklet from the page itself.`,
+          error: `That site wouldn't let Savry read the page (${fetchRes.status}). Try the "Save to Savry" bookmarklet from the page itself, or enter the recipe yourself.`,
+          manual: true,
         });
       }
-      const result = await preview(extractPageData(await fetchRes.text(), url));
-      return result ? res.status(200).json(result) : res.status(422).json({ error: NO_RECIPE });
+      html = await fetchRes.text();
     } catch (err) {
-      console.error("[import-recipe GET]", err);
-      return res.status(500).json({ error: "Failed to fetch or parse the URL." });
+      console.error("[import-recipe GET] fetch failed", err);
+      return res.status(422).json({
+        error: "Savry couldn't reach that page. Check the link, or enter the recipe yourself.",
+        manual: true,
+      });
     }
+    return respondWithPreview(res, extractPageData(html, url));
   }
 
   // POST { page } — preview data captured by the bookmarklet in the user's browser.
   if (req.body?.page) {
     const page = sanitizePageData(req.body.page);
     if (!page) return res.status(400).json({ error: "Invalid page data" });
-    const result = await preview(page);
-    return result ? res.status(200).json(result) : res.status(422).json({ error: NO_RECIPE });
+    return respondWithPreview(res, page);
   }
 
   // POST { recipe } — save after the user confirms.
@@ -107,6 +126,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   } catch (err) {
     console.error("[import-recipe POST]", err);
-    return res.status(500).json({ error: "Database error while saving recipe." });
+    return res.status(500).json({ error: "Savry couldn't save the recipe. Please try again." });
   }
 }

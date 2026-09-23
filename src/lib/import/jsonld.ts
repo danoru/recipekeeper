@@ -222,6 +222,38 @@ function orUnknown(value: string): string {
   return value.trim() || "Unknown";
 }
 
+/** An empty recipe for manual entry, with the creator guessed from the URL's site. */
+export function blankRecipe(url: string): ImportedRecipe {
+  let website = "";
+  try {
+    website = new URL(url).origin;
+  } catch {
+    // leave blank; the form still requires a valid link to save
+  }
+  const creatorLink = creatorSlugFromUrl(website || url);
+  return {
+    name: "",
+    description: "",
+    image: "",
+    category: "Other",
+    cuisine: "Unknown",
+    course: "Mains",
+    method: "Classic",
+    diet: "None",
+    link: url,
+    recipeYield: null,
+    totalTimeMinutes: null,
+    ingredients: [],
+    steps: [],
+    creatorName: creatorLink,
+    creatorLink,
+    creatorWebsite: website,
+    creatorImage: "",
+    creatorInstagram: "",
+    creatorYoutube: "",
+  };
+}
+
 /** The page's Recipe mapped to Savry's shape, or null if it has none. */
 export function parseRecipe(page: PageData): ImportedRecipe | null {
   let recipe: Json | null = null;
