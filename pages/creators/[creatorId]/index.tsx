@@ -1,10 +1,15 @@
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LanguageIcon from "@mui/icons-material/Language";
 import YouTubeIcon from "@mui/icons-material/YouTube";
-import { Box, Divider, Grid, IconButton, Link as MuiLink, Typography } from "@mui/material";
+import { Box, Button, Divider, Grid, IconButton, Link as MuiLink, Typography } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 
+import EditCreatorDialog from "@/components/creators/EditCreatorDialog";
 import RecipeList from "@/components/recipes/RecipeList";
 import StarRating from "@/components/ui/StarRating";
 import { getCreatorByLink } from "@/data/creators";
@@ -21,6 +26,13 @@ interface Props {
 
 export default function CreatorPage({ creator, recipes, topRatedRecipes }: Props) {
   const title = `${creator.name} • Savry`;
+
+  // The page is cached, so the admin check happens in the browser; the API
+  // re-checks the ADMIN badge in the database before saving anything.
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.badge === "ADMIN";
+  const router = useRouter();
+  const [editing, setEditing] = useState(false);
 
   const allEntries = recipes.flatMap((r) => r.diaryEntries);
   const totalReviews = allEntries.length;
@@ -144,13 +156,31 @@ export default function CreatorPage({ creator, recipes, topRatedRecipes }: Props
           }}
         >
           <Box sx={{ position: "relative", aspectRatio: "1", width: "100%" }}>
-            <Image
-              fill
-              alt={creator.name}
-              sizes="220px"
-              src={creator.image}
-              style={{ objectFit: "cover", objectPosition: "top" }}
-            />
+            {creator.image ? (
+              <Image
+                fill
+                alt={creator.name}
+                sizes="220px"
+                src={creator.image}
+                style={{ objectFit: "cover", objectPosition: "top" }}
+              />
+            ) : (
+              <Box
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  bgcolor: "#1e1e1e",
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "4rem",
+                  color: "primary.main",
+                }}
+              >
+                {creator.name.charAt(0)}
+              </Box>
+            )}
             <Box
               sx={{
                 position: "absolute",
@@ -228,9 +258,33 @@ export default function CreatorPage({ creator, recipes, topRatedRecipes }: Props
                 </IconButton>
               )}
             </Box>
+
+            {isAdmin && (
+              <Button
+                fullWidth
+                size="small"
+                startIcon={<EditOutlinedIcon sx={{ fontSize: "15px !important" }} />}
+                sx={{ mt: 1.5 }}
+                variant="outlined"
+                onClick={() => setEditing(true)}
+              >
+                Edit creator
+              </Button>
+            )}
           </Box>
         </Box>
       </Box>
+      {editing && (
+        <EditCreatorDialog
+          creator={creator}
+          onClose={() => setEditing(false)}
+          onSaved={() => {
+            setEditing(false);
+            // The API already refreshed the cached page; load the new version.
+            router.replace(router.asPath, undefined, { scroll: false });
+          }}
+        />
+      )}
     </>
   );
 }

@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
         try {
           const user = await prisma.users.findUnique({
             where: { username: credentials.username },
-            select: { id: true, username: true, password: true },
+            select: { id: true, username: true, password: true, badge: true },
           });
 
           if (!user) {
@@ -38,6 +38,7 @@ export const authOptions: NextAuthOptions = {
             return {
               id: user.id.toString(),
               username: user.username,
+              badge: user.badge,
             };
           } else {
             return null;
@@ -58,6 +59,13 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }: { token: any; user?: any }) {
       if (user) {
         token.user = user;
+      } else if (token.user && token.user.badge === undefined) {
+        // Sessions from before badges were added: look it up once and keep it in the token.
+        const found = await prisma.users.findUnique({
+          where: { id: Number(token.user.id) },
+          select: { badge: true },
+        });
+        token.user = { ...token.user, badge: found?.badge ?? "USER" };
       }
       return token;
     },

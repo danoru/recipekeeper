@@ -12,29 +12,44 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import Head from "next/head";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 
+import EditDiaryEntryDialog, {
+  type EditableDiaryEntry,
+} from "@/components/diary/EditDiaryEntryDialog";
 import StarRating from "@/components/ui/StarRating";
 import ProfileLinkBar from "@/components/users/ProfileLinkBar";
 import { getUserDiaryEntries } from "@/data/diary";
-import { serialize } from "@/data/serialize";
+import { serialize, type Serialized } from "@/data/serialize";
 import { findUserByUsername } from "@/data/users";
-import type { DiaryEntries, Recipes } from "@/generated/prisma/browser";
+
+type DiaryEntry = Serialized<Awaited<ReturnType<typeof getUserDiaryEntries>>[number]>;
 
 interface Props {
-  user: any;
-  diaryEntries: (DiaryEntries & { recipes: Recipes })[];
+  user: { username: string };
+  diaryEntries: DiaryEntry[];
 }
 
 export default function RecipeDiary({ user, diaryEntries }: Props) {
   const title = `${user.username}'s Diary • Savry`;
 
+  // The page is cached for everyone, so ownership is decided in the browser;
+  // the API independently checks that you own an entry before changing it.
+  const { data: session } = useSession();
+  const isOwner = session?.user?.username?.toLowerCase() === user.username.toLowerCase();
+  const [entries, setEntries] = useState(diaryEntries);
+  const [editing, setEditing] = useState<EditableDiaryEntry | null>(null);
+
   // Group entries by month (and year, so April 2025 and April 2026 stay separate).
-  const entriesByMonth: Record<string, (DiaryEntries & { recipes: Recipes })[]> = {};
-  diaryEntries.forEach((entry) => {
-    const month = dayjs(entry.date).format("MMM 'YY");
-    if (!entriesByMonth[month]) entriesByMonth[month] = [];
-    entriesByMonth[month].push(entry);
-  });
+  const entriesByMonth: Record<string, DiaryEntry[]> = {};
+  [...entries]
+    .sort((a, b) => dayjs(b.date).valueOf() - dayjs(a.date).valueOf())
+    .forEach((entry) => {
+      const month = dayjs(entry.date).format("MMM 'YY");
+      if (!entriesByMonth[month]) entriesByMonth[month] = [];
+      entriesByMonth[month].push(entry);
+    });
 
   const headerSx = {
     fontSize: "0.625rem",
@@ -98,7 +113,7 @@ export default function RecipeDiary({ user, diaryEntries }: Props) {
                       </TableCell>
                       <TableCell sx={cellSx}>
                         <Typography sx={{ fontSize: "0.875rem", color: "text.primary" }}>
-                          {entry.recipes.name}
+                          {entry.recipes?.name ?? "Deleted recipe"}
                         </Typography>
                       </TableCell>
                       <TableCell sx={cellSx}>
@@ -125,15 +140,21 @@ export default function RecipeDiary({ user, diaryEntries }: Props) {
                         )}
                       </TableCell>
                       <TableCell sx={{ ...cellSx, width: 40 }}>
-                        <IconButton
-                          size="small"
-                          sx={{
-                            color: "text.disabled",
-                            "&:hover": { color: "text.primary" },
-                          }}
-                        >
-                          <EditIcon sx={{ fontSize: 16 }} />
-                        </IconButton>
+                        {isOwner && (
+                          <Tooltip title="Edit entry">
+                            <IconButton
+                              aria-label={`Edit ${entry.recipes?.name ?? "Deleted recipe"} entry`}
+                              size="small"
+                              sx={{
+                                color: "text.disabled",
+                                "&:hover": { color: "text.primary" },
+                              }}
+                              onClick={() => setEditing(entry)}
+                            >
+                              <EditIcon sx={{ fontSize: 16 }} />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))
@@ -143,6 +164,21 @@ export default function RecipeDiary({ user, diaryEntries }: Props) {
           </TableContainer>
         </Box>
       </Box>
+
+      {editing && (
+        <EditDiaryEntryDialog
+          entry={editing}
+          onClose={() => setEditing(null)}
+          onDeleted={(id) => {
+            setEntries((prev) => prev.filter((e) => e.id !== id));
+            setEditing(null);
+          }}
+          onSaved={(update) => {
+            setEntries((prev) => prev.map((e) => (e.id === update.id ? { ...e, ...update } : e)));
+            setEditing(null);
+          }}
+        />
+      )}
     </>
   );
 }

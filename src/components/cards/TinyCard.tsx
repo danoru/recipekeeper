@@ -35,7 +35,7 @@ export default function TinyCard({ image, link, name }: TinyCardProps) {
                 transition: "filter 0.25s ease",
               }}
             >
-              <Image fill alt={name} src={image} style={{ objectFit: "cover" }} />
+              {image && <Image fill alt={name} src={image} style={{ objectFit: "cover" }} />}
             </CardMedia>
             <Box
               className="overlay-border"

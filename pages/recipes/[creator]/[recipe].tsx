@@ -105,14 +105,16 @@ export default function RecipePage({
               flexShrink: 0,
             }}
           >
-            <Image
-              fill
-              priority
-              alt={recipe.name}
-              sizes="220px"
-              src={recipe.image}
-              style={{ objectFit: "cover" }}
-            />
+            {recipe.image && (
+              <Image
+                fill
+                priority
+                alt={recipe.name}
+                sizes="220px"
+                src={recipe.image}
+                style={{ objectFit: "cover" }}
+              />
+            )}
           </Box>
 
           <Box sx={{ minWidth: 0 }}>

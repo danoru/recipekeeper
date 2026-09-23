@@ -95,13 +95,15 @@ export default function UserRecipeReviews({ user, reviews }: Props) {
                         display: "block",
                       }}
                     >
-                      <Image
-                        fill
-                        alt={recipeName}
-                        sizes="72px"
-                        src={review.recipes.image}
-                        style={{ objectFit: "cover" }}
-                      />
+                      {review.recipes?.image && (
+                        <Image
+                          fill
+                          alt={recipeName}
+                          sizes="72px"
+                          src={review.recipes.image}
+                          style={{ objectFit: "cover" }}
+                        />
+                      )}
                     </Box>
 
                     {/* Review content */}

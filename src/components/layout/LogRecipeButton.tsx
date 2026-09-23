@@ -2,21 +2,16 @@ import Alert from "@mui/material/Alert";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import Chip from "@mui/material/Chip";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Modal from "@mui/material/Modal";
-import Rating from "@mui/material/Rating";
 import Snackbar from "@mui/material/Snackbar";
-import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
+import DiaryEntryFields from "@/components/diary/DiaryEntryFields";
 import type { Recipes } from "@/generated/prisma/browser";
 
 type RecipeOption = Pick<Recipes, "id" | "name" | "image">;
@@ -361,112 +356,15 @@ function StepTwo({
         )}
       </Box>
 
-      <Stack direction="row" spacing={2} sx={{ mb: 2.5 }}>
-        {/* Recipe thumbnail */}
-        <Box
-          sx={{
-            flexShrink: 0,
-            width: 80,
-            height: 80,
-            borderRadius: "8px",
-            overflow: "hidden",
-            border: "1px solid rgba(255,255,255,0.07)",
-            bgcolor: "#1e1e1e",
-          }}
-        >
-          {selectedRecipe.image && (
-            <Image
-              alt={selectedRecipe.name}
-              height={80}
-              src={selectedRecipe.image}
-              style={{ objectFit: "cover", width: "100%", height: "100%" }}
-              width={80}
-            />
-          )}
-        </Box>
-
-        {/* Date + rating stacked */}
-        <Stack spacing={1.25} sx={{ flex: 1 }}>
-          <DatePicker
-            label="Date cooked"
-            slotProps={{
-              textField: {
-                size: "small",
-                sx: {
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                    fontSize: "0.875rem",
-                  },
-                  "& .MuiInputLabel-root": { fontSize: "0.8125rem" },
-                },
-              },
-            }}
-            value={date}
-            onChange={onDateChange}
-          />
-          <Box>
-            <Typography
-              sx={{
-                fontSize: "0.6875rem",
-                color: "text.secondary",
-                mb: 0.5,
-                letterSpacing: "0.06em",
-              }}
-            >
-              Rating
-            </Typography>
-            <Rating
-              precision={0.5}
-              sx={{
-                "& .MuiRating-iconFilled": { color: "#e6b84a" },
-                "& .MuiRating-iconHover": { color: "#c8a96e" },
-                "& .MuiRating-iconEmpty": { color: "rgba(255,255,255,0.18)" },
-              }}
-              value={rating}
-              onChange={(_, newValue) => onRatingChange(newValue)}
-            />
-          </Box>
-        </Stack>
-      </Stack>
-
-      {/* Review */}
-      <TextField
-        fullWidth
-        multiline
-        label="Notes (optional)"
-        rows={3}
-        size="small"
-        sx={{
-          mb: 1.5,
-          "& .MuiOutlinedInput-root": {
-            borderRadius: "8px",
-            fontSize: "0.875rem",
-          },
-          "& .MuiInputLabel-root": { fontSize: "0.8125rem" },
+      <DiaryEntryFields
+        recipe={selectedRecipe}
+        values={{ date, rating, comment, hasCookedBefore }}
+        onChange={(next) => {
+          onDateChange(next.date);
+          onRatingChange(next.rating);
+          onCommentChange(next.comment);
+          onHasCookedBeforeChange(next.hasCookedBefore);
         }}
-        value={comment}
-        onChange={(e) => onCommentChange(e.target.value)}
-      />
-
-      {/* Remade checkbox */}
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={hasCookedBefore}
-            size="small"
-            sx={{
-              color: "rgba(255,255,255,0.2)",
-              "&.Mui-checked": { color: "primary.main" },
-            }}
-            onChange={(e) => onHasCookedBeforeChange(e.target.checked)}
-          />
-        }
-        label={
-          <Typography sx={{ fontSize: "0.8125rem", color: "text.secondary" }}>
-            I&apos;ve made this before
-          </Typography>
-        }
-        sx={{ mb: 2.5 }}
       />
 
       {/* Save */}
