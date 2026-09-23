@@ -28,10 +28,10 @@ interface Props {
 export default function RecipeDiary({ user, diaryEntries }: Props) {
   const title = `${user.username}'s Diary • Savry`;
 
-  // Group entries by month label
+  // Group entries by month (and year, so April 2025 and April 2026 stay separate).
   const entriesByMonth: Record<string, (DiaryEntries & { recipes: Recipes })[]> = {};
   diaryEntries.forEach((entry) => {
-    const month = dayjs(entry.date).format("MMM");
+    const month = dayjs(entry.date).format("MMM 'YY");
     if (!entriesByMonth[month]) entriesByMonth[month] = [];
     entriesByMonth[month].push(entry);
   });
@@ -87,11 +87,14 @@ export default function RecipeDiary({ user, diaryEntries }: Props) {
                 {Object.entries(entriesByMonth).map(([month, entries]) =>
                   entries.map((entry, idx) => (
                     <TableRow key={`${month}-${idx}`} sx={{ "&:hover": { bgcolor: "#1a1a1a" } }}>
-                      <TableCell sx={{ ...cellSx, color: "text.disabled", width: 60 }}>
+                      <TableCell
+                        sx={{ ...cellSx, color: "text.disabled", width: 72, whiteSpace: "nowrap" }}
+                      >
                         {idx === 0 ? month : ""}
                       </TableCell>
                       <TableCell sx={{ ...cellSx, width: 40 }}>
-                        {dayjs(entry.date).format("d")}
+                        {/* "D" = day of month ("d" would be day of week, 0–6) */}
+                        {dayjs(entry.date).format("D")}
                       </TableCell>
                       <TableCell sx={cellSx}>
                         <Typography sx={{ fontSize: "0.875rem", color: "text.primary" }}>
